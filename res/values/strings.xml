@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, TMT_Main_Activity!</string>
     <string name="app_name">TMT</string>
+    <string name="search">Search…</string>
 
 </resources>
