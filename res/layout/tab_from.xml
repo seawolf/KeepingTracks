@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:padding="5dp" >
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp" >
 
-        <AutoCompleteTextView
-            android:id="@+id/actv_Search"
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="50dp" >
 
-            <requestFocus />
-        </AutoCompleteTextView>
+            <AutoCompleteTextView
+                android:id="@+id/actv_Search"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
 
+                <requestFocus />
+            </AutoCompleteTextView>
+        </LinearLayout>
+
+        <DatePicker
+            android:id="@+id/dp_Date"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
+        <TimePicker
+            android:id="@+id/tp_Time"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/txt_FromSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <DatePicker
-        android:id="@+id/dp_Date"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp" />
-
-    <TimePicker
-        android:id="@+id/tp_Time"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp" />
-
-    <TextView
-        android:id="@+id/txt_FromSummary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+</ScrollView>
