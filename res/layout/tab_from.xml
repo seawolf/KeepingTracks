@@ -17,12 +17,6 @@
             <requestFocus />
         </AutoCompleteTextView>
 
-        <Button
-            android:id="@+id/btn_from_search"
-            android:layout_width="50dp"
-            android:layout_height="fill_parent"
-            android:onClick="search"
-            android:text="@string/search_go" />
     </LinearLayout>
 
     <DatePicker
