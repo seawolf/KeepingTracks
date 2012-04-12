@@ -21,7 +21,7 @@ public class FromActivity extends Activity {
 
 		try {
 			InputStream input;
-			input = getAssets().open("stations.lst");
+			input = getAssets().open(filename);
 			int size = input.available();
 			byte[] buffer = new byte[size];
 
@@ -39,13 +39,11 @@ public class FromActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_from);
-		dp_Date = (DatePicker) findViewById(R.id.dp_Date);
-		tp_Time = (TimePicker) findViewById(R.id.tp_Time);
-		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
+
 		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
 
 		// Link array of completions
-		String[] completions = read_csv("assets/stations.lst");
+		String[] completions = read_csv("stations.lst");
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
 		actv_Search.setAdapter(adapter);
