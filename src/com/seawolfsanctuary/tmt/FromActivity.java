@@ -4,11 +4,13 @@ import java.io.InputStream;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class FromActivity extends Activity {
 	TextView txt_Search, txt_FromSummary;
@@ -30,7 +32,10 @@ public class FromActivity extends Activity {
 			array = new String(buffer).split("\n");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			String error_msg = "Error reading station list!";
+			Toast toast = Toast.makeText(this, error_msg, 50000);
+			toast.setGravity(Gravity.CENTER, 0, 0);
+			toast.show();
 		}
 
 		return array;
