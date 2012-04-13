@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class TMT_Main_Activity extends TabActivity {
+public class AddActivity extends TabActivity {
 
 	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
@@ -47,7 +47,7 @@ public class TMT_Main_Activity extends TabActivity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
 
-		setContentView(R.layout.main);
+		setContentView(R.layout.add_activity);
 
 		TabHost mTabHost = getTabHost();
 
