@@ -12,4 +12,11 @@ public class Helpers {
 		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 	}
 
+	public static String trimCSVSpeech(String input) {
+		if (input.startsWith("" + '"') && input.endsWith("" + '"')) {
+			return input.substring(1, input.length() - 1);
+		} else {
+			return input;
+		}
+	}
 }
