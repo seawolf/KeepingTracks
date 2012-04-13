@@ -57,6 +57,15 @@ public class TMT_Main_Activity extends TabActivity {
 		mTabHost.addTab(mTabHost.newTabSpec("tc_Summary")
 				.setIndicator("Summary").setContent(R.id.tc_Summary));
 
+		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+			@Override
+			public void onTabChanged(String tabID) {
+				if (tabID == "tc_Summary") {
+					updateText();
+				}
+			}
+		});
+
 		mTabHost.setCurrentTab(0);
 
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
