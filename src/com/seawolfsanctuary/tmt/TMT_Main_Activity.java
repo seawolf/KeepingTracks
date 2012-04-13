@@ -102,8 +102,12 @@ public class TMT_Main_Activity extends TabActivity {
 
 		// Restore preferences
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+		if (settings.getString("last", "") != "") {
+			showOKPopUp("Last Session",
 					settings.getString("last", "(no last entry found)")
 							.replace("You selected:", ""));
+		}
 	}
 
 	@Override
@@ -184,5 +188,20 @@ public class TMT_Main_Activity extends TabActivity {
 		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
 
 		Helpers.hideKeyboard(view);
+	}
+
+	private void showOKPopUp(String title, String content) {
+		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
+		helpBuilder.setTitle(title);
+		helpBuilder.setMessage(content);
+		helpBuilder.setPositiveButton("Ok",
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing but close the dialog
+					}
+				});
+		AlertDialog helpDialog = helpBuilder.create();
+		helpDialog.show();
 	}
 }
