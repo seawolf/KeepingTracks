@@ -15,7 +15,7 @@
             android:layout_height="50dp" >
 
             <AutoCompleteTextView
-                android:id="@+id/actv_Search"
+                android:id="@+id/actv_FromSearch"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
@@ -24,13 +24,13 @@
         </LinearLayout>
 
         <DatePicker
-            android:id="@+id/dp_Date"
+            android:id="@+id/dp_FromDate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="10dp" />
 
         <TimePicker
-            android:id="@+id/tp_Time"
+            android:id="@+id/tp_FromTime"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="10dp" />

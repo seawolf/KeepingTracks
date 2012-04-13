@@ -17,10 +17,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class FromActivity extends Activity {
-	TextView txt_Search, txt_FromSummary;
-	DatePicker dp_Date;
-	TimePicker tp_Time;
-	AutoCompleteTextView actv_Search;
+	TextView txt_FromSearch, txt_FromSummary;
+	DatePicker dp_FromDate;
+	TimePicker tp_FromTime;
+	AutoCompleteTextView actv_FromSearch;
 
 	private String[] read_csv(String filename) {
 		String[] array = {};
@@ -49,19 +49,19 @@ public class FromActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tab_from);
 
-		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
-		dp_Date = (DatePicker) findViewById(R.id.dp_Date);
-		tp_Time = (TimePicker) findViewById(R.id.tp_Time);
+		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
+		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
-		actv_Search.setAdapter(adapter);
-		actv_Search.setThreshold(2);
+		actv_FromSearch.setAdapter(adapter);
+		actv_FromSearch.setThreshold(2);
 
-		actv_Search
+		actv_FromSearch
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
@@ -73,22 +73,23 @@ public class FromActivity extends Activity {
 	}
 
 	public void updateText() {
-		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
-		dp_Date = (DatePicker) findViewById(R.id.dp_Date);
-		tp_Time = (TimePicker) findViewById(R.id.tp_Time);
+		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
+		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 		txt_FromSummary.setText("You selected: "
-				+ actv_Search.getText().toString() + "\nOn: "
-				+ dp_Date.getDayOfMonth() + "/" + dp_Date.getMonth() + "/"
-				+ dp_Date.getYear() + "\nAt: " + tp_Time.getCurrentHour() + ":"
-				+ tp_Time.getCurrentMinute());
+				+ actv_FromSearch.getText().toString() + "\nOn: "
+				+ dp_FromDate.getDayOfMonth() + "/" + dp_FromDate.getMonth()
+				+ "/" + dp_FromDate.getYear() + "\nAt: "
+				+ tp_FromTime.getCurrentHour() + ":"
+				+ tp_FromTime.getCurrentMinute());
 
 	}
 
 	public void hideKeyboard() {
-		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(actv_Search.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(actv_FromSearch.getWindowToken(), 0);
 	}
 }
