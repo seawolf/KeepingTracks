@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class FromActivity extends Activity {
 	TextView txt_FromSearch, txt_FromSummary;
@@ -38,6 +39,9 @@ public class FromActivity extends Activity {
 			actv_FromSearch.setError(error_msg);
 			actv_FromSearch.setEnabled(false);
 		}
+
+		Toast.makeText(getBaseContext(), "Stations loaded.", Toast.LENGTH_SHORT)
+				.show();
 
 		return array;
 	}
