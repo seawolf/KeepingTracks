@@ -3,9 +3,11 @@ package com.seawolfsanctuary.tmt;
 import java.io.InputStream;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -64,6 +66,7 @@ public class FromActivity extends Activity {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
+						hideKeyboard();
 						updateText();
 					}
 				});
@@ -81,5 +84,11 @@ public class FromActivity extends Activity {
 				+ dp_Date.getYear() + "\nAt: " + tp_Time.getCurrentHour() + ":"
 				+ tp_Time.getCurrentMinute());
 
+	}
+
+	public void hideKeyboard() {
+		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(actv_Search.getWindowToken(), 0);
 	}
 }
