@@ -5,6 +5,8 @@ import java.io.InputStream;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
@@ -46,6 +48,9 @@ public class FromActivity extends Activity {
 		setContentView(R.layout.tab_from);
 
 		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
+		dp_Date = (DatePicker) findViewById(R.id.dp_Date);
+		tp_Time = (TimePicker) findViewById(R.id.tp_Time);
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
@@ -53,6 +58,28 @@ public class FromActivity extends Activity {
 				android.R.layout.simple_dropdown_item_1line, completions);
 		actv_Search.setAdapter(adapter);
 		actv_Search.setThreshold(2);
+
+		actv_Search
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						updateText();
+					}
+				});
 	}
 
+	public void updateText() {
+		actv_Search = (AutoCompleteTextView) findViewById(R.id.actv_Search);
+		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
+		dp_Date = (DatePicker) findViewById(R.id.dp_Date);
+		tp_Time = (TimePicker) findViewById(R.id.tp_Time);
+
+		txt_FromSummary.setText("You selected: "
+				+ actv_Search.getText().toString() + "\nOn: "
+				+ dp_Date.getDayOfMonth() + "/" + dp_Date.getMonth() + "/"
+				+ dp_Date.getYear() + "\nAt: " + tp_Time.getCurrentHour() + ":"
+				+ tp_Time.getCurrentMinute());
+
+	}
 }
