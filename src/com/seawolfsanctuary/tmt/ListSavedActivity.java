@@ -19,7 +19,7 @@ public class ListSavedActivity extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.context_menu, menu);
 		return true;
 	}
 
@@ -29,6 +29,7 @@ public class ListSavedActivity extends ListActivity {
 		switch (item.getItemId()) {
 		case R.id.add_new:
 			Intent intent = new Intent(this, AddActivity.class);
+			ListSavedActivity.this.finish();
 			startActivity(intent);
 			return true;
 		default:

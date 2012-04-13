@@ -7,5 +7,6 @@
     <string name="tr_class">Class</string>
     <string name="add_new">Add New</string>
     <string name="list_saved">List Saved</string>
+    <string name="exit">Exit</string>
 
 </resources>

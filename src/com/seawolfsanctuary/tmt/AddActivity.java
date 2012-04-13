@@ -2,9 +2,7 @@ package com.seawolfsanctuary.tmt;
 
 import java.io.InputStream;
 
-import android.app.AlertDialog;
 import android.app.TabActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,7 +42,7 @@ public class AddActivity extends TabActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.context_menu, menu);
 		return true;
 	}
 
@@ -54,6 +52,7 @@ public class AddActivity extends TabActivity {
 		switch (item.getItemId()) {
 		case R.id.list:
 			Intent intent = new Intent(this, ListSavedActivity.class);
+			AddActivity.this.finish();
 			startActivity(intent);
 			return true;
 		default:
@@ -121,15 +120,6 @@ public class AddActivity extends TabActivity {
 						Helpers.hideKeyboard(actv_ToSearch);
 					}
 				});
-
-		// Restore preferences
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-
-		if (settings.getString("last", "") != "") {
-			showOKPopUp("Last Session",
-					settings.getString("last", "(no last entry found)")
-							.replace("You selected:", ""));
-		}
 	}
 
 	@Override
@@ -210,20 +200,5 @@ public class AddActivity extends TabActivity {
 		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
 
 		Helpers.hideKeyboard(view);
-	}
-
-	private void showOKPopUp(String title, String content) {
-		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
-		helpBuilder.setTitle(title);
-		helpBuilder.setMessage(content);
-		helpBuilder.setPositiveButton("Ok",
-				new DialogInterface.OnClickListener() {
-
-					public void onClick(DialogInterface dialog, int which) {
-						// Do nothing but close the dialog
-					}
-				});
-		AlertDialog helpDialog = helpBuilder.create();
-		helpDialog.show();
 	}
 }
