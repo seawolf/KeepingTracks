@@ -2,7 +2,10 @@ package com.seawolfsanctuary.tmt;
 
 import java.io.InputStream;
 
+import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +35,8 @@ public class TMT_Main_Activity extends TabActivity {
 	AutoCompleteTextView actv_ToSearch;
 
 	TextView txt_Summary;
+
+	public static final String PREFS_NAME = "TMT";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -95,6 +100,21 @@ public class TMT_Main_Activity extends TabActivity {
 					}
 				});
 
+		// Restore preferences
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+					settings.getString("last", "(no last entry found)")
+							.replace("You selected:", ""));
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
+
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("last", (String) txt_Summary.getText());
+		editor.commit();
 	}
 
 	private String[] read_csv(String filename) {
