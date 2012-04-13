@@ -15,8 +15,11 @@ public class DetailActivity extends Activity {
 		setContentView(R.layout.tab_detail);
 	}
 
-	public void onCheckboxClicked(View v) {
+	public void onCheckboxClicked(View view) {
+		CheckBox cb_DetailClass = (CheckBox) findViewById(R.id.cb_DetailClass);
 		TextView txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
-		txt_DetailClass.setEnabled(((CheckBox) v).isChecked());
+		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
+
+		Helpers.hideKeyboard(view);
 	}
 }
