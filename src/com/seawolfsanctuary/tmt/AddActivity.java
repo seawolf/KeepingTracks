@@ -132,6 +132,9 @@ public class AddActivity extends TabActivity {
 			input.close();
 			array = new String(buffer).split("\n");
 
+			Toast.makeText(getBaseContext(), "Stations loaded.",
+					Toast.LENGTH_SHORT).show();
+
 		} catch (Exception e) {
 			String error_msg = "Error reading station list!";
 
@@ -145,9 +148,6 @@ public class AddActivity extends TabActivity {
 			actv_ToSearch.setError(error_msg);
 			actv_ToSearch.setEnabled(false);
 		}
-
-		Toast.makeText(getBaseContext(), "Stations loaded.", Toast.LENGTH_SHORT)
-				.show();
 
 		return array;
 	}
