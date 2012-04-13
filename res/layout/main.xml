@@ -50,11 +50,6 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp" />
-
-                    <TextView
-                        android:id="@+id/txt_FromSummary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </ScrollView>
 
@@ -107,14 +102,46 @@
                     android:orientation="vertical"
                     android:padding="5dp" >
 
-                    <EditText
-                        android:id="@+id/txt_DetailClass"
+                    <AutoCompleteTextView
+                        android:id="@+id/actv_ToSearch"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text" >
+                        android:layout_height="wrap_content" >
 
                         <requestFocus />
-                    </EditText>
+                    </AutoCompleteTextView>
+
+                    <DatePicker
+                        android:id="@+id/dp_ToDate"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp" />
+
+                    <TimePicker
+                        android:id="@+id/tp_ToTime"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp" />
+                </LinearLayout>
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/tc_Summary"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="5dp" >
+
+                    <TextView
+                        android:id="@+id/txt_Summary"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+
+                        <requestFocus />
+                    </TextView>
                 </LinearLayout>
             </ScrollView>
         </FrameLayout>

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 public class TMT_Main_Activity extends TabActivity {
 
-	TextView txt_FromSearch, txt_FromSummary;
+	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
 	TimePicker tp_FromTime;
 	AutoCompleteTextView actv_FromSearch;
@@ -26,10 +26,23 @@ public class TMT_Main_Activity extends TabActivity {
 	CheckBox cb_DetailClass;
 	TextView txt_DetailClass;
 
+	TextView txt_ToSearch;
+	DatePicker dp_ToDate;
+	TimePicker tp_ToTime;
+	AutoCompleteTextView actv_ToSearch;
+
+	TextView txt_Summary;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Link array of completions
+		String[] completions = read_csv("stations.lst");
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_dropdown_item_1line, completions);
+
 		setContentView(R.layout.main);
 
 		Resources res = getResources();
@@ -41,21 +54,16 @@ public class TMT_Main_Activity extends TabActivity {
 				.setContent(R.id.tc_Detail));
 		mTabHost.addTab(mTabHost.newTabSpec("tc_To").setIndicator("To")
 				.setContent(R.id.tc_To));
+		mTabHost.addTab(mTabHost.newTabSpec("tc_Summary")
+				.setIndicator("Summary").setContent(R.id.tc_Summary));
 
 		mTabHost.setCurrentTab(0);
 
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
-		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
-		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
-		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
-		// Link array of completions
-		String[] completions = read_csv("stations.lst");
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_dropdown_item_1line, completions);
 		actv_FromSearch.setAdapter(adapter);
 		actv_FromSearch.setThreshold(2);
-
 		actv_FromSearch
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
@@ -63,6 +71,18 @@ public class TMT_Main_Activity extends TabActivity {
 							int position, long id) {
 						updateText();
 						Helpers.hideKeyboard(actv_FromSearch);
+					}
+				});
+
+		actv_ToSearch.setAdapter(adapter);
+		actv_ToSearch.setThreshold(2);
+		actv_ToSearch
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						updateText();
+						Helpers.hideKeyboard(actv_ToSearch);
 					}
 				});
 
@@ -83,10 +103,16 @@ public class TMT_Main_Activity extends TabActivity {
 
 		} catch (Exception e) {
 			String error_msg = "Error reading station list!";
+
 			actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 			actv_FromSearch.setText(error_msg);
 			actv_FromSearch.setError(error_msg);
 			actv_FromSearch.setEnabled(false);
+
+			actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+			actv_ToSearch.setText(error_msg);
+			actv_ToSearch.setError(error_msg);
+			actv_ToSearch.setEnabled(false);
 		}
 
 		Toast.makeText(getBaseContext(), "Stations loaded.", Toast.LENGTH_SHORT)
@@ -97,17 +123,30 @@ public class TMT_Main_Activity extends TabActivity {
 
 	public void updateText() {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
-		txt_FromSummary = (TextView) findViewById(R.id.txt_FromSummary);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 
-		txt_FromSummary.setText("You selected:" + "\nFrom:"
+		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
+		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+
+		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
+
+		txt_Summary.setText("You selected:" + "\nFrom:"
 				+ actv_FromSearch.getText().toString() + "\nOn: "
 				+ dp_FromDate.getDayOfMonth() + "/" + dp_FromDate.getMonth()
 				+ "/" + dp_FromDate.getYear() + "\nAt: "
 				+ tp_FromTime.getCurrentHour() + ":"
-				+ tp_FromTime.getCurrentMinute());
+				+ tp_FromTime.getCurrentMinute() +
+
+				"\nTo:" + actv_ToSearch.getText().toString() + "\nOn: "
+				+ dp_ToDate.getDayOfMonth() + "/" + dp_ToDate.getMonth() + "/"
+				+ dp_ToDate.getYear() + "\nAt: " + tp_ToTime.getCurrentHour()
+				+ ":" + tp_ToTime.getCurrentMinute() +
+
+				"\nWith:" + txt_DetailClass.getText());
 	}
 
 	public void onCheckboxClicked(View view) {
