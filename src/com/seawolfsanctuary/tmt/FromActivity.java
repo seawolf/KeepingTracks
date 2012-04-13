@@ -5,7 +5,6 @@ import java.io.InputStream;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -14,7 +13,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class FromActivity extends Activity {
 	TextView txt_FromSearch, txt_FromSummary;
@@ -37,9 +35,10 @@ public class FromActivity extends Activity {
 
 		} catch (Exception e) {
 			String error_msg = "Error reading station list!";
-			Toast toast = Toast.makeText(this, error_msg, 50000);
-			toast.setGravity(Gravity.CENTER, 0, 0);
-			toast.show();
+			actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
+			actv_FromSearch.setText(error_msg);
+			actv_FromSearch.setError(error_msg);
+			actv_FromSearch.setEnabled(false);
 		}
 
 		return array;
