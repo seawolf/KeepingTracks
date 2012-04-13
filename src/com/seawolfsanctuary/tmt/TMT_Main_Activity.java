@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -50,7 +49,6 @@ public class TMT_Main_Activity extends TabActivity {
 
 		setContentView(R.layout.main);
 
-		Resources res = getResources();
 		TabHost mTabHost = getTabHost();
 
 		mTabHost.addTab(mTabHost.newTabSpec("tc_From").setIndicator("From")
@@ -154,7 +152,7 @@ public class TMT_Main_Activity extends TabActivity {
 		return array;
 	}
 
-	public void updateText() {
+	private void updateText() {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
