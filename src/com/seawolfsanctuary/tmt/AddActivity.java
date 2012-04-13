@@ -5,8 +5,12 @@ import java.io.InputStream;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,6 +40,26 @@ public class AddActivity extends TabActivity {
 	TextView txt_Summary;
 
 	public static final String PREFS_NAME = "TMT";
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.list:
+			Intent intent = new Intent(this, ListSavedActivity.class);
+			startActivity(intent);
+			return true;
+		default:
+			return true;
+		}
+	}
 
 	/** Called when the activity is first created. */
 	@Override
