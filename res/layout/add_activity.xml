@@ -50,6 +50,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp" />
+
                 </LinearLayout>
             </ScrollView>
 
@@ -135,6 +136,12 @@
                     android:orientation="vertical"
                     android:padding="5dp" >
 
+                    <Button
+                        android:id="@+id/btn_Save"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Save" android:onClick="writeEntry"/>
+
                     <TextView
                         android:id="@+id/txt_Summary"
                         android:layout_width="fill_parent"
@@ -142,6 +149,7 @@
 
                         <requestFocus />
                     </TextView>
+
                 </LinearLayout>
             </ScrollView>
         </FrameLayout>

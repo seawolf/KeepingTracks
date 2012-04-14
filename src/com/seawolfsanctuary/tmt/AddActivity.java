@@ -1,11 +1,15 @@
 package com.seawolfsanctuary.tmt;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -200,5 +204,76 @@ public class AddActivity extends TabActivity {
 		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
 
 		Helpers.hideKeyboard(view);
+	}
+
+	public boolean writeEntry(View view) {
+		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
+		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
+		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+
+		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+
+		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
+		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+
+		boolean mExternalStorageWritable = false;
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			// We can read and write the media
+			mExternalStorageWritable = true;
+		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			// We can only read the media
+			mExternalStorageWritable = false;
+		} else {
+			// Something else is wrong. It may be one of many other states, but
+			// all we need to know is we can neither read nor write
+			mExternalStorageWritable = false;
+		}
+
+		if (mExternalStorageWritable) {
+			try {
+				File f = new File(Environment.getExternalStorageDirectory()
+						.toString(), "/tmt.csv");
+
+				if (!f.exists()) {
+					f.createNewFile();
+				}
+
+				BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+
+				String msep = "\",\"";
+				String line = "";
+				line = "\"" + actv_FromSearch.getText().toString() + msep
+						+ dp_FromDate.getDayOfMonth() + msep
+						+ dp_FromDate.getMonth() + msep + dp_FromDate.getYear()
+						+ msep + tp_FromTime.getCurrentHour() + msep
+						+ tp_FromTime.getCurrentMinute() + msep
+						+ actv_ToSearch.getText().toString() + msep
+						+ dp_ToDate.getDayOfMonth() + msep
+						+ dp_ToDate.getMonth() + msep + dp_ToDate.getYear()
+						+ msep + tp_ToTime.getCurrentHour() + msep
+						+ tp_ToTime.getCurrentMinute() + msep
+						+ txt_DetailClass.getText() + "\"";
+
+				writer.append(line);
+				writer.close();
+
+				Toast.makeText(getBaseContext(), "Entry saved.",
+						Toast.LENGTH_SHORT).show();
+
+				return true;
+
+			} catch (Exception e) {
+				Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+						Toast.LENGTH_LONG).show();
+
+				return false;
+			}
+
+		} else {
+			return false;
+		}
 	}
 }
