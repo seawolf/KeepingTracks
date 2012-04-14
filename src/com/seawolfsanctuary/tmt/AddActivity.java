@@ -6,7 +6,6 @@ import java.io.InputStream;
 
 import android.app.TabActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -39,8 +38,6 @@ public class AddActivity extends TabActivity {
 	AutoCompleteTextView actv_ToSearch;
 
 	TextView txt_Summary;
-
-	public static final String PREFS_NAME = "TMT";
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,17 +120,6 @@ public class AddActivity extends TabActivity {
 						Helpers.hideKeyboard(actv_ToSearch);
 					}
 				});
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
-
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("last", (String) txt_Summary.getText());
-		editor.commit();
 	}
 
 	private String[] read_csv(String filename) {
