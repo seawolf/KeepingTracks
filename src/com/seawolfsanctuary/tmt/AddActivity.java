@@ -1,6 +1,5 @@
 package com.seawolfsanctuary.tmt;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -241,7 +240,7 @@ public class AddActivity extends TabActivity {
 					f.createNewFile();
 				}
 
-				BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+				FileWriter writer = new FileWriter(f, true);
 
 				String msep = "\",\"";
 				String line = "";
@@ -257,7 +256,8 @@ public class AddActivity extends TabActivity {
 						+ tp_ToTime.getCurrentMinute() + msep
 						+ txt_DetailClass.getText() + "\"";
 
-				writer.append(line);
+				writer.write(line);
+				writer.write(System.getProperty("line.separator"));
 				writer.close();
 
 				Toast.makeText(getBaseContext(), "Entry saved.",
