@@ -62,9 +62,32 @@ public class ListSavedActivity extends ListActivity {
 
 				String name = Helpers.trimCSVSpeech(str.split(",")[0]);
 				names.add(name);
-				data.put(name + "_a", Helpers.trimCSVSpeech(str.split(",")[1]));
-				data.put(name + "_b", Helpers.trimCSVSpeech(str.split(",")[2]));
-
+				data.put(name + "_from_station",
+						Helpers.trimCSVSpeech(str.split(",")[0]));
+				data.put(name + "_from_day",
+						Helpers.trimCSVSpeech(str.split(",")[1]));
+				data.put(name + "_from_month",
+						Helpers.trimCSVSpeech(str.split(",")[2]));
+				data.put(name + "_from_year",
+						Helpers.trimCSVSpeech(str.split(",")[3]));
+				data.put(name + "_from_hour",
+						Helpers.trimCSVSpeech(str.split(",")[4]));
+				data.put(name + "_from_minute",
+						Helpers.trimCSVSpeech(str.split(",")[5]));
+				data.put(name + "_to_station",
+						Helpers.trimCSVSpeech(str.split(",")[6]));
+				data.put(name + "_to_day",
+						Helpers.trimCSVSpeech(str.split(",")[7]));
+				data.put(name + "_to_month",
+						Helpers.trimCSVSpeech(str.split(",")[8]));
+				data.put(name + "_to_year",
+						Helpers.trimCSVSpeech(str.split(",")[9]));
+				data.put(name + "_to_hour",
+						Helpers.trimCSVSpeech(str.split(",")[10]));
+				data.put(name + "_to_minute",
+						Helpers.trimCSVSpeech(str.split(",")[11]));
+				data.put(name + "_class",
+						Helpers.trimCSVSpeech(str.split(",")[12]));
 			}
 
 		} catch (Exception e) {
@@ -83,9 +106,14 @@ public class ListSavedActivity extends ListActivity {
 					int position, long id) {
 				Toast.makeText(
 						getApplicationContext(),
-						data.get(((TextView) view).getText() + "_a") + " | "
-								+ data.get(((TextView) view).getText() + "_b"),
-						Toast.LENGTH_SHORT).show();
+						data.get(((TextView) view).getText() + "_from_station")
+								.substring(0, 3)
+								+ " -> "
+								+ data.get(
+										((TextView) view).getText()
+												+ "_to_station")
+										.substring(0, 3), Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 
