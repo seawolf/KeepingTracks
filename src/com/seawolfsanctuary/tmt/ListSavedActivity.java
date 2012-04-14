@@ -3,11 +3,15 @@ package com.seawolfsanctuary.tmt;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,7 +60,7 @@ public class ListSavedActivity extends ListActivity {
 		final Hashtable<String, String> data = new Hashtable<String, String>();
 
 		try {
-			entries = loadSavedEntries();
+			entries = loadSavedEntries(true);
 
 			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
 				String str = (String) i.next();
@@ -117,25 +122,42 @@ public class ListSavedActivity extends ListActivity {
 			}
 		});
 
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int id, final long position) {
+				new AlertDialog.Builder(view.getContext())
+						.setTitle("Delete Entry")
+						.setMessage(
+								"Are you sure you want to delete this entry?")
+						.setPositiveButton("Yes", new OnClickListener() {
+							public void onClick(DialogInterface arg0, int arg1) {
+								deleteEntry(
+										(ArrayList<String>) loadSavedEntries(false),
+										position);
+
+								Intent intent = getIntent();
+								finish();
+								startActivity(intent);
+							}
+						}).setNegativeButton("No", new OnClickListener() {
+							public void onClick(DialogInterface arg0, int arg1) {
+								// ignore
+							}
+						}).show();
+
+				return true;
+
+			}
+		});
+
 	}
 
-	private ArrayList<String> loadSavedEntries() {
-		boolean mExternalStorageReadable = false;
+	private ArrayList<String> loadSavedEntries(boolean showToast) {
 		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			mExternalStorageReadable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// We can only read the media
-			mExternalStorageReadable = true;
-		} else {
-			// Something else is wrong. It may be one of many other states, but
-			// all we need to know is we can neither read nor write
-			mExternalStorageReadable = false;
-		}
-
-		if (mExternalStorageReadable) {
 			try {
 				String line = null;
 				ArrayList<String> array = new ArrayList<String>();
@@ -150,11 +172,14 @@ public class ListSavedActivity extends ListActivity {
 				}
 				reader.close();
 
-				Toast.makeText(
-						getBaseContext(),
-						"Loaded " + array.size() + " entr"
-								+ (array.size() == 1 ? "y" : "ies")
-								+ " from CSV file.", Toast.LENGTH_SHORT).show();
+				if (showToast) {
+					Toast.makeText(
+							getBaseContext(),
+							"Loaded " + array.size() + " entr"
+									+ (array.size() == 1 ? "y" : "ies")
+									+ " from CSV file.", Toast.LENGTH_SHORT)
+							.show();
+				}
 				return array;
 
 			} catch (Exception e) {
@@ -168,4 +193,48 @@ public class ListSavedActivity extends ListActivity {
 			return new ArrayList<String>();
 		}
 	}
+
+	public boolean deleteEntry(ArrayList<String> entries, long long_position) {
+		boolean success = false;
+		int position = (int) long_position;
+
+		try {
+			entries.remove(position);
+
+			File modified = new File(Environment.getExternalStorageDirectory()
+					.toString(), "/tmt_new.csv");
+			if (!modified.exists()) {
+				modified.createNewFile();
+			}
+
+			FileWriter writer = new FileWriter(modified, true);
+
+			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+				String str = (String) i.next();
+				writer.append(str);
+				writer.write(System.getProperty("line.separator"));
+			}
+			writer.close();
+
+			File existing = new File(Environment.getExternalStorageDirectory()
+					.toString(), "/tmt.csv");
+			if (!existing.exists()) {
+				existing.createNewFile();
+			}
+
+			modified.renameTo(existing);
+			modified.delete();
+
+			Toast.makeText(getBaseContext(), "Entry deleted.",
+					Toast.LENGTH_SHORT).show();
+
+			success = true;
+		} catch (Exception e) {
+			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return success;
+	}
+
 }
