@@ -148,11 +148,13 @@ public class ListSavedActivity extends ListActivity {
 					String str = new String(line);
 					array.add(str);
 				}
-
 				reader.close();
-				Toast.makeText(getBaseContext(), "CSV file loaded.",
-						Toast.LENGTH_SHORT).show();
 
+				Toast.makeText(
+						getBaseContext(),
+						"Loaded " + array.size() + " entr"
+								+ (array.size() == 1 ? "y" : "ies")
+								+ " from CSV file.", Toast.LENGTH_SHORT).show();
 				return array;
 
 			} catch (Exception e) {
