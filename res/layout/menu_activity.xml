@@ -35,6 +35,14 @@
             android:padding="10dp"
             android:text="@string/list_saved"
             android:onClick="startListSavedActivity" />
+
+        <Button
+            android:id="@+id/btn_DeepDive"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/deep_dive"
+            android:onClick="startDeepDiveListSavedActivity" />
     </LinearLayout>
 
 </ScrollView>
