@@ -24,7 +24,7 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 		private Context context;
 
 		public DeepDiveListSavedAdapter(Context context) {
-			context = context;
+			//
 		}
 
 		@Override
