@@ -3,12 +3,13 @@ package com.seawolfsanctuary.tmt;
 import java.util.ArrayList;
 
 import android.app.ExpandableListActivity;
-import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 public class DeepDiveListSavedActivity extends ExpandableListActivity {
 
@@ -23,69 +24,69 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setListAdapter(new DeepDiveListSavedAdapter(getBaseContext()));
-		ExpandableListView lv = getExpandableListView();
-		lv.setTextFilterEnabled(true);
+		setListAdapter(new DeepDiveListSavedAdapter());
+		registerForContextMenu(getExpandableListView());
 	}
 
 	class DeepDiveListSavedAdapter extends BaseExpandableListAdapter {
-		private Context context;
-
-		public DeepDiveListSavedAdapter(Context context) {
-			//
-		}
-
-		@Override
 		public Object getChild(int groupPosition, int childPosition) {
-			return null;
+			return presentedData[groupPosition][childPosition];
 		}
 
-		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			return 0;
+			return childPosition;
 		}
 
-		@Override
+		public int getChildrenCount(int groupPosition) {
+			return presentedData[groupPosition].length;
+		}
+
+		public TextView getGenericView() {
+			// Layout parameters for the ExpandableListView
+			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
+					ViewGroup.LayoutParams.FILL_PARENT, 64);
+
+			TextView textView = new TextView(DeepDiveListSavedActivity.this);
+			textView.setLayoutParams(lp);
+			// Centre the text vertically
+			textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+			// Set the text starting position
+			textView.setPadding(36, 0, 0, 0);
+			return textView;
+		}
+
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
-			return null;
+			TextView textView = getGenericView();
+			textView.setText(getChild(groupPosition, childPosition).toString());
+			return textView;
 		}
 
-		@Override
-		public int getChildrenCount(int groupPosition) {
-			return 0;
-		}
-
-		@Override
 		public Object getGroup(int groupPosition) {
-			return null;
+			return presentedNames[groupPosition];
 		}
 
-		@Override
 		public int getGroupCount() {
-			return 0;
+			return presentedNames.length;
 		}
 
-		@Override
 		public long getGroupId(int groupPosition) {
-			return 0;
+			return groupPosition;
 		}
 
-		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded,
 				View convertView, ViewGroup parent) {
-			return null;
+			TextView textView = getGenericView();
+			textView.setText(getGroup(groupPosition).toString());
+			return textView;
 		}
 
-		@Override
-		public boolean hasStableIds() {
-			return false;
-		}
-
-		@Override
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			return false;
+			return true;
+		}
+
+		public boolean hasStableIds() {
+			return true;
 		}
 
 	}
