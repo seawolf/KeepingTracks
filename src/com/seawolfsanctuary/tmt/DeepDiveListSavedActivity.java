@@ -177,11 +177,11 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 			try {
 				for (Iterator<String> i = entries.iterator(); i.hasNext();) {
 					String str = (String) i.next();
-
-					String[] entry = new String[12];
+					String[] elements = str.split(",");
+					String[] entry = new String[elements.length];
 
 					for (int j = 0; j < entry.length; j++) {
-						entry[j] = Helpers.trimCSVSpeech(str.split(",")[j]);
+						entry[j] = Helpers.trimCSVSpeech(elements[j]);
 					}
 
 					data.add(entry);
