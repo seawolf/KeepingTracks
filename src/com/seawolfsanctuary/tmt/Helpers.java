@@ -24,12 +24,8 @@ public class Helpers {
 
 	public static String[] arrayListToArray(ArrayList<String> input) {
 		String[] returnedArray = new String[input.size()];
-		try {
-			for (int i = 0; i < input.size(); i++) {
-				returnedArray[i] = input.get(i);
-			}
-		} catch (Exception e) {
-			returnedArray[0] = "Error!";
+		for (int i = 0; i < input.size(); i++) {
+			returnedArray[i] = input.get(i);
 		}
 		return returnedArray;
 	}
@@ -37,14 +33,8 @@ public class Helpers {
 	public static String[][] multiArrayListToArray(
 			ArrayList<ArrayList<String>> input) {
 		String[][] returnedArray = new String[input.size()][];
-		try {
-			for (int i = 0; i < input.size(); i++) {
-				ArrayList<String> element = input.get(i);
-				String[] formattedElement = (String[]) element.toArray();
-				returnedArray[i] = formattedElement;
-			}
-		} catch (Exception e) {
-			returnedArray[0] = new String[] { "Error!", e.getMessage() };
+		for (int i = 0; i < input.size(); i++) {
+			returnedArray[i] = arrayListToArray(input.get(i));
 		}
 		return returnedArray;
 	}
