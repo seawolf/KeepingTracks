@@ -62,6 +62,8 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 						+ entry[8] + "/" + entry[9] + "\nAt: " + entry[10]
 						+ ":" + entry[11]);
 
+				split.add("With: " + entry[12]);
+
 				data.add(split);
 			}
 
