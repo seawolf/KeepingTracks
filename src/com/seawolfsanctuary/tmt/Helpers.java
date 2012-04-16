@@ -22,7 +22,20 @@ public class Helpers {
 		}
 	}
 
-	public static String[][] arrayListToArray(ArrayList<ArrayList<String>> input) {
+	public static String[] arrayListToArray(ArrayList<String> input) {
+		String[] returnedArray = new String[input.size()];
+		try {
+			for (int i = 0; i < input.size(); i++) {
+				returnedArray[i] = input.get(i);
+			}
+		} catch (Exception e) {
+			returnedArray[0] = "Error!";
+		}
+		return returnedArray;
+	}
+
+	public static String[][] multiArrayListToArray(
+			ArrayList<ArrayList<String>> input) {
 		String[][] returnedArray = new String[input.size()][];
 		try {
 			for (int i = 0; i < input.size(); i++) {

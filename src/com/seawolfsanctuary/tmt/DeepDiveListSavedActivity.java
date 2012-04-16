@@ -1,5 +1,7 @@
 package com.seawolfsanctuary.tmt;
 
+import java.util.ArrayList;
+
 import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +11,13 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 public class DeepDiveListSavedActivity extends ExpandableListActivity {
+
+	ArrayList<String> entries = new ArrayList<String>();
+	ArrayList<String> names = new ArrayList<String>();
+	ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+
+	String[] presentedNames = Helpers.arrayListToArray(names);
+	String[][] presentedData = Helpers.multiArrayListToArray(data);
 
 	/** Called when the activity is first created. */
 	@Override
