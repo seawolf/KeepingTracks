@@ -7,9 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.app.ExpandableListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -18,6 +22,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ListSavedActivity extends ExpandableListActivity {
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.add_new:
+			Intent intent = new Intent(this, AddActivity.class);
+			ListSavedActivity.this.finish();
+			startActivity(intent);
+			return true;
+		default:
+			return true;
+		}
+	}
 
 	/** Called when the activity is first created. */
 	@Override
