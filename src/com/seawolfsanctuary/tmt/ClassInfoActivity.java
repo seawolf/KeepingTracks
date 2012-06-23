@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.app.ExpandableListActivity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -165,6 +167,18 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		public boolean hasStableIds() {
 			return true;
+		}
+
+		private Drawable load_photo(String filename) {
+			try {
+				InputStream ims = getAssets().open(
+						"class_photos/" + filename + ".jpg");
+				Drawable d = Drawable.createFromStream(ims, null);
+				return d;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return null;
+			}
 		}
 
 		private String[] read_csv(String filename) {
