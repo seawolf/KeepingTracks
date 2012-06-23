@@ -1,6 +1,7 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -55,6 +56,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					String[] new_entry = new String[] { entry[0], entry[1],
 							entry[2], entry[3], "", "" };
 					entry = new_entry;
+				}
+
+				try {
+					entry[1] = NumberFormat.getIntegerInstance().format(
+							Integer.parseInt(entry[1]))
+							+ "mm";
+				} catch (Exception e) {
+					// meh
 				}
 
 				if (entry[4].length() < 1) {
