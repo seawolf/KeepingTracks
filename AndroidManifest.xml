@@ -33,6 +33,10 @@
             android:name=".DeepDiveListSavedActivity"
             android:label="@string/deep_dive" >
         </activity>
+        <activity
+            android:name=".ClassInfoActivity"
+            android:label="@string/class_info" >
+        </activity>
     </application>
 
 </manifest>

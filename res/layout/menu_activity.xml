@@ -43,6 +43,13 @@
             android:padding="10dp"
             android:text="@string/deep_dive"
             android:onClick="startDeepDiveListSavedActivity" />
+
+        <Button
+            android:id="@+id/btn_ClassInfo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:onClick="startClassInfoActivity" android:text="@string/class_info"/>
     </LinearLayout>
 
 </ScrollView>
