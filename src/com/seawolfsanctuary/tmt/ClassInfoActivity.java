@@ -127,9 +127,17 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
-			TextView textView = getGenericView();
-			textView.setText(getChild(groupPosition, childPosition).toString());
-			return textView;
+			if (childPosition == 0) {
+				String classNo = presentedNames[groupPosition];
+				ImageView imageView = getGenericImageView();
+				imageView.setImageDrawable(load_photo(classNo));
+				return imageView;
+			} else {
+				TextView textView = getGenericTextView();
+				textView.setText(getChild(groupPosition, childPosition)
+						.toString());
+				return textView;
+			}
 		}
 
 		public Object getGroup(int groupPosition) {
