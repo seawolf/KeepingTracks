@@ -163,10 +163,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						getBaseContext(),
 						"Loaded " + array.length + " entr"
 								+ (array.length == 1 ? "y" : "ies")
-								+ " from CSV file.", Toast.LENGTH_SHORT).show();
+								+ " from data file.", Toast.LENGTH_SHORT)
+						.show();
 
 			} catch (Exception e) {
-				String error_msg = "Error reading information file!";
+				String error_msg = "Error reading data file!";
 			}
 
 			return array;
