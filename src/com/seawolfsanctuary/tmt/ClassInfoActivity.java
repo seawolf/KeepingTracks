@@ -150,11 +150,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				input.close();
 				array = new String(buffer).split("\n");
 
-				Toast.makeText(getBaseContext(), "Info loaded.",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(
+						getBaseContext(),
+						"Loaded " + array.length + " entr"
+								+ (array.length == 1 ? "y" : "ies")
+								+ " from CSV file.", Toast.LENGTH_SHORT).show();
 
 			} catch (Exception e) {
-				String error_msg = "Error reading station list!";
+				String error_msg = "Error reading information file!";
 			}
 
 			return array;
@@ -167,20 +170,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				String[] classInfo = read_csv("classes.csv");
 				for (String infoLine : classInfo) {
-					System.out.println("- Found: " + infoLine);
 					array.add(infoLine);
 				}
-
-				if (showToast) {
-					Toast.makeText(
-							getBaseContext(),
-							"Loaded " + array.size() + " entr"
-									+ (array.size() == 1 ? "y" : "ies")
-									+ " from CSV file.", Toast.LENGTH_SHORT)
-							.show();
-				}
-
-				System.out.println("Parsed!");
 
 				return array;
 
