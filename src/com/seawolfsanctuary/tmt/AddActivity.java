@@ -31,6 +31,8 @@ public class AddActivity extends TabActivity {
 
 	CheckBox cb_DetailClass;
 	TextView txt_DetailClass;
+	CheckBox cb_DetailHeadcode;
+	TextView txt_DetailHeadcode;
 
 	TextView txt_ToSearch;
 	DatePicker dp_ToDate;
@@ -161,6 +163,7 @@ public class AddActivity extends TabActivity {
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+		txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
@@ -180,13 +183,24 @@ public class AddActivity extends TabActivity {
 				+ dp_ToDate.getYear() + "\nAt: " + tp_ToTime.getCurrentHour()
 				+ ":" + tp_ToTime.getCurrentMinute() +
 
-				"\nWith:" + txt_DetailClass.getText());
+				"\nWith: " + txt_DetailClass.getText() +
+
+				"\nAs: " + txt_DetailHeadcode.getText());
 	}
 
-	public void onCheckboxClicked(View view) {
+	public void onClassCheckboxClicked(View view) {
 		CheckBox cb_DetailClass = (CheckBox) findViewById(R.id.cb_DetailClass);
 		TextView txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
+
+		Helpers.hideKeyboard(view);
+	}
+
+	public void onHeadcodeCheckboxClicked(View view) {
+		CheckBox cb_DetailHeadcode = (CheckBox) findViewById(R.id.cb_DetailHeadcode);
+		TextView txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+		txt_DetailHeadcode.setEnabled(((CheckBox) cb_DetailHeadcode)
+				.isChecked());
 
 		Helpers.hideKeyboard(view);
 	}
@@ -197,6 +211,7 @@ public class AddActivity extends TabActivity {
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+		txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
@@ -240,7 +255,8 @@ public class AddActivity extends TabActivity {
 						+ dp_ToDate.getMonth() + msep + dp_ToDate.getYear()
 						+ msep + tp_ToTime.getCurrentHour() + msep
 						+ tp_ToTime.getCurrentMinute() + msep
-						+ txt_DetailClass.getText() + "\"";
+						+ txt_DetailClass.getText() + msep
+						+ txt_DetailHeadcode.getText() + "\"";
 
 				writer.write(line);
 				writer.write(System.getProperty("line.separator"));
