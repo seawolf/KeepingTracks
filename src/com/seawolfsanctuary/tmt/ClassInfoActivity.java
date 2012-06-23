@@ -70,6 +70,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					entry[4] = "still in service";
 				}
 
+				split.add(null);
 				split.add("Guage: " + entry[1] + "\nEngine: " + entry[2]);
 				split.add("Built: " + entry[3] + "\nRetired: " + entry[4]);
 
