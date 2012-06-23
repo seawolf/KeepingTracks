@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, TMT_Main_Activity!</string>
     <string name="app_name">TMT</string>
     <string name="search">Search…</string>
     <string name="tr_class">Class</string>
     <string name="add_new">Add New</string>
     <string name="list_saved">List Saved</string>
     <string name="exit">Exit</string>
-    <string name="deep_dive">Deep Dive</string>
 
 </resources>

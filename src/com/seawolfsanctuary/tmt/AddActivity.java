@@ -51,7 +51,7 @@ public class AddActivity extends TabActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.list:
-			Intent intent = new Intent(this, DeepDiveListSavedActivity.class);
+			Intent intent = new Intent(this, ListSavedActivity.class);
 			AddActivity.this.finish();
 			startActivity(intent);
 			return true;

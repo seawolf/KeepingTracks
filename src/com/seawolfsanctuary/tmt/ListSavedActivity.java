@@ -17,17 +17,17 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DeepDiveListSavedActivity extends ExpandableListActivity {
+public class ListSavedActivity extends ExpandableListActivity {
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setListAdapter(new DeepDiveListSavedAdapter());
+		setListAdapter(new ListSavedAdapter());
 		registerForContextMenu(getExpandableListView());
 	}
 
-	class DeepDiveListSavedAdapter extends BaseExpandableListAdapter {
+	class ListSavedAdapter extends BaseExpandableListAdapter {
 
 		ArrayList<String> entries = loadSavedEntries(true);
 		ArrayList<String[]> data = parseEntries(entries);
@@ -87,7 +87,7 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
 					ViewGroup.LayoutParams.FILL_PARENT, 64);
 
-			TextView textView = new TextView(DeepDiveListSavedActivity.this);
+			TextView textView = new TextView(ListSavedActivity.this);
 			textView.setLayoutParams(lp);
 			// Centre the text vertically
 			textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);

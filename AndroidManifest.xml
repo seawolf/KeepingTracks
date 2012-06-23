@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name=".ListSavedActivity"
-            android:label="@string/deep_dive" >
+            android:label="@string/list_saved" >
         </activity>
     </application>
 

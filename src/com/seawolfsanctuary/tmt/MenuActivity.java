@@ -40,8 +40,8 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void startDeepDiveListSavedActivity(View v) {
-		Intent intent = new Intent(this, DeepDiveListSavedActivity.class);
+	public void startListSavedActivity(View v) {
+		Intent intent = new Intent(this, ListSavedActivity.class);
 		startActivity(intent);
 	}
 
