@@ -99,7 +99,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			return presentedData[groupPosition].length;
 		}
 
-		public TextView getGenericView() {
+		public TextView getGenericTextView() {
 			// Layout parameters for the ExpandableListView
 			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
 					ViewGroup.LayoutParams.FILL_PARENT, 64);
@@ -111,6 +111,18 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			// Set the text starting position
 			textView.setPadding(36, 0, 0, 0);
 			return textView;
+		}
+
+		public ImageView getGenericImageView() {
+			// Layout parameters for the ExpandableListView
+			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
+					ViewGroup.LayoutParams.FILL_PARENT, 128);
+
+			ImageView imageView = new ImageView(ClassInfoActivity.this);
+			imageView.setLayoutParams(lp);
+			// Set the image starting position
+			imageView.setPadding(36, 0, 0, 0);
+			return imageView;
 		}
 
 		public View getChildView(int groupPosition, int childPosition,
@@ -134,7 +146,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		public View getGroupView(int groupPosition, boolean isExpanded,
 				View convertView, ViewGroup parent) {
-			TextView textView = getGenericView();
+			TextView textView = getGenericTextView();
 			textView.setText(getGroup(groupPosition).toString());
 			return textView;
 		}
