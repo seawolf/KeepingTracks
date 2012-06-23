@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ClassInfoActivity extends ExpandableListActivity {
+
+	public static final int IMAGE_POSITION = 0;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -124,12 +127,20 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			imageView.setLayoutParams(lp);
 			// Set the image starting position
 			imageView.setPadding(36, 0, 0, 0);
+
+			imageView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View arg0) {
+					show_photo();
+				}
+			});
+
 			return imageView;
 		}
 
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
-			if (childPosition == 0) {
+			if (childPosition == IMAGE_POSITION) {
 				String classNo = presentedNames[groupPosition];
 				ImageView imageView = getGenericImageView();
 				imageView.setImageDrawable(load_photo(classNo));
@@ -162,11 +173,19 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			return true;
+			if (childPosition == IMAGE_POSITION) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		public boolean hasStableIds() {
 			return true;
+		}
+
+		private void show_photo() {
+			//
 		}
 
 		private Drawable load_photo(String filename) {
