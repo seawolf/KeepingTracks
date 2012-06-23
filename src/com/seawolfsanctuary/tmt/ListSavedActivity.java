@@ -3,10 +3,14 @@ package com.seawolfsanctuary.tmt;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,7 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +57,37 @@ public class ListSavedActivity extends ExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setListAdapter(new ListSavedAdapter());
 		registerForContextMenu(getExpandableListView());
+
+		ExpandableListView lv = getExpandableListView();
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					final int id, long position) {
+				new AlertDialog.Builder(view.getContext())
+						.setTitle("Delete Entry")
+						.setMessage(
+								"Are you sure you want to delete this entry?")
+						.setPositiveButton("Yes", new OnClickListener() {
+							public void onClick(DialogInterface arg0, int arg1) {
+								deleteEntry(
+										(ArrayList<String>) loadSavedEntries(false),
+										id);
+
+								Intent intent = getIntent();
+								finish();
+								startActivity(intent);
+							}
+						}).setNegativeButton("No", new OnClickListener() {
+							public void onClick(DialogInterface arg0, int arg1) {
+								// ignore
+							}
+						}).show();
+
+				return true;
+
+			}
+		});
+
 	}
 
 	class ListSavedAdapter extends BaseExpandableListAdapter {
@@ -155,72 +193,113 @@ public class ListSavedActivity extends ExpandableListActivity {
 			return true;
 		}
 
-		private ArrayList<String> loadSavedEntries(boolean showToast) {
-			String state = Environment.getExternalStorageState();
-			if (Environment.MEDIA_MOUNTED.equals(state)
-					|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+	}
 
-				try {
-					String line = null;
-					ArrayList<String> array = new ArrayList<String>();
-
-					File f = new File(Environment.getExternalStorageDirectory()
-							.toString(), "/tmt.csv");
-					BufferedReader reader = new BufferedReader(
-							new FileReader(f));
-
-					while ((line = reader.readLine()) != null) {
-						String str = new String(line);
-						array.add(str);
-					}
-					reader.close();
-
-					if (showToast) {
-						Toast.makeText(
-								getBaseContext(),
-								"Loaded " + array.size() + " entr"
-										+ (array.size() == 1 ? "y" : "ies")
-										+ " from CSV file.", Toast.LENGTH_SHORT)
-								.show();
-					}
-					return array;
-
-				} catch (Exception e) {
-					Toast.makeText(getBaseContext(),
-							"Error: " + e.getMessage(), Toast.LENGTH_LONG)
-							.show();
-
-					return new ArrayList<String>();
-				}
-
-			} else {
-				return new ArrayList<String>();
-			}
-		}
-
-		private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
-			ArrayList<String[]> data = new ArrayList<String[]>();
+	public ArrayList<String> loadSavedEntries(boolean showToast) {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 
 			try {
-				for (Iterator<String> i = entries.iterator(); i.hasNext();) {
-					String str = (String) i.next();
-					String[] elements = str.split(",");
-					String[] entry = new String[elements.length];
+				String line = null;
+				ArrayList<String> array = new ArrayList<String>();
 
-					for (int j = 0; j < entry.length; j++) {
-						entry[j] = Helpers.trimCSVSpeech(elements[j]);
-					}
+				File f = new File(Environment.getExternalStorageDirectory()
+						.toString(), "/tmt.csv");
+				BufferedReader reader = new BufferedReader(new FileReader(f));
 
-					data.add(entry);
+				while ((line = reader.readLine()) != null) {
+					String str = new String(line);
+					array.add(str);
 				}
+				reader.close();
+
+				if (showToast) {
+					Toast.makeText(
+							getBaseContext(),
+							"Loaded " + array.size() + " entr"
+									+ (array.size() == 1 ? "y" : "ies")
+									+ " from CSV file.", Toast.LENGTH_SHORT)
+							.show();
+				}
+				return array;
+
 			} catch (Exception e) {
-				Toast.makeText(getApplicationContext(),
-						"Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+						Toast.LENGTH_LONG).show();
+
+				return new ArrayList<String>();
 			}
 
-			return data;
+		} else {
+			return new ArrayList<String>();
+		}
+	}
+
+	private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
+		ArrayList<String[]> data = new ArrayList<String[]>();
+
+		try {
+			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+				String str = (String) i.next();
+				String[] elements = str.split(",");
+				String[] entry = new String[elements.length];
+
+				for (int j = 0; j < entry.length; j++) {
+					entry[j] = Helpers.trimCSVSpeech(elements[j]);
+				}
+
+				data.add(entry);
+			}
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
 		}
 
+		return data;
+	}
+
+	public boolean deleteEntry(ArrayList<String> entries, long long_position) {
+		boolean success = false;
+		int position = (int) long_position;
+
+		try {
+			entries.remove(position);
+
+			File modified = new File(Environment.getExternalStorageDirectory()
+					.toString(), "/tmt_new.csv");
+			if (!modified.exists()) {
+				modified.createNewFile();
+			}
+
+			FileWriter writer = new FileWriter(modified, true);
+
+			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+				String str = (String) i.next();
+				writer.append(str);
+				writer.write(System.getProperty("line.separator"));
+			}
+			writer.close();
+
+			File existing = new File(Environment.getExternalStorageDirectory()
+					.toString(), "/tmt.csv");
+			if (!existing.exists()) {
+				existing.createNewFile();
+			}
+
+			modified.renameTo(existing);
+			modified.delete();
+
+			Toast.makeText(getBaseContext(), "Entry deleted.",
+					Toast.LENGTH_SHORT).show();
+
+			success = true;
+		} catch (Exception e) {
+			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return success;
 	}
 
 }
