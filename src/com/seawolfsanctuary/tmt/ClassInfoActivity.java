@@ -1,10 +1,15 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.ExpandableListActivity;
 import android.content.Intent;
@@ -13,6 +18,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,6 +35,26 @@ public class ClassInfoActivity extends ExpandableListActivity {
 	public static final int IMAGE_POSITION = 0;
 	public static final String dataDirectoryPath = "Android/data/com.seawolfsanctuary.tmt";
 	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
+	public static final URI bundleDownloadURI = URI
+			.create("http://seawolfsanctuary.com/data.zip");
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.class_info_context_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.download:
+			downloadBundle();
+		default:
+			return true;
+		}
+	}
 
 	/** Called when the activity is first created. */
 	@Override
@@ -34,6 +62,26 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setListAdapter(new ClassInfoAdapter());
 		registerForContextMenu(getExpandableListView());
+	}
+
+	private boolean downloadBundle() {
+		Toast.makeText(getBaseContext(), "Downloading bundle...",
+				Toast.LENGTH_SHORT).show();
+
+		try {
+			new DefaultHttpClient()
+					.execute(new HttpGet(bundleDownloadURI))
+					.getEntity()
+					.writeTo(
+							new FileOutputStream(new File("file:///sdcard/",
+									"data.zip")));
+			Toast.makeText(getBaseContext(), "Bundle download complete!",
+					Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return true;
 	}
 
 	class ClassInfoAdapter extends BaseExpandableListAdapter {
