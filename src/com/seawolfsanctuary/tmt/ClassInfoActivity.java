@@ -51,7 +51,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			ArrayList<String> names = new ArrayList<String>();
 			for (int i = 0; i < data.size(); i++) {
 				String[] entry = data.get(i);
-				names.add(entry[0]);
+				String name = entry[0];
+				if (entry[1].length() > 0) {
+					name = name + "  -  " + entry[1];
+				}
+				names.add(name);
 			}
 			return names;
 		}
@@ -63,29 +67,29 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				if (entry.length < 5) {
+				if (entry.length < 6) {
 					String[] new_entry = new String[] { entry[0], entry[1],
-							entry[2], entry[3], "", "" };
+							entry[2], entry[3], entry[4], "", "" };
 					entry = new_entry;
 				}
 
 				try {
-					entry[1] = NumberFormat.getIntegerInstance().format(
-							Integer.parseInt(entry[1]))
+					entry[2] = NumberFormat.getIntegerInstance().format(
+							Integer.parseInt(entry[2]))
 							+ "mm";
 				} catch (Exception e) {
 					// meh
 				}
 
-				if (entry[4].length() < 1) {
-					entry[4] = "still in service";
+				if (entry[5].length() < 1) {
+					entry[5] = "still in service";
 				}
 
 				split.add(null);
-				split.add("Guage: " + entry[1] + "\nEngine: " + entry[2]);
-				split.add("Built: " + entry[3] + "\nRetired: " + entry[4]);
+				split.add("Guage: " + entry[2] + "\nEngine: " + entry[3]);
+				split.add("Service: " + entry[4] + "\nRetired: " + entry[5]);
 
-				ArrayList<String> operatorList = parseOperators(entry[5]);
+				ArrayList<String> operatorList = parseOperators(entry[6]);
 				String operators = "";
 				for (String operator : operatorList) {
 					operators = operators + operator + ", ";
@@ -140,7 +144,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			if (childPosition == IMAGE_POSITION) {
-				final String classNo = presentedNames[groupPosition];
+				final String classNo = data.get(groupPosition)[0];
 				ImageView imageView = getGenericImageView();
 				imageView.setImageDrawable(load_photo(classNo));
 				imageView.setOnClickListener(new OnClickListener() {
@@ -278,8 +282,6 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 					for (int j = 0; j < entry.length; j++) {
 						entry[j] = Helpers.trimCSVSpeech(elements[j]);
-						System.out.println("  - Found at " + j + ": "
-								+ entry[j]);
 					}
 
 					data.add(entry);
