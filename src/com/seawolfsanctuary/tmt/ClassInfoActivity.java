@@ -1,5 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
+import java.io.File;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 public class ClassInfoActivity extends ExpandableListActivity {
 
 	public static final int IMAGE_POSITION = 0;
+	public static final String dataDirectoryPath = "Android/data/com.seawolfsanctuary.tmt";
+	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -187,11 +191,19 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		private void show_photo(String classNo) {
-			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setDataAndType(
-					Uri.parse("file:///sdcard/Android/data/com.seawolfsanctuary.tmt/class_photos/"
-							+ classNo), "image/*");
-			startActivity(i);
+			File f = new File(Environment.getExternalStorageDirectory()
+					.toString() + "/" + dataDirectoryPath + "/class_photos/",
+					classNo);
+			if (f.exists()) {
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setDataAndType(Uri.parse(dataDirectoryURI + "/class_photos/"
+						+ classNo), "image/*");
+				startActivity(i);
+			} else {
+				Toast.makeText(getBaseContext(),
+						"Please download the bundle to view this photo.",
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 
 		private Drawable load_photo(String filename) {
@@ -227,7 +239,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						.show();
 
 			} catch (Exception e) {
-				String error_msg = "Error reading data file!";
+				Toast.makeText(getBaseContext(), "Error reading data file!",
+						Toast.LENGTH_SHORT).show();
 			}
 
 			return array;
