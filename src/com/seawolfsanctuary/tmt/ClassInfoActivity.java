@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.app.ExpandableListActivity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -128,22 +130,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			// Set the image starting position
 			imageView.setPadding(36, 0, 0, 0);
 
-			imageView.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View arg0) {
-					show_photo();
-				}
-			});
-
 			return imageView;
 		}
 
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			if (childPosition == IMAGE_POSITION) {
-				String classNo = presentedNames[groupPosition];
+				final String classNo = presentedNames[groupPosition];
 				ImageView imageView = getGenericImageView();
 				imageView.setImageDrawable(load_photo(classNo));
+				imageView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						show_photo(classNo);
+					}
+				});
+
 				return imageView;
 			} else {
 				TextView textView = getGenericTextView();
@@ -184,8 +186,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			return true;
 		}
 
-		private void show_photo() {
-			//
+		private void show_photo(String classNo) {
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setDataAndType(
+					Uri.parse("file:///sdcard/Android/data/com.seawolfsanctuary.tmt/class_photos/"
+							+ classNo), "image/*");
+			startActivity(i);
 		}
 
 		private Drawable load_photo(String filename) {
