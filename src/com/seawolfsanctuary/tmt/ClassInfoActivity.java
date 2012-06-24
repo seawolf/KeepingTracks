@@ -47,6 +47,10 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		switch (item.getItemId()) {
 		case R.id.download:
 			downloadBundle();
+
+			Intent intent = new Intent(this, ClassInfoActivity.class);
+			ClassInfoActivity.this.finish();
+			startActivity(intent);
 		default:
 			return true;
 		}
