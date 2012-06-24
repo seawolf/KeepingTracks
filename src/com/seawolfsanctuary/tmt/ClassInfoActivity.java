@@ -103,6 +103,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						+ "/class_photos/thumbs/" + destination);
 				if (target.exists()) {
 					target.delete();
+					System.out.println("Deleted " + "/sdcard/"
+							+ dataDirectoryPath + "/class_photos/thumbs/"
+							+ destination);
 				}
 
 				FileOutputStream f = new FileOutputStream("/sdcard/"
@@ -166,6 +169,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						+ "/class_photos/" + destination);
 				if (target.exists()) {
 					target.delete();
+					System.out.println("Deleted " + "/sdcard/"
+							+ dataDirectoryPath + "/class_photos/"
+							+ destination);
 				}
 
 				FileOutputStream f = new FileOutputStream("/sdcard/"
