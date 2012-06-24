@@ -210,15 +210,23 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			}
 		}
 
-		private Drawable load_photo(String filename) {
+		private Drawable load_photo(String classNo) {
+			Drawable d = null;
 			try {
-				InputStream ims = getAssets().open("class_photos/" + filename);
-				Drawable d = Drawable.createFromStream(ims, null);
-				return d;
+				File f = new File(Environment.getExternalStorageDirectory()
+						.toString()
+						+ "/"
+						+ dataDirectoryPath
+						+ "/class_photos/thumbs/", classNo);
+				if (f.exists()) {
+					Drawable p = Drawable.createFromPath(f.getPath());
+					d = p;
+				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
-				return null;
 			}
+
+			return d;
 		}
 
 		private String[] read_csv(String filename) {
