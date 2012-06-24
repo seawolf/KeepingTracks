@@ -29,6 +29,10 @@ import android.widget.Toast;
 
 public class ListSavedActivity extends ListActivity {
 
+	public static final String dataFilePath = Environment
+			.getExternalStorageDirectory().toString()
+			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -162,8 +166,7 @@ public class ListSavedActivity extends ListActivity {
 				String line = null;
 				ArrayList<String> array = new ArrayList<String>();
 
-				File f = new File(Environment.getExternalStorageDirectory()
-						.toString(), "/tmt.csv");
+				File f = new File(dataFilePath);
 				BufferedReader reader = new BufferedReader(new FileReader(f));
 
 				while ((line = reader.readLine()) != null) {
@@ -201,8 +204,7 @@ public class ListSavedActivity extends ListActivity {
 		try {
 			entries.remove(position);
 
-			File modified = new File(Environment.getExternalStorageDirectory()
-					.toString(), "/tmt_new.csv");
+			File modified = new File(dataFilePath + ".new");
 			if (!modified.exists()) {
 				modified.createNewFile();
 			}
@@ -216,8 +218,7 @@ public class ListSavedActivity extends ListActivity {
 			}
 			writer.close();
 
-			File existing = new File(Environment.getExternalStorageDirectory()
-					.toString(), "/tmt.csv");
+			File existing = new File(dataFilePath);
 			if (!existing.exists()) {
 				existing.createNewFile();
 			}
