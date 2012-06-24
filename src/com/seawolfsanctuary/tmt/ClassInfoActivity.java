@@ -212,8 +212,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		private Drawable load_photo(String filename) {
 			try {
-				InputStream ims = getAssets().open(
-						"class_photos/" + filename + ".jpg");
+				InputStream ims = getAssets().open("class_photos/" + filename);
 				Drawable d = Drawable.createFromStream(ims, null);
 				return d;
 			} catch (Exception e) {
