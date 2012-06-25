@@ -41,6 +41,10 @@ public class AddActivity extends TabActivity {
 
 	TextView txt_Summary;
 
+	public static final String dataFilePath = Environment
+			.getExternalStorageDirectory().toString()
+			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -234,8 +238,7 @@ public class AddActivity extends TabActivity {
 
 		if (mExternalStorageWritable) {
 			try {
-				File f = new File(Environment.getExternalStorageDirectory()
-						.toString(), "/tmt.csv");
+				File f = new File(dataFilePath);
 
 				if (!f.exists()) {
 					f.createNewFile();

@@ -19,6 +19,10 @@ import android.widget.Toast;
 
 public class DeepDiveListSavedActivity extends ExpandableListActivity {
 
+	public static final String dataFilePath = Environment
+			.getExternalStorageDirectory().toString()
+			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -141,8 +145,7 @@ public class DeepDiveListSavedActivity extends ExpandableListActivity {
 					String line = null;
 					ArrayList<String> array = new ArrayList<String>();
 
-					File f = new File(Environment.getExternalStorageDirectory()
-							.toString(), "/tmt.csv");
+					File f = new File(dataFilePath);
 					BufferedReader reader = new BufferedReader(
 							new FileReader(f));
 
