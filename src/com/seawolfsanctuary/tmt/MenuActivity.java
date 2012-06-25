@@ -45,11 +45,6 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void startDeepDiveListSavedActivity(View v) {
-		Intent intent = new Intent(this, DeepDiveListSavedActivity.class);
-		startActivity(intent);
-	}
-
 	public void startClassInfoActivity(View v) {
 		Intent intent = new Intent(this, ClassInfoActivity.class);
 		startActivity(intent);

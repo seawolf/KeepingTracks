@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/add_new"
-          android:title="Add New" />
+          android:title="@string/add_new" />
     <item android:id="@+id/list"
-          android:title="List Saved" />
+          android:title="@string/list_saved" />
 </menu>

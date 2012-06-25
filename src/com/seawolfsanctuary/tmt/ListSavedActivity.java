@@ -5,29 +5,30 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
+import android.app.ExpandableListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListSavedActivity extends ListActivity {
+public class ListSavedActivity extends ExpandableListActivity {
 
 	public static final String dataFilePath = Environment
 			.getExternalStorageDirectory().toString()
@@ -58,78 +59,14 @@ public class ListSavedActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setListAdapter(new ListSavedAdapter());
+		registerForContextMenu(getExpandableListView());
 
-		ArrayList<String> entries = new ArrayList<String>();
-		ArrayList<String> names = new ArrayList<String>();
-		final Hashtable<String, String> data = new Hashtable<String, String>();
-
-		try {
-			entries = loadSavedEntries(true);
-
-			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
-				String str = (String) i.next();
-
-				String name = Helpers.trimCSVSpeech(str.split(",")[0]);
-				names.add(name);
-				data.put(name + "_from_station",
-						Helpers.trimCSVSpeech(str.split(",")[0]));
-				data.put(name + "_from_day",
-						Helpers.trimCSVSpeech(str.split(",")[1]));
-				data.put(name + "_from_month",
-						Helpers.trimCSVSpeech(str.split(",")[2]));
-				data.put(name + "_from_year",
-						Helpers.trimCSVSpeech(str.split(",")[3]));
-				data.put(name + "_from_hour",
-						Helpers.trimCSVSpeech(str.split(",")[4]));
-				data.put(name + "_from_minute",
-						Helpers.trimCSVSpeech(str.split(",")[5]));
-				data.put(name + "_to_station",
-						Helpers.trimCSVSpeech(str.split(",")[6]));
-				data.put(name + "_to_day",
-						Helpers.trimCSVSpeech(str.split(",")[7]));
-				data.put(name + "_to_month",
-						Helpers.trimCSVSpeech(str.split(",")[8]));
-				data.put(name + "_to_year",
-						Helpers.trimCSVSpeech(str.split(",")[9]));
-				data.put(name + "_to_hour",
-						Helpers.trimCSVSpeech(str.split(",")[10]));
-				data.put(name + "_to_minute",
-						Helpers.trimCSVSpeech(str.split(",")[11]));
-				data.put(name + "_class",
-						Helpers.trimCSVSpeech(str.split(",")[12]));
-			}
-
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
-		}
-
-		setListAdapter(new ArrayAdapter<String>(this,
-				R.layout.list_saved_activity, names));
-
-		ListView lv = getListView();
-		lv.setTextFilterEnabled(true);
-
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Toast.makeText(
-						getApplicationContext(),
-						data.get(((TextView) view).getText() + "_from_station")
-								.substring(0, 3)
-								+ " -> "
-								+ data.get(
-										((TextView) view).getText()
-												+ "_to_station")
-										.substring(0, 3), Toast.LENGTH_SHORT)
-						.show();
-			}
-		});
-
+		ExpandableListView lv = getExpandableListView();
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int id, final long position) {
+					final int id, long position) {
 				new AlertDialog.Builder(view.getContext())
 						.setTitle("Delete Entry")
 						.setMessage(
@@ -138,7 +75,7 @@ public class ListSavedActivity extends ListActivity {
 							public void onClick(DialogInterface arg0, int arg1) {
 								deleteEntry(
 										(ArrayList<String>) loadSavedEntries(false),
-										position);
+										id);
 
 								Intent intent = getIntent();
 								finish();
@@ -157,7 +94,114 @@ public class ListSavedActivity extends ListActivity {
 
 	}
 
-	private ArrayList<String> loadSavedEntries(boolean showToast) {
+	class ListSavedAdapter extends BaseExpandableListAdapter {
+
+		ArrayList<String> entries = loadSavedEntries(true);
+		ArrayList<String[]> data = parseEntries(entries);
+		ArrayList<String> names = new ArrayList<String>(getNames(data));
+
+		private String[] presentedNames = Helpers
+				.arrayListToArray(getNames(data));
+		private String[][] presentedData = Helpers
+				.multiArrayListToArray(getData(data));
+
+		private ArrayList<String> getNames(ArrayList<String[]> data) {
+			ArrayList<String> names = new ArrayList<String>();
+			for (int i = 0; i < data.size(); i++) {
+				String[] entry = data.get(i);
+				names.add("[" + entry[1] + "/" + entry[2] + "/" + entry[3]
+						+ "]" + "\n" + entry[0] + " -> " + entry[6]);
+			}
+			return names;
+		}
+
+		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
+			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+
+			for (int i = 0; i < entries.size(); i++) {
+				String[] entry = entries.get(i);
+				ArrayList<String> split = new ArrayList<String>();
+
+				split.add("From: " + entry[0] + "\nOn: " + entry[1] + "/"
+						+ entry[2] + "/" + entry[3] + "\nAt: " + entry[4] + ":"
+						+ entry[5]);
+				split.add("To: " + entry[6] + "\nOn " + entry[7] + "/"
+						+ entry[8] + "/" + entry[9] + "\nAt: " + entry[10]
+						+ ":" + entry[11]);
+
+				split.add("With: " + entry[12]);
+
+				split.add("As: " + entry[13]);
+
+				data.add(split);
+			}
+
+			return data;
+		}
+
+		public Object getChild(int groupPosition, int childPosition) {
+			return presentedData[groupPosition][childPosition];
+		}
+
+		public long getChildId(int groupPosition, int childPosition) {
+			return childPosition;
+		}
+
+		public int getChildrenCount(int groupPosition) {
+			return presentedData[groupPosition].length;
+		}
+
+		public TextView getGenericView() {
+			// Layout parameters for the ExpandableListView
+			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
+					ViewGroup.LayoutParams.FILL_PARENT, 64);
+
+			TextView textView = new TextView(ListSavedActivity.this);
+			textView.setLayoutParams(lp);
+			// Centre the text vertically
+			textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+			// Set the text starting position
+			textView.setPadding(36, 0, 0, 0);
+			return textView;
+		}
+
+		public View getChildView(int groupPosition, int childPosition,
+				boolean isLastChild, View convertView, ViewGroup parent) {
+			TextView textView = getGenericView();
+			textView.setText(getChild(groupPosition, childPosition).toString());
+			return textView;
+		}
+
+		public Object getGroup(int groupPosition) {
+			return presentedNames[groupPosition];
+		}
+
+		public int getGroupCount() {
+			return presentedNames.length;
+		}
+
+		public long getGroupId(int groupPosition) {
+			return groupPosition;
+		}
+
+		public View getGroupView(int groupPosition, boolean isExpanded,
+				View convertView, ViewGroup parent) {
+			TextView textView = getGenericView();
+			textView.setText(getGroup(groupPosition).toString());
+			return textView;
+		}
+
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return true;
+		}
+
+		public boolean hasStableIds() {
+			return true;
+		}
+
+	}
+
+	public ArrayList<String> loadSavedEntries(boolean showToast) {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)
 				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
@@ -195,6 +239,29 @@ public class ListSavedActivity extends ListActivity {
 		} else {
 			return new ArrayList<String>();
 		}
+	}
+
+	private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
+		ArrayList<String[]> data = new ArrayList<String[]>();
+
+		try {
+			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+				String str = (String) i.next();
+				String[] elements = str.split(",");
+				String[] entry = new String[elements.length];
+
+				for (int j = 0; j < entry.length; j++) {
+					entry[j] = Helpers.trimCSVSpeech(elements[j]);
+				}
+
+				data.add(entry);
+			}
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return data;
 	}
 
 	public boolean deleteEntry(ArrayList<String> entries, long long_position) {
