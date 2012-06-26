@@ -137,9 +137,13 @@ public class ListSavedActivity extends ExpandableListActivity {
 						+ Helpers.leftPad(entry[10], 2) + ":"
 						+ Helpers.leftPad(entry[11], 2));
 
-				split.add("With: " + entry[12]);
+				if (entry[12].length() > 0) {
+					split.add("With: " + entry[12]);
+				}
 
-				split.add("As: " + entry[13]);
+				if (entry[13].length() > 0) {
+					split.add("As: " + entry[13]);
+				}
 
 				data.add(split);
 			}
