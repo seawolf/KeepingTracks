@@ -109,8 +109,10 @@ public class ListSavedActivity extends ExpandableListActivity {
 			ArrayList<String> names = new ArrayList<String>();
 			for (int i = 0; i < data.size(); i++) {
 				String[] entry = data.get(i);
-				names.add("[" + entry[1] + "/" + entry[2] + "/" + entry[3]
-						+ "]" + "\n" + entry[0] + " -> " + entry[6]);
+				names.add(Helpers.leftPad(entry[1], 2) + "/"
+						+ Helpers.leftPad(entry[2], 2) + "/"
+						+ Helpers.leftPad(entry[3], 4) + ":\n" + entry[0]
+						+ "\n" + entry[6]);
 			}
 			return names;
 		}
@@ -122,12 +124,18 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				split.add("From: " + entry[0] + "\nOn: " + entry[1] + "/"
-						+ entry[2] + "/" + entry[3] + "\nAt: " + entry[4] + ":"
-						+ entry[5]);
-				split.add("To: " + entry[6] + "\nOn " + entry[7] + "/"
-						+ entry[8] + "/" + entry[9] + "\nAt: " + entry[10]
-						+ ":" + entry[11]);
+				split.add("From: " + entry[0] + "\nOn: "
+						+ Helpers.leftPad(entry[1], 2) + "/"
+						+ Helpers.leftPad(entry[2], 2) + "/"
+						+ Helpers.leftPad(entry[3], 2) + "\nAt: "
+						+ Helpers.leftPad(entry[4], 2) + ":"
+						+ Helpers.leftPad(entry[5], 2));
+				split.add("To: " + entry[6] + "\nOn "
+						+ Helpers.leftPad(entry[7], 2) + "/"
+						+ Helpers.leftPad(entry[8], 2) + "/"
+						+ Helpers.leftPad(entry[9], 2) + "\nAt: "
+						+ Helpers.leftPad(entry[10], 2) + ":"
+						+ Helpers.leftPad(entry[11], 2));
 
 				split.add("With: " + entry[12]);
 
