@@ -38,4 +38,12 @@ public class Helpers {
 		}
 		return returnedArray;
 	}
+
+	public static String leftPad(String s, int width) {
+		return String.format("%" + width + "s", s).replace(' ', '0');
+	}
+
+	public static String rightPad(String s, int width) {
+		return String.format("%-" + width + "s", s).replace(' ', '0');
+	}
 }
