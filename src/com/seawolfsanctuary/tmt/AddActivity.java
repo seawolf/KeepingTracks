@@ -285,4 +285,10 @@ public class AddActivity extends TabActivity {
 			return false;
 		}
 	}
+
+	public void startClassInfoActivity(View view) {
+		Intent intent = new Intent(this, ClassInfoActivity.class);
+		startActivity(intent);
+	}
+
 }

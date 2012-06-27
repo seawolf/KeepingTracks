@@ -85,6 +85,13 @@
                             android:layout_weight="1"
                             android:inputType="text" >
                         </EditText>
+
+                    <Button
+                        android:id="@+id/btn_startClassInfoActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="startClassInfoActivity"
+                        android:text="@string/dotdotdot" />
 					</LinearLayout>
 
                     <LinearLayout
@@ -159,7 +166,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:onClick="writeEntry"
-                        android:text="Save" />
+                        android:text="@string/save" />
 
                     <TextView
                         android:id="@+id/txt_Summary"
