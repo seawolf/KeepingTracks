@@ -268,6 +268,10 @@ public class AddActivity extends TabActivity {
 				Toast.makeText(getBaseContext(), "Entry saved.",
 						Toast.LENGTH_SHORT).show();
 
+				AddActivity.this.finish();
+				Intent intent = new Intent(this, ListSavedActivity.class);
+				startActivity(intent);
+
 				return true;
 
 			} catch (Exception e) {
