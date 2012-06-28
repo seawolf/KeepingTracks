@@ -13,6 +13,7 @@ import android.app.ExpandableListActivity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Gravity;
@@ -43,14 +44,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.download:
-			downloadBundle();
-
-			Intent intent = new Intent(this, ClassInfoActivity.class);
-			ClassInfoActivity.this.finish();
-			startActivity(intent);
+			new DownloadBundleTask().execute();
 		default:
 			return true;
 		}
@@ -64,144 +60,162 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		registerForContextMenu(getExpandableListView());
 	}
 
-	private boolean downloadBundle() {
-		ClassInfoAdapter adapter = new ClassInfoAdapter();
-		ArrayList<String> entries = adapter.loadClassInfo(true);
-		ArrayList<String[]> data = adapter.parseEntries(entries);
+	private class DownloadBundleTask extends AsyncTask<Void, Void, Boolean> {
+		protected Boolean doInBackground(Void... params) {
+			ClassInfoAdapter adapter = new ClassInfoAdapter();
+			ArrayList<String> entries = adapter.loadClassInfo(true);
+			ArrayList<String[]> data = adapter.parseEntries(entries);
 
-		boolean photos = downloadPhotos(data);
-		boolean thumbs = downloadThumbs(data);
-		return (photos && thumbs);
-	}
-
-	private boolean downloadThumbs(ArrayList<String[]> data) {
-		try {
-
-			URL bundleDownloadURL = new URL(
-					"http://dl.dropbox.com/u/6413248/class_photos/thumbs/");
-
-			Toast.makeText(getBaseContext(), "Downloading thumbs...",
-					Toast.LENGTH_SHORT).show();
-
-			File targetDir = new File("/sdcard/" + dataDirectoryPath
-					+ "/class_photos/thumbs");
-			if (targetDir.exists()) {
-				targetDir.delete();
+			boolean success = false;
+			if (downloadThumbs(data) && downloadPhotos(data)) {
+				success = true;
 			}
-			targetDir.mkdir();
 
-			for (int i = 0; i < data.size(); i++) {
-				String[] d = data.get(i);
+			return success;
+		}
 
-				String destination = d[0];
-				URL photoDownloadURL = new URL(bundleDownloadURL + destination);
-				HttpURLConnection c = (HttpURLConnection) photoDownloadURL
-						.openConnection();
-				c.setRequestMethod("GET");
-				c.setDoOutput(true);
-				System.out.println("Connecting...");
-				c.connect();
-				System.out.println("Connected!");
+		protected void onPostExecute(Boolean success) {
+			Intent intent = new Intent(getApplicationContext(),
+					ClassInfoActivity.class);
+			ClassInfoActivity.this.finish();
+			startActivity(intent);
 
-				File target = new File("/sdcard/" + dataDirectoryPath
-						+ "/class_photos/thumbs/" + destination);
-				if (target.exists()) {
-					target.delete();
-					System.out.println("Deleted " + "/sdcard/"
+			if (success) {
+				Toast.makeText(getApplicationContext(), "Download finished!",
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(getApplicationContext(), "Download failed.",
+						Toast.LENGTH_LONG).show();
+			}
+		}
+
+		private boolean downloadThumbs(ArrayList<String[]> data) {
+			boolean success = false;
+
+			try {
+				URL bundleDownloadURL = new URL(
+						"http://dl.dropbox.com/u/6413248/class_photos/thumbs/");
+
+				File targetDir = new File("/sdcard/" + dataDirectoryPath
+						+ "/class_photos/thumbs");
+				if (targetDir.exists()) {
+					targetDir.delete();
+				}
+				targetDir.mkdir();
+
+				for (int i = 0; i < data.size(); i++) {
+					String[] d = data.get(i);
+
+					String destination = d[0];
+					URL photoDownloadURL = new URL(bundleDownloadURL
+							+ destination);
+					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
+							.openConnection();
+					c.setRequestMethod("GET");
+					c.setDoOutput(true);
+					System.out.println("Connecting...");
+					c.connect();
+					System.out.println("Connected!");
+
+					File target = new File("/sdcard/" + dataDirectoryPath
+							+ "/class_photos/thumbs/" + destination);
+					if (target.exists()) {
+						target.delete();
+						System.out.println("Deleted " + "/sdcard/"
+								+ dataDirectoryPath + "/class_photos/thumbs/"
+								+ destination);
+					}
+
+					FileOutputStream f = new FileOutputStream("/sdcard/"
+							+ dataDirectoryPath + "/class_photos/thumbs/"
+							+ destination);
+					InputStream in = c.getInputStream();
+					byte[] buffer = new byte[1024];
+					int len1 = 0;
+					while ((len1 = in.read(buffer)) > 0) {
+						f.write(buffer, 0, len1);
+					}
+					f.close();
+					c.disconnect();
+
+					System.out.println("Downloaded! -> " + "/sdcard/"
 							+ dataDirectoryPath + "/class_photos/thumbs/"
 							+ destination);
 				}
 
-				FileOutputStream f = new FileOutputStream("/sdcard/"
-						+ dataDirectoryPath + "/class_photos/thumbs/"
-						+ destination);
-				InputStream in = c.getInputStream();
-				byte[] buffer = new byte[1024];
-				int len1 = 0;
-				while ((len1 = in.read(buffer)) > 0) {
-					f.write(buffer, 0, len1);
-				}
-				f.close();
-				c.disconnect();
-
-				System.out.println("Downloaded! -> " + "/sdcard/"
-						+ dataDirectoryPath + "/class_photos/thumbs/"
-						+ destination);
+				success = true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 
-			Toast.makeText(getBaseContext(), "Thumbnail download complete!",
-					Toast.LENGTH_SHORT).show();
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			return success;
 		}
 
-		return true;
-	}
+		private boolean downloadPhotos(ArrayList<String[]> data) {
+			boolean success = false;
 
-	private boolean downloadPhotos(ArrayList<String[]> data) {
-		try {
+			try {
 
-			URL bundleDownloadURL = new URL(
-					"http://dl.dropbox.com/u/6413248/class_photos/");
+				URL bundleDownloadURL = new URL(
+						"http://dl.dropbox.com/u/6413248/class_photos/");
 
-			Toast.makeText(getBaseContext(), "Downloading photos...",
-					Toast.LENGTH_SHORT).show();
+				File targetDir = new File("/sdcard/" + dataDirectoryPath
+						+ "/class_photos");
+				if (targetDir.exists()) {
+					targetDir.delete();
+				}
+				targetDir.mkdir();
 
-			File targetDir = new File("/sdcard/" + dataDirectoryPath
-					+ "/class_photos");
-			if (targetDir.exists()) {
-				targetDir.delete();
-			}
-			targetDir.mkdir();
+				for (int i = 0; i < data.size(); i++) {
+					String[] d = data.get(i);
 
-			for (int i = 0; i < data.size(); i++) {
-				String[] d = data.get(i);
+					String destination = d[0];
+					URL photoDownloadURL = new URL(bundleDownloadURL
+							+ destination);
+					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
+							.openConnection();
+					c.setRequestMethod("GET");
+					c.setDoOutput(true);
+					System.out.println("Connecting...");
+					c.connect();
+					System.out.println("Connected!");
 
-				String destination = d[0];
-				URL photoDownloadURL = new URL(bundleDownloadURL + destination);
-				HttpURLConnection c = (HttpURLConnection) photoDownloadURL
-						.openConnection();
-				c.setRequestMethod("GET");
-				c.setDoOutput(true);
-				System.out.println("Connecting...");
-				c.connect();
-				System.out.println("Connected!");
+					File target = new File("/sdcard/" + dataDirectoryPath
+							+ "/class_photos/" + destination);
+					if (target.exists()) {
+						target.delete();
+						System.out.println("Deleted " + "/sdcard/"
+								+ dataDirectoryPath + "/class_photos/"
+								+ destination);
+					}
 
-				File target = new File("/sdcard/" + dataDirectoryPath
-						+ "/class_photos/" + destination);
-				if (target.exists()) {
-					target.delete();
-					System.out.println("Deleted " + "/sdcard/"
+					FileOutputStream f = new FileOutputStream("/sdcard/"
 							+ dataDirectoryPath + "/class_photos/"
 							+ destination);
+					InputStream in = c.getInputStream();
+					byte[] buffer = new byte[1024];
+					int len1 = 0;
+					while ((len1 = in.read(buffer)) > 0) {
+						f.write(buffer, 0, len1);
+					}
+					f.close();
+					c.disconnect();
+
+					System.out.println("Downloaded! -> " + "/sdcard/"
+							+ dataDirectoryPath + "/class_photos/"
+							+ destination);
+
+					success = true;
 				}
 
-				FileOutputStream f = new FileOutputStream("/sdcard/"
-						+ dataDirectoryPath + "/class_photos/" + destination);
-				InputStream in = c.getInputStream();
-				byte[] buffer = new byte[1024];
-				int len1 = 0;
-				while ((len1 = in.read(buffer)) > 0) {
-					f.write(buffer, 0, len1);
-				}
-				f.close();
-				c.disconnect();
-
-				System.out.println("Downloaded! -> " + "/sdcard/"
-						+ dataDirectoryPath + "/class_photos/" + destination);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 
-			Toast.makeText(getBaseContext(), "Photo download complete!",
-					Toast.LENGTH_SHORT).show();
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			return success;
 		}
-
-		return true;
 	}
 
 	class ClassInfoAdapter extends BaseExpandableListAdapter {
@@ -410,16 +424,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				input.close();
 				array = new String(buffer).split("\n");
 
-				Toast.makeText(
-						getBaseContext(),
-						"Loaded " + array.length + " entr"
-								+ (array.length == 1 ? "y" : "ies")
-								+ " from data file.", Toast.LENGTH_SHORT)
-						.show();
-
 			} catch (Exception e) {
-				Toast.makeText(getBaseContext(), "Error reading data file!",
-						Toast.LENGTH_SHORT).show();
 			}
 
 			return array;
@@ -438,9 +443,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				return array;
 
 			} catch (Exception e) {
-				Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-
+				System.out.println(e.getMessage());
 				return new ArrayList<String>();
 			}
 
@@ -463,8 +466,6 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
-				Toast.makeText(getApplicationContext(),
-						"Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
 			return data;
