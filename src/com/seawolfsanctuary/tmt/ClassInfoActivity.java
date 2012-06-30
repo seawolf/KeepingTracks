@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.app.ExpandableListActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -46,7 +47,13 @@ public class ClassInfoActivity extends ExpandableListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.download:
-			new DownloadBundleTask().execute();
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			progressDialog.setTitle("Downloading...");
+			progressDialog
+					.setMessage("0% - 50%: thumbnails\n50% - 100%: full photos");
+			progressDialog.setCancelable(false);
+			new DownloadBundleTask(progressDialog).execute();
 		default:
 			return true;
 		}
@@ -60,37 +67,26 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		registerForContextMenu(getExpandableListView());
 	}
 
-	private class DownloadBundleTask extends AsyncTask<Void, Void, Boolean> {
+	private class DownloadBundleTask extends AsyncTask<Void, Integer, Boolean> {
+		private ProgressDialog progressDialog;
+
+		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
+			progressDialog = dialogFromActivity;
+		}
+
+		public void onPreExecute() {
+			progressDialog.show();
+		}
+
 		protected Boolean doInBackground(Void... params) {
 			ClassInfoAdapter adapter = new ClassInfoAdapter();
 			ArrayList<String> entries = adapter.loadClassInfo(true);
 			ArrayList<String[]> data = adapter.parseEntries(entries);
 
-			boolean success = false;
-			if (downloadThumbs(data) && downloadPhotos(data)) {
-				success = true;
-			}
+			progressDialog.setMax(data.size() * 2);
 
-			return success;
-		}
-
-		protected void onPostExecute(Boolean success) {
-			Intent intent = new Intent(getApplicationContext(),
-					ClassInfoActivity.class);
-			ClassInfoActivity.this.finish();
-			startActivity(intent);
-
-			if (success) {
-				Toast.makeText(getApplicationContext(), "Download finished!",
-						Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(getApplicationContext(), "Download failed.",
-						Toast.LENGTH_LONG).show();
-			}
-		}
-
-		private boolean downloadThumbs(ArrayList<String[]> data) {
-			boolean success = false;
+			boolean downloadedThumbs = false;
+			boolean downloadedPhotos = false;
 
 			try {
 				URL bundleDownloadURL = new URL(
@@ -138,25 +134,20 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					f.close();
 					c.disconnect();
 
+					progressDialog.incrementProgressBy(1);
 					System.out.println("Downloaded! -> " + "/sdcard/"
 							+ dataDirectoryPath + "/class_photos/thumbs/"
 							+ destination);
 				}
 
-				success = true;
+				downloadedThumbs = true;
+
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 
-			return success;
-		}
-
-		private boolean downloadPhotos(ArrayList<String[]> data) {
-			boolean success = false;
-
 			try {
-
 				URL bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/");
 
@@ -166,7 +157,6 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					targetDir.delete();
 				}
 				targetDir.mkdir();
-
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
 
@@ -202,20 +192,39 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					f.close();
 					c.disconnect();
 
+					progressDialog.incrementProgressBy(1);
 					System.out.println("Downloaded! -> " + "/sdcard/"
 							+ dataDirectoryPath + "/class_photos/"
 							+ destination);
-
-					success = true;
 				}
+
+				downloadedPhotos = true;
 
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 
-			return success;
+			return (downloadedThumbs && downloadedPhotos);
 		}
+
+		protected void onPostExecute(Boolean success) {
+			Intent intent = new Intent(getApplicationContext(),
+					ClassInfoActivity.class);
+			ClassInfoActivity.this.finish();
+			startActivity(intent);
+
+			if (success) {
+				Toast.makeText(getApplicationContext(), "Download finished!",
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(getApplicationContext(), "Download failed.",
+						Toast.LENGTH_LONG).show();
+			}
+
+			progressDialog.dismiss();
+		}
+
 	}
 
 	class ClassInfoAdapter extends BaseExpandableListAdapter {
