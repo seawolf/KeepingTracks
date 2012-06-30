@@ -1,6 +1,17 @@
-"150-1","Sprinter",1435,"DMU",0000,,
-"150-2","Sprinter",1435,"DMU",0000,,
-151,"Sprinter Prototype",1435,"DMU",0000,,
+140,"Pacer Prototype",1435,"DMU",1980,1981,
+141,"Pacer (Layland)",1435,"DMU",1981,1997,"British Rail|Islamic Republic of Iran Railways"
+142,"Pacer (BREL/Layland)",1435,"DMU",1985,,"Arriva|Northern"
+143,"Pacer (Hunslet/Walter Alexander)",1435,"DMU",1985,,"Arriva|First Great Western"
+144,"Pacer (BREL/Walter Alexander)",1435,"DMU",1986,,"Northern"
+"150-1","Sprinter",1435,"DMU",1984,,
+"150-2","Sprinter",1435,"DMU",1984,,
+151,"Sprinter Prototype",1435,"DMU",1985,1989,
+153,"Super Sprinter",1435,"DMU",1991,,
+155,"Super Sprinter - 2-car",1435,"DMU",1987,,
+156,"Super Sprinter - 2-car",1435,"DMU",1987,,
+157,"Super Sprinter - 2-car",1435,"DMU",0000,0000,
+158,"Express Sprinter",1435,"DMU",1989,,
+159,"South Western TUrbo",1435,"DMU",1993,,
 175,"Coradia",1435,"DMU",2000,,"Arriva|First TransPennine Express"
 323,,1435,"DMU",0000,,"Northern|South West Trains"
 507,,1435,"EMU",1978,,"Merseyrail|Arriva"
