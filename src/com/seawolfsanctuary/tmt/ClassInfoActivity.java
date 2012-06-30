@@ -191,8 +191,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		protected void onProgressUpdate(String... progress) {
-			progressDialog.setMessage("Downloading " + progress[0] + ": "
-					+ progress[1]);
+			progressDialog.setMessage(progress[0].substring(0, 1).toUpperCase()
+					+ progress[0].substring(1) + " for class " + progress[1]);
 		}
 
 		protected void onPostExecute(Boolean success) {
