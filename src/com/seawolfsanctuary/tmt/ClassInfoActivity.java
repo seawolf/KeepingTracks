@@ -196,6 +196,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		protected void onPostExecute(Boolean success) {
+			progressDialog.dismiss();
+
 			Intent intent = new Intent(getApplicationContext(),
 					ClassInfoActivity.class);
 			ClassInfoActivity.this.finish();
@@ -206,11 +208,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(getApplicationContext(),
-						"Download failed. " + downloadingError,
+						"Download failed.\n" + downloadingError,
 						Toast.LENGTH_LONG).show();
 			}
-
-			progressDialog.dismiss();
 		}
 
 	}
