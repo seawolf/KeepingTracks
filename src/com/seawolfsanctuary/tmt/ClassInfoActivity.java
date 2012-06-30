@@ -68,6 +68,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
 		private ProgressDialog progressDialog;
+		private String downloadingError = "unkown error :-(";
 
 		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
 			progressDialog = dialogFromActivity;
@@ -100,26 +101,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
-
 					String destination = d[0];
+
 					publishProgress("thumbnail", destination);
+
 					URL photoDownloadURL = new URL(bundleDownloadURL
 							+ destination);
 					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
 							.openConnection();
 					c.setRequestMethod("GET");
 					c.setDoOutput(true);
-					System.out.println("Connecting...");
 					c.connect();
-					System.out.println("Connected!");
 
 					File target = new File("/sdcard/" + dataDirectoryPath
 							+ "/class_photos/thumbs/" + destination);
 					if (target.exists()) {
 						target.delete();
-						System.out.println("Deleted " + "/sdcard/"
-								+ dataDirectoryPath + "/class_photos/thumbs/"
-								+ destination);
 					}
 
 					FileOutputStream f = new FileOutputStream("/sdcard/"
@@ -135,23 +132,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
-					System.out.println("Downloaded! -> " + "/sdcard/"
-							+ dataDirectoryPath + "/class_photos/thumbs/"
-							+ destination);
 				}
 
 				downloadedThumbs = true;
 
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-			}
-
-			try {
-				URL bundleDownloadURL = new URL(
+				bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/");
 
-				File targetDir = new File("/sdcard/" + dataDirectoryPath
+				targetDir = new File("/sdcard/" + dataDirectoryPath
 						+ "/class_photos");
 				if (targetDir.exists()) {
 					targetDir.delete();
@@ -159,26 +147,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				targetDir.mkdir();
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
-
 					String destination = d[0];
+
 					publishProgress("photo", destination);
+
 					URL photoDownloadURL = new URL(bundleDownloadURL
 							+ destination);
 					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
 							.openConnection();
 					c.setRequestMethod("GET");
 					c.setDoOutput(true);
-					System.out.println("Connecting...");
 					c.connect();
-					System.out.println("Connected!");
 
 					File target = new File("/sdcard/" + dataDirectoryPath
 							+ "/class_photos/" + destination);
 					if (target.exists()) {
 						target.delete();
-						System.out.println("Deleted " + "/sdcard/"
-								+ dataDirectoryPath + "/class_photos/"
-								+ destination);
 					}
 
 					FileOutputStream f = new FileOutputStream("/sdcard/"
@@ -194,15 +178,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
-					System.out.println("Downloaded! -> " + "/sdcard/"
-							+ dataDirectoryPath + "/class_photos/"
-							+ destination);
 				}
 
 				downloadedPhotos = true;
 
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				downloadingError = e.getLocalizedMessage();
 				e.printStackTrace();
 			}
 
@@ -224,7 +205,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				Toast.makeText(getApplicationContext(), "Download finished!",
 						Toast.LENGTH_LONG).show();
 			} else {
-				Toast.makeText(getApplicationContext(), "Download failed.",
+				Toast.makeText(getApplicationContext(),
+						"Download failed. " + downloadingError,
 						Toast.LENGTH_LONG).show();
 			}
 
