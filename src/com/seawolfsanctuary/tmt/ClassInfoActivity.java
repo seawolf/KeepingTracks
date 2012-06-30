@@ -50,8 +50,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			progressDialog.setTitle("Downloading...");
-			progressDialog
-					.setMessage("0% - 50%: thumbnails\n50% - 100%: full photos");
+			progressDialog.setMessage("Preparing to download...");
 			progressDialog.setCancelable(false);
 			new DownloadBundleTask(progressDialog).execute();
 		default:
@@ -67,7 +66,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		registerForContextMenu(getExpandableListView());
 	}
 
-	private class DownloadBundleTask extends AsyncTask<Void, Integer, Boolean> {
+	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
 		private ProgressDialog progressDialog;
 
 		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
@@ -103,6 +102,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					String[] d = data.get(i);
 
 					String destination = d[0];
+					publishProgress("thumbnail", destination);
 					URL photoDownloadURL = new URL(bundleDownloadURL
 							+ destination);
 					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
@@ -161,6 +161,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					String[] d = data.get(i);
 
 					String destination = d[0];
+					publishProgress("photo", destination);
 					URL photoDownloadURL = new URL(bundleDownloadURL
 							+ destination);
 					HttpURLConnection c = (HttpURLConnection) photoDownloadURL
@@ -206,6 +207,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			}
 
 			return (downloadedThumbs && downloadedPhotos);
+		}
+
+		protected void onProgressUpdate(String... progress) {
+			progressDialog.setMessage("Downloading " + progress[0] + ": "
+					+ progress[1]);
 		}
 
 		protected void onPostExecute(Boolean success) {
