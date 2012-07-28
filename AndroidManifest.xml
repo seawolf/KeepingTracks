@@ -35,6 +35,10 @@
             android:name=".ClassInfoActivity"
             android:label="@string/class_info" >
         </activity>
+        <activity
+            android:name=".FoursquareSetupActivity"
+            android:label="@string/foursquare_setup" >
+        </activity>
     </application>
 
 </manifest>

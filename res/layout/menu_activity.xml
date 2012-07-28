@@ -35,12 +35,22 @@
             android:padding="10dp"
             android:text="@string/list_saved"
             android:onClick="startListSavedActivity" />
+        
         <Button
             android:id="@+id/btn_ClassInfo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:onClick="startClassInfoActivity" android:text="@string/class_info"/>
+            android:text="@string/class_info"
+            android:onClick="startClassInfoActivity" />
+
+        <Button
+            android:id="@+id/btn_Foursquared"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/foursquare_setup"
+            android:onClick="startFoursquareSetupActivity" />
     </LinearLayout>
 
 </ScrollView>
