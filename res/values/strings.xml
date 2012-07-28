@@ -10,6 +10,7 @@
     <string name="class_info">Class Reference</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_authenticate">Authenticate with Foursquare</string>
+    <string name="foursquare_venue_select">Places Near You</string>
     <string name="save">Save</string>
     <string name="dotdotdot">…</string>
     <string name="exit">Exit</string>
