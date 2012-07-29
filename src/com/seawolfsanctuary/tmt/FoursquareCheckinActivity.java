@@ -312,4 +312,24 @@ public class FoursquareCheckinActivity extends ListActivity {
 			}
 		});
 	}
+
+	private static String readAccessToken() {
+		String accessToken = "";
+
+		try {
+			String line = null;
+			File f = new File(dataDirectoryPath + "/access_token.txt");
+
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+
+			while ((line = reader.readLine()) != null) {
+				accessToken = line;
+			}
+			reader.close();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return accessToken;
+	}
 }
