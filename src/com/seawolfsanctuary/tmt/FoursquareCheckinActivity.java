@@ -254,6 +254,24 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return success;
 	}
 
+	private boolean checkIntoVenue(String venueID) {
+		boolean success = false;
+
+		try {
+
+			venuesUpdated = false;
+			String result = tryToCheckinTo(venueID, "private");
+			int returnedStatus = parseFoursquareCheckinResponse(result);
+			success = wasCheckinSuccessful(returnedStatus);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return success;
+	}
+
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -279,11 +297,18 @@ public class FoursquareCheckinActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Toast.makeText(
-						getApplicationContext(),
-						"You've selected #" + (position + 1) + ": "
-								+ ((TextView) view).getText(),
-						Toast.LENGTH_SHORT).show();
+				boolean checkinSuccessful = checkIntoVenue(venueIDs
+						.get(position));
+				if (checkinSuccessful == true) {
+					Toast.makeText(getApplicationContext(),
+							"Checked into " + venues.get(position) + "!",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(
+							getApplicationContext(),
+							"Could not check into " + venues.get(position)
+									+ ".", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 	}
