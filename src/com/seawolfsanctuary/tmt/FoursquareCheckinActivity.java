@@ -83,6 +83,41 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return location;
 	}
 
+	private static String askFoursquareForVenuesAt(Location location)
+			throws ClientProtocolException, IOException {
+		// initialize
+		InputStream is = null;
+		String result = "";
+		String url = "https://api.foursquare.com/v2/venues/search?v=20120728&oauth_token="
+				+ readAccessToken()
+				+ "&ll="
+				+ location.getLatitude()
+				+ ","
+				+ location.getLongitude();
+
+		// http get
+		System.out.println("Contacting Foursquare...");
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(url);
+		HttpResponse response = httpclient.execute(httpGet);
+		HttpEntity entity = response.getEntity();
+		is = entity.getContent();
+
+		// convert response to string
+		System.out.println("Recieving response...");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is,
+				"utf-8"), 8);
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		is.close();
+		result = sb.toString();
+
+		return result;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
