@@ -44,6 +44,45 @@ public class FoursquareCheckinActivity extends ListActivity {
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
 
+	private static Location location = null;
+
+	private static boolean venuesUpdated = false;
+	private static ArrayList<String> venues = new ArrayList<String>();
+	private static ArrayList<String> venueIDs = new ArrayList<String>();
+
+	private LocationListener locationListener = new LocationListener() {
+		public void onLocationChanged(Location location) {
+			System.out.println("Location: " + location);
+		}
+
+		@Override
+		public void onProviderDisabled(String arg0) {
+			System.out.println("Provider disabled: " + arg0);
+		}
+
+		@Override
+		public void onProviderEnabled(String arg0) {
+			System.out.println("Provider enabled: " + arg0);
+		}
+
+		@Override
+		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+			System.out.println("Status Changed: " + arg0 + " | " + arg1);
+		}
+	};
+
+	private static Location objLocation(LocationManager lm) {
+		System.out.println("Starting location services...");
+
+		Criteria criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+		String provider = lm.getBestProvider(criteria, true);
+		Location location = lm.getLastKnownLocation(provider);
+
+		return location;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
