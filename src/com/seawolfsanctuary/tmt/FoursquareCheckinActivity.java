@@ -118,6 +118,20 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return result;
 	}
 
+	private JSONArray parseFoursquareSearchResponse(String result)
+			throws JSONException {
+		JSONArray returnedVenues = null;
+
+		System.out.println("Parsing response...");
+		JSONObject jArray = new JSONObject(result);
+
+		System.out.println("Selecting response...");
+		JSONObject response = jArray.getJSONObject("response");
+		returnedVenues = response.getJSONArray("venues");
+
+		return returnedVenues;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
