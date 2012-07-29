@@ -132,6 +132,37 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return returnedVenues;
 	}
 
+	private boolean updateVenuesFromSearch(JSONArray returnedVenues)
+			throws JSONException {
+		boolean success = false;
+
+		venues.clear();
+		venueIDs.clear();
+
+		System.out.println("Parsing venues...");
+		for (int i = 0; i < returnedVenues.length(); i++) {
+			JSONObject e = returnedVenues.getJSONObject(i);
+			String venueName = e.getString("name");
+
+			String venueCategory = "Uncategorised";
+			JSONArray venueCategories = e.getJSONArray("categories");
+			for (int cc = 0; cc < venueCategories.length(); cc++) {
+				JSONObject c = venueCategories.getJSONObject(cc);
+				String categoryPrimary = c.getString("primary");
+				if (categoryPrimary == "true") {
+					venueCategory = c.getString("name");
+				}
+			}
+
+			System.out.println("Adding venue: " + venueName);
+			venues.add(venueCategory + ": " + venueName);
+			venueIDs.add(e.getString("id"));
+			success = true;
+		}
+
+		return success;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
