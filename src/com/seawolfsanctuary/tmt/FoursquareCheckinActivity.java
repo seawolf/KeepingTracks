@@ -44,11 +44,24 @@ public class FoursquareCheckinActivity extends ListActivity {
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
 
-	private static Location location = null;
-
 	private static boolean venuesUpdated = false;
 	private static ArrayList<String> venues = new ArrayList<String>();
 	private static ArrayList<String> venueIDs = new ArrayList<String>();
+
+	private static LocationManager locationManager = null;
+	private static Location location = null;
+
+	private static Location objLocation() {
+		System.out.println("Starting location services...");
+
+		Criteria criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+
+		String provider = locationManager.getBestProvider(criteria, true);
+		Location location = locationManager.getLastKnownLocation(provider);
+
+		return location;
+	}
 
 	private LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location location) {
@@ -70,18 +83,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 			System.out.println("Status Changed: " + arg0 + " | " + arg1);
 		}
 	};
-
-	private static Location objLocation(LocationManager lm) {
-		System.out.println("Starting location services...");
-
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-		String provider = lm.getBestProvider(criteria, true);
-		Location location = lm.getLastKnownLocation(provider);
-
-		return location;
-	}
 
 	private static String askFoursquareForVenuesAt(Location location)
 			throws ClientProtocolException, IOException {
@@ -165,6 +166,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 	private void searchForVenues() {
 		try {
+
+			// Get user's location:
+
+			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			location = objLocation();
 
 			venuesUpdated = false;
 			String result = askFoursquareForVenuesAt(location);
@@ -271,14 +277,10 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return success;
 	}
 
-
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Get user's location
-		location = objLocation((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
 		// Ask Foursquare for venues
 		searchForVenues();
@@ -287,7 +289,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 			Toast.makeText(getApplicationContext(), "Updated venues.",
 					Toast.LENGTH_SHORT).show();
 		}
-
 
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
