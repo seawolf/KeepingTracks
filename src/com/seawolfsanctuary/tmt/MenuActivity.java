@@ -55,4 +55,9 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
+	public void startFoursquareCheckinActivity(View v) {
+		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
+		startActivity(intent);
+	}
+
 }

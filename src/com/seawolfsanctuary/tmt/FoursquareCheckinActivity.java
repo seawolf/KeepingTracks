@@ -26,6 +26,9 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -255,6 +258,38 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return success;
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.foursquare_context_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.foursquare_deauthenticate:
+			if (removeAccessToken() == true) {
+				FoursquareCheckinActivity.this.finish();
+				Toast.makeText(
+						getApplicationContext(),
+						"You must now re-authenticate with Foursquare to check-in.",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(
+						getApplicationContext(),
+						"Could not revoke access. Remove this application from your account by visiting the Foursquare website.",
+						Toast.LENGTH_LONG).show();
+			}
+
+			return true;
+		default:
+			System.out.println("Unkown action: " + item.getItemId());
+			return true;
+		}
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -310,5 +345,22 @@ public class FoursquareCheckinActivity extends ListActivity {
 		}
 
 		return accessToken;
+	}
+
+	private static boolean removeAccessToken() {
+		boolean success = false;
+
+		try {
+			File f = new File(dataDirectoryPath + "/access_token.txt");
+			success = f.delete();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return success;
+	}
+
+	public void removeFoursquareAuthentication() {
+		removeAccessToken();
 	}
 }

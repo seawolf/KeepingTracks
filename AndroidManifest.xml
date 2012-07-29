@@ -41,6 +41,10 @@
             android:name=".FoursquareSetupActivity"
             android:label="@string/foursquare_setup" >
         </activity>
+        <activity
+            android:name=".FoursquareCheckinActivity"
+            android:label="foursquare_venue_select" >
+        </activity>
     </application>
 
 </manifest>

@@ -7,12 +7,15 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -32,11 +35,36 @@ public class FoursquareSetupActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu, menu);
+		inflater.inflate(R.menu.foursquare_context_menu, menu);
 		return true;
 	}
 
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.foursquare_deauthenticate:
+			if (removeAccessToken() == true) {
+				FoursquareSetupActivity.this.finish();
+				Toast.makeText(
+						getApplicationContext(),
+						"You must now re-authenticate with Foursquare to check-in.",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(
+						getApplicationContext(),
+						"Could not revoke access. Remove this application from your account by visiting the Foursquare website.",
+						Toast.LENGTH_LONG).show();
+			}
+
+			return true;
+		default:
+			System.out.println("Unkown action: " + item.getItemId());
+			return true;
+		}
+	}
+
 	/** Called when the activity is first created. */
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,13 +90,18 @@ public class FoursquareSetupActivity extends Activity {
 				String fragment = "#access_token=";
 				int start = url.indexOf(fragment);
 				if (start > -1) {
-					// You can use the accessToken for api calls now.
-					String accessToken = url.substring(
-							start + fragment.length(), url.length());
-					Toast.makeText(FoursquareSetupActivity.this,
-							"Token: " + accessToken, Toast.LENGTH_SHORT).show();
 
-					writeAccessToken(accessToken);
+					if (readAccessToken() == "") {
+						// Fetch an access token and reload
+						String accessToken = url.substring(
+								start + fragment.length(), url.length());
+						writeAccessToken(accessToken);
+						reloadActivity();
+					} else {
+						Toast.makeText(FoursquareSetupActivity.this,
+								"Saved Token: " + readAccessToken(),
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		});
@@ -185,8 +218,8 @@ public class FoursquareSetupActivity extends Activity {
 			writer.write(accessToken);
 			writer.close();
 
-			Toast.makeText(getBaseContext(),
-					"Token saved: " + readAccessToken(), Toast.LENGTH_SHORT)
+			Toast.makeText(FoursquareSetupActivity.this,
+					"Saved Token: " + readAccessToken(), Toast.LENGTH_SHORT)
 					.show();
 			return true;
 
@@ -218,5 +251,24 @@ public class FoursquareSetupActivity extends Activity {
 		}
 
 		return accessToken;
+	}
+
+	private static boolean removeAccessToken() {
+		boolean success = false;
+
+		try {
+			File f = new File(dataDirectoryPath + "/access_token.txt");
+			success = f.delete();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return success;
+	}
+
+	private void reloadActivity() {
+		Intent intent = new Intent(this, FoursquareSetupActivity.class);
+		FoursquareSetupActivity.this.finish();
+		startActivity(intent);
 	}
 }

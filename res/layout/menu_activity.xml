@@ -51,6 +51,14 @@
             android:padding="10dp"
             android:text="@string/foursquare_setup"
             android:onClick="startFoursquareSetupActivity" />
+
+        <Button
+            android:id="@+id/btn_Foursquare_Venues"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/foursquare_checkin"
+            android:onClick="startFoursquareCheckinActivity" />
     </LinearLayout>
 
 </ScrollView>
