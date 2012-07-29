@@ -36,6 +36,10 @@ import android.widget.Toast;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
+	private static final String dataDirectoryPath = Environment
+			.getExternalStorageDirectory().toString()
+			+ "/Android/data/com.seawolfsanctuary.tmt";
+
 	public static final String dataFilePath = Environment
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
