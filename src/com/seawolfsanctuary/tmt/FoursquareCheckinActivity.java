@@ -243,6 +243,17 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return returnedStatus;
 	}
 
+	private boolean wasCheckinSuccessful(int returnedStatus)
+			throws JSONException {
+		boolean success = false;
+
+		System.out.println("Parsing checkin response: "
+				+ Integer.toString(returnedStatus));
+		success = (returnedStatus == 200);
+
+		return success;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
