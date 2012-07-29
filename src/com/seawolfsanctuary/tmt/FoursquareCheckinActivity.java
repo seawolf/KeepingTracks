@@ -88,12 +88,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ArrayList<String> venues = new ArrayList<String>();
-
-		venues.add("Here");
-		venues.add("There");
-		venues.add("Everywhere");
-		venues.add("Nowhere");
+		// Get user's location
+		location = objLocation((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
