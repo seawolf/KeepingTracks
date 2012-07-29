@@ -186,6 +186,48 @@ public class FoursquareCheckinActivity extends ListActivity {
 		}
 	}
 
+	private static String tryToCheckinTo(String venueID, String broadcast)
+			throws ClientProtocolException, IOException {
+		// initialize
+		InputStream is = null;
+		String result = "";
+		String url = "https://api.foursquare.com/v2/checkins/add?v=20120728&oauth_token="
+				+ readAccessToken()
+				+ "&venueId="
+				+ venueID
+				+ "&ll="
+				+ location.getLatitude()
+				+ ","
+				+ location.getLongitude()
+				+ "&broadcast=" + broadcast;
+
+		System.out.println("URL: " + url);
+
+		// http post
+		System.out.println("Contacting Foursquare...");
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(url);
+		HttpResponse response = httpclient.execute(httpPost);
+		HttpEntity entity = response.getEntity();
+		is = entity.getContent();
+
+		// convert response to string
+		System.out.println("Recieving response...");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is,
+				"utf-8"), 8);
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		is.close();
+		result = sb.toString();
+
+		System.out.println(result);
+
+		return result;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
