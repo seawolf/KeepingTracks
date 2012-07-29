@@ -40,7 +40,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt";
 
-	public static final String dataFilePath = Environment
+	private static final String dataFilePath = Environment
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
 
