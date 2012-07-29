@@ -163,6 +163,29 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return success;
 	}
 
+	private void searchForVenues() {
+		try {
+
+			venuesUpdated = false;
+			String result = askFoursquareForVenuesAt(location);
+			JSONArray returnedVenues = parseFoursquareSearchResponse(result);
+			venuesUpdated = updateVenuesFromSearch(returnedVenues);
+
+		} catch (ClientProtocolException e) {
+			Toast.makeText(getApplicationContext(),
+					"Unable to connect to the Internet.", Toast.LENGTH_SHORT)
+					.show();
+		} catch (IOException e) {
+			Toast.makeText(getApplicationContext(),
+					"Unable to connect to the Internet.", Toast.LENGTH_SHORT)
+					.show();
+		} catch (JSONException e) {
+			Toast.makeText(getApplicationContext(),
+					"Foursquare sent me something I couldn't understand.",
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -171,11 +194,20 @@ public class FoursquareCheckinActivity extends ListActivity {
 		// Get user's location
 		location = objLocation((LocationManager) getSystemService(Context.LOCATION_SERVICE));
 
+		// Ask Foursquare for venues
+		searchForVenues();
+
+		if (venuesUpdated) {
+			Toast.makeText(getApplicationContext(), "Updated venues.",
+					Toast.LENGTH_SHORT).show();
+		}
+
+
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.foursquare_checkin_venue, venues));
-		ListView lv = getListView();
 
+		ListView lv = getListView();
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
