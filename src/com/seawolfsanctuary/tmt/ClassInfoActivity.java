@@ -16,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,7 +65,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
 		private ProgressDialog progressDialog;
-		private String downloadingError = "unkown error :-(";
+		private String downloadingError = "unknown error :-(";
 
 		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
 			progressDialog = dialogFromActivity;
@@ -90,8 +89,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				URL bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/thumbs/");
 
-				File targetDir = new File("/sdcard/"
-						+ Helpers.dataDirectoryPath + "/class_photos/thumbs");
+				File targetDir = new File(Helpers.dataDirectoryPath
+						+ "/class_photos/thumbs");
 				if (targetDir.exists()) {
 					targetDir.delete();
 				}
@@ -111,16 +110,15 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File("/sdcard/"
-							+ Helpers.dataDirectoryPath
+					File target = new File(Helpers.dataDirectoryPath
 							+ "/class_photos/thumbs/" + destination);
 					if (target.exists()) {
 						target.delete();
 					}
 
-					FileOutputStream f = new FileOutputStream("/sdcard/"
-							+ Helpers.dataDirectoryPath
-							+ "/class_photos/thumbs/" + destination);
+					FileOutputStream f = new FileOutputStream(
+							Helpers.dataDirectoryPath + "/class_photos/thumbs/"
+									+ destination);
 					InputStream in = c.getInputStream();
 					byte[] buffer = new byte[1024];
 					int len1 = 0;
@@ -138,7 +136,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/");
 
-				targetDir = new File("/sdcard/" + Helpers.dataDirectoryPath
+				targetDir = new File(Helpers.dataDirectoryPath
 						+ "/class_photos");
 				if (targetDir.exists()) {
 					targetDir.delete();
@@ -158,16 +156,15 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File("/sdcard/"
-							+ Helpers.dataDirectoryPath + "/class_photos/"
-							+ destination);
+					File target = new File(Helpers.dataDirectoryPath
+							+ "/class_photos/" + destination);
 					if (target.exists()) {
 						target.delete();
 					}
 
-					FileOutputStream f = new FileOutputStream("/sdcard/"
-							+ Helpers.dataDirectoryPath + "/class_photos/"
-							+ destination);
+					FileOutputStream f = new FileOutputStream(
+							Helpers.dataDirectoryPath + "/class_photos/"
+									+ destination);
 					InputStream in = c.getInputStream();
 					byte[] buffer = new byte[1024];
 					int len1 = 0;
@@ -380,11 +377,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		private void show_photo(String classNo) {
-			File f = new File(Environment.getExternalStorageDirectory()
-					.toString()
-					+ "/"
-					+ Helpers.dataDirectoryPath
-					+ "/class_photos/", classNo);
+			File f = new File(Helpers.dataDirectoryPath + "/class_photos/",
+					classNo);
 			if (f.exists()) {
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setDataAndType(
@@ -401,10 +395,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		private Drawable load_photo(String classNo) {
 			Drawable d = null;
 			try {
-				File f = new File(Environment.getExternalStorageDirectory()
-						.toString()
-						+ "/"
-						+ Helpers.dataDirectoryPath
+				File f = new File(Helpers.dataDirectoryPath
 						+ "/class_photos/thumbs/", classNo);
 				if (f.exists()) {
 					Drawable p = Drawable.createFromPath(f.getPath());
