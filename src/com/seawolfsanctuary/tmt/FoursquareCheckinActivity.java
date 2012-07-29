@@ -228,6 +228,21 @@ public class FoursquareCheckinActivity extends ListActivity {
 		return result;
 	}
 
+	private int parseFoursquareCheckinResponse(String result)
+			throws JSONException {
+		int returnedStatus = -1;
+
+		System.out.println("Parsing response...");
+		JSONObject response = new JSONObject(result);
+
+		System.out.println("Selecting response...");
+		JSONObject meta = response.getJSONObject("meta");
+
+		returnedStatus = meta.getInt("code");
+
+		return returnedStatus;
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
