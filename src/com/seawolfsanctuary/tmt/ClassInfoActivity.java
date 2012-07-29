@@ -33,8 +33,6 @@ import android.widget.Toast;
 public class ClassInfoActivity extends ExpandableListActivity {
 
 	public static final int IMAGE_POSITION = 0;
-	public static final String dataDirectoryPath = "Android/data/com.seawolfsanctuary.tmt";
-	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,8 +90,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				URL bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/thumbs/");
 
-				File targetDir = new File("/sdcard/" + dataDirectoryPath
-						+ "/class_photos/thumbs");
+				File targetDir = new File("/sdcard/"
+						+ Helpers.dataDirectoryPath + "/class_photos/thumbs");
 				if (targetDir.exists()) {
 					targetDir.delete();
 				}
@@ -113,15 +111,16 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File("/sdcard/" + dataDirectoryPath
+					File target = new File("/sdcard/"
+							+ Helpers.dataDirectoryPath
 							+ "/class_photos/thumbs/" + destination);
 					if (target.exists()) {
 						target.delete();
 					}
 
 					FileOutputStream f = new FileOutputStream("/sdcard/"
-							+ dataDirectoryPath + "/class_photos/thumbs/"
-							+ destination);
+							+ Helpers.dataDirectoryPath
+							+ "/class_photos/thumbs/" + destination);
 					InputStream in = c.getInputStream();
 					byte[] buffer = new byte[1024];
 					int len1 = 0;
@@ -139,7 +138,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				bundleDownloadURL = new URL(
 						"http://dl.dropbox.com/u/6413248/class_photos/");
 
-				targetDir = new File("/sdcard/" + dataDirectoryPath
+				targetDir = new File("/sdcard/" + Helpers.dataDirectoryPath
 						+ "/class_photos");
 				if (targetDir.exists()) {
 					targetDir.delete();
@@ -159,14 +158,15 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File("/sdcard/" + dataDirectoryPath
-							+ "/class_photos/" + destination);
+					File target = new File("/sdcard/"
+							+ Helpers.dataDirectoryPath + "/class_photos/"
+							+ destination);
 					if (target.exists()) {
 						target.delete();
 					}
 
 					FileOutputStream f = new FileOutputStream("/sdcard/"
-							+ dataDirectoryPath + "/class_photos/"
+							+ Helpers.dataDirectoryPath + "/class_photos/"
 							+ destination);
 					InputStream in = c.getInputStream();
 					byte[] buffer = new byte[1024];
@@ -381,12 +381,15 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		private void show_photo(String classNo) {
 			File f = new File(Environment.getExternalStorageDirectory()
-					.toString() + "/" + dataDirectoryPath + "/class_photos/",
-					classNo);
+					.toString()
+					+ "/"
+					+ Helpers.dataDirectoryPath
+					+ "/class_photos/", classNo);
 			if (f.exists()) {
 				Intent i = new Intent(Intent.ACTION_VIEW);
-				i.setDataAndType(Uri.parse(dataDirectoryURI + "/class_photos/"
-						+ classNo), "image/*");
+				i.setDataAndType(
+						Uri.parse(Helpers.dataDirectoryURI + "/class_photos/"
+								+ classNo), "image/*");
 				startActivity(i);
 			} else {
 				Toast.makeText(getBaseContext(),
@@ -401,7 +404,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				File f = new File(Environment.getExternalStorageDirectory()
 						.toString()
 						+ "/"
-						+ dataDirectoryPath
+						+ Helpers.dataDirectoryPath
 						+ "/class_photos/thumbs/", classNo);
 				if (f.exists()) {
 					Drawable p = Drawable.createFromPath(f.getPath());

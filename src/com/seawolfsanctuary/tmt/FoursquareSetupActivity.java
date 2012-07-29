@@ -1,9 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URL;
 
@@ -12,7 +9,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,11 +18,6 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public class FoursquareSetupActivity extends Activity {
-
-	public static final String dataDirectoryPath = Environment
-			.getExternalStorageDirectory().toString()
-			+ "/Android/data/com.seawolfsanctuary.tmt";
-	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
 
 	private static final String CLIENT_ID = fetchClientID();
 	private static final String CLIENT_SECRET = fetchClientSecret();
@@ -43,7 +34,7 @@ public class FoursquareSetupActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.foursquare_deauthenticate:
-			if (removeAccessToken() == true) {
+			if (Helpers.removeAccessToken() == true) {
 				FoursquareSetupActivity.this.finish();
 				Toast.makeText(
 						getApplicationContext(),
@@ -91,15 +82,15 @@ public class FoursquareSetupActivity extends Activity {
 				int start = url.indexOf(fragment);
 				if (start > -1) {
 
-					if (readAccessToken() == "") {
+					if (Helpers.readAccessToken() == "") {
 						// Fetch an access token and reload
 						String accessToken = url.substring(
 								start + fragment.length(), url.length());
-						writeAccessToken(accessToken);
+						Helpers.writeAccessToken(accessToken);
 						reloadActivity();
 					} else {
 						Toast.makeText(FoursquareSetupActivity.this,
-								"Saved Token: " + readAccessToken(),
+								"Saved Token: " + Helpers.readAccessToken(),
 								Toast.LENGTH_SHORT).show();
 					}
 				}
@@ -198,72 +189,6 @@ public class FoursquareSetupActivity extends Activity {
 		} catch (Exception e) {
 			//
 		}
-	}
-
-	private boolean writeAccessToken(String accessToken) {
-		try {
-
-			File f = new File(dataDirectoryPath + "/access_token.txt");
-
-			if (f.exists()) {
-				f.delete();
-			}
-
-			if (!f.exists()) {
-				f.createNewFile();
-			}
-
-			FileWriter writer = new FileWriter(f, true);
-
-			writer.write(accessToken);
-			writer.close();
-
-			Toast.makeText(FoursquareSetupActivity.this,
-					"Saved Token: " + readAccessToken(), Toast.LENGTH_SHORT)
-					.show();
-			return true;
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
-
-			return false;
-		}
-
-	}
-
-	public String readAccessToken() {
-		String accessToken = "";
-
-		try {
-			String line = null;
-			File f = new File(dataDirectoryPath + "/access_token.txt");
-
-			BufferedReader reader = new BufferedReader(new FileReader(f));
-
-			while ((line = reader.readLine()) != null) {
-				accessToken = line;
-			}
-			reader.close();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return accessToken;
-	}
-
-	private static boolean removeAccessToken() {
-		boolean success = false;
-
-		try {
-			File f = new File(dataDirectoryPath + "/access_token.txt");
-			success = f.delete();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return success;
 	}
 
 	private void reloadActivity() {

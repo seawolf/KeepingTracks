@@ -1,8 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +23,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,14 +34,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class FoursquareCheckinActivity extends ListActivity {
-
-	private static final String dataDirectoryPath = Environment
-			.getExternalStorageDirectory().toString()
-			+ "/Android/data/com.seawolfsanctuary.tmt";
-
-	private static final String dataFilePath = Environment
-			.getExternalStorageDirectory().toString()
-			+ "/Android/data/com.seawolfsanctuary.tmt/routes.csv";
 
 	private static boolean venuesUpdated = false;
 	private static ArrayList<String> venues = new ArrayList<String>();
@@ -71,11 +60,10 @@ public class FoursquareCheckinActivity extends ListActivity {
 		InputStream is = null;
 		String result = "";
 		String url = "https://api.foursquare.com/v2/venues/search?v=20120728&oauth_token="
-				+ readAccessToken()
+				+ Helpers.readAccessToken()
 				+ "&ll="
 				+ location.getLatitude()
-				+ ","
-				+ location.getLongitude();
+				+ "," + location.getLongitude();
 
 		// http get
 		System.out.println("Contacting Foursquare...");
@@ -179,7 +167,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		InputStream is = null;
 		String result = "";
 		String url = "https://api.foursquare.com/v2/checkins/add?v=20120728&oauth_token="
-				+ readAccessToken()
+				+ Helpers.readAccessToken()
 				+ "&venueId="
 				+ venueID
 				+ "&ll="
@@ -270,7 +258,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.foursquare_deauthenticate:
-			if (removeAccessToken() == true) {
+			if (Helpers.removeAccessToken() == true) {
 				FoursquareCheckinActivity.this.finish();
 				Toast.makeText(
 						getApplicationContext(),
@@ -327,40 +315,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		});
 	}
 
-	private static String readAccessToken() {
-		String accessToken = "";
-
-		try {
-			String line = null;
-			File f = new File(dataDirectoryPath + "/access_token.txt");
-
-			BufferedReader reader = new BufferedReader(new FileReader(f));
-
-			while ((line = reader.readLine()) != null) {
-				accessToken = line;
-			}
-			reader.close();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return accessToken;
-	}
-
-	private static boolean removeAccessToken() {
-		boolean success = false;
-
-		try {
-			File f = new File(dataDirectoryPath + "/access_token.txt");
-			success = f.delete();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return success;
-	}
-
 	public void removeFoursquareAuthentication() {
-		removeAccessToken();
+		Helpers.removeAccessToken();
 	}
 }
