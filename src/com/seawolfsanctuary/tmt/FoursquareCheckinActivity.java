@@ -23,7 +23,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -62,27 +61,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 		return location;
 	}
-
-	private LocationListener locationListener = new LocationListener() {
-		public void onLocationChanged(Location location) {
-			System.out.println("Location: " + location);
-		}
-
-		@Override
-		public void onProviderDisabled(String arg0) {
-			System.out.println("Provider disabled: " + arg0);
-		}
-
-		@Override
-		public void onProviderEnabled(String arg0) {
-			System.out.println("Provider enabled: " + arg0);
-		}
-
-		@Override
-		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			System.out.println("Status Changed: " + arg0 + " | " + arg1);
-		}
-	};
 
 	private static String askFoursquareForVenuesAt(Location location)
 			throws ClientProtocolException, IOException {
