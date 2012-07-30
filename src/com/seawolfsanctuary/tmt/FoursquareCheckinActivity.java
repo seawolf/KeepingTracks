@@ -45,21 +45,52 @@ public class FoursquareCheckinActivity extends ListActivity {
 	private static ArrayList<String> venues = new ArrayList<String>();
 	private static ArrayList<String> venueIDs = new ArrayList<String>();
 
+	private static int locationUpdateStatus = 0;
 	private static LocationManager locationManager = null;
 	private static Location location = null;
 	// Define a listener that responds to location updates
 	LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location newLocation) {
 			// Called when a new location is found
-			System.out.println("New Location from " + newLocation.getProvider()
-					+ " at " + newLocation.getTime());
+			Toast.makeText(
+					getApplicationContext(),
+					"New Location from " + newLocation.getProvider() + " at "
+							+ newLocation.getTime(), Toast.LENGTH_SHORT).show();
 
 			if (initialLookup || isBetterLocation(newLocation, location)) {
-				if (initialLookup) {
-					System.out.println("Initial lookup...");
-					initialLookup = false;
+
+				String message = "...";
+				switch (locationUpdateStatus) {
+				case -2:
+					message = "Not worthy of an update.";
+					break;
+				case -1:
+					message = "Significantly older.";
+					break;
+				case 0:
+					message = "Current location unknown. Please switch on GPS.";
+					break;
+				case 1:
+					message = "Significantly newer.";
+					break;
+				case 2:
+					message = "More accurate.";
+					break;
+				case 3:
+					message = "Significantly newer and not less accurate.";
+					break;
+				case 4:
+					message = "Signifcantly newer, not significantly less accurate, from same provider.";
+					break;
+				default:
+					message = "Current location unknown. Please switch on GPS.";
+					break;
 				}
 
+				Toast.makeText(getApplicationContext(), message,
+						Toast.LENGTH_SHORT).show();
+
+				initialLookup = false;
 				location = newLocation;
 				new SearchVenuesTask().execute(newLocation);
 			}
@@ -85,7 +116,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 			Location currentBestLocation) {
 		if (currentBestLocation == null) {
 			// A new location is always better than no location
-			System.out.println("Current location unknown.");
+			locationUpdateStatus = 0;
 			return true;
 		}
 
@@ -99,12 +130,12 @@ public class FoursquareCheckinActivity extends ListActivity {
 		// the new location
 		// because the user has likely moved
 		if (isSignificantlyNewer) {
-			System.out.println("Significantly newer.");
+			locationUpdateStatus = 1;
 			return true;
 			// If the new location is more than two minutes older, it must be
 			// worse
 		} else if (isSignificantlyOlder) {
-			System.out.println("Significantly older");
+			locationUpdateStatus = -1;
 			return false;
 		}
 
@@ -122,19 +153,18 @@ public class FoursquareCheckinActivity extends ListActivity {
 		// Determine location quality using a combination of timeliness and
 		// accuracy
 		if (isMoreAccurate) {
-			System.out.println("More accurate.");
+			locationUpdateStatus = 2;
 			return true;
 		} else if (isSignificantlyNewer && !isLessAccurate) {
-			System.out.println("Significantly newer and not less accurate.");
+			locationUpdateStatus = 3;
 			return true;
 		} else if (isSignificantlyNewer && !isSignificantlyLessAccurate
 				&& isFromSameProvider) {
-			System.out
-					.println("Signifcantly newer, not significantly less accurate, from same provider.");
+			locationUpdateStatus = 4;
 			return true;
 		}
 
-		System.out.println("Not worthy of an update!");
+		locationUpdateStatus = -2;
 		return false;
 	}
 
@@ -185,7 +215,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 		System.out.println("Parsing response...");
 		JSONObject jArray = new JSONObject(result);
 
-		System.out.println("Selecting response...");
 		JSONObject response = jArray.getJSONObject("response");
 		returnedVenues = response.getJSONArray("venues");
 
@@ -352,7 +381,9 @@ public class FoursquareCheckinActivity extends ListActivity {
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = locationManager.getBestProvider(criteria, true);
-		System.out.println("Updated location based on " + provider);
+		Toast.makeText(getApplicationContext(),
+				"Updated location based on " + provider, Toast.LENGTH_SHORT)
+				.show();
 
 		// Register the listener with the Location Manager to receive updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -394,17 +425,12 @@ public class FoursquareCheckinActivity extends ListActivity {
 				searchForVenues();
 
 			} catch (ClientProtocolException e) {
-				Toast.makeText(getApplicationContext(),
-						"Unable to connect to the Internet.",
-						Toast.LENGTH_SHORT).show();
+				System.out.println("Unable to connect to the Internet.");
 			} catch (IOException e) {
-				Toast.makeText(getApplicationContext(),
-						"Unable to connect to the Internet.",
-						Toast.LENGTH_SHORT).show();
+				System.out.println("Unable to connect to the Internet.");
 			} catch (JSONException e) {
-				Toast.makeText(getApplicationContext(),
-						"Foursquare sent me something I couldn't understand.",
-						Toast.LENGTH_SHORT).show();
+				System.out
+						.println("Foursquare sent me something I couldn't understand.");
 			}
 
 			return newLocations[0];
@@ -416,7 +442,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 		 */
 		protected void onPostExecute(Location newLocation) {
 
-			System.out.println("Updating view...");
+			Toast.makeText(getApplicationContext(), "Updated venues.",
+					Toast.LENGTH_SHORT).show();
 			ListView lst_Venues = getListView();
 			ListAdapter lst_Venues_Adaptor = lst_Venues.getAdapter();
 			((BaseAdapter) lst_Venues_Adaptor).notifyDataSetChanged();
