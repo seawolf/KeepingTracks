@@ -377,15 +377,22 @@ public class FoursquareCheckinActivity extends ListActivity {
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		// Get user's location:
-		System.out.println("Starting location services...");
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		String provider = locationManager.getBestProvider(criteria, true);
+		String provider = null;
+		Criteria net_criteria = new Criteria();
+		net_criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+		provider = locationManager.getBestProvider(net_criteria, true);
 		Toast.makeText(getApplicationContext(),
-				"Updated location based on " + provider, Toast.LENGTH_SHORT)
+				"Creating location based on " + provider, Toast.LENGTH_SHORT)
 				.show();
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+				30000, 0, locationListener);
 
-		// Register the listener with the Location Manager to receive updates
+		Criteria gps_criteria = new Criteria();
+		gps_criteria.setAccuracy(Criteria.ACCURACY_FINE);
+		provider = locationManager.getBestProvider(gps_criteria, true);
+		Toast.makeText(getApplicationContext(),
+				"Creating location based on " + provider, Toast.LENGTH_SHORT)
+				.show();
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				5000, 0, locationListener);
 
