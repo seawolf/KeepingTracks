@@ -21,7 +21,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,32 +32,125 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
+	private static final int LOOKUP_LIFETIME = 1000 * 30;
+	private static boolean initialLookup = false;
 	private static boolean venuesUpdated = false;
 	private static ArrayList<String> venues = new ArrayList<String>();
 	private static ArrayList<String> venueIDs = new ArrayList<String>();
 
 	private static LocationManager locationManager = null;
 	private static Location location = null;
+	// Define a listener that responds to location updates
+	LocationListener locationListener = new LocationListener() {
+		public void onLocationChanged(Location newLocation) {
+			// Called when a new location is found
+			System.out.println("New Location from " + newLocation.getProvider()
+					+ " at " + newLocation.getTime());
 
-	private static Location objLocation() {
-		System.out.println("Starting location services...");
+			if (initialLookup || isBetterLocation(newLocation, location)) {
+				if (initialLookup) {
+					System.out.println("Initial lookup...");
+					initialLookup = false;
+				}
 
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+				location = newLocation;
+				new SearchVenuesTask().execute(newLocation);
+			}
 
-		String provider = locationManager.getBestProvider(criteria, true);
-		Location location = locationManager.getLastKnownLocation(provider);
+			if (venuesUpdated) {
+				Toast.makeText(getApplicationContext(), "Updated venues.",
+						Toast.LENGTH_SHORT).show();
+			}
 
-		return location;
+		}
+
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+		}
+
+		public void onProviderEnabled(String provider) {
+		}
+
+		public void onProviderDisabled(String provider) {
+		}
+	};
+
+	protected boolean isBetterLocation(Location location,
+			Location currentBestLocation) {
+		if (currentBestLocation == null) {
+			// A new location is always better than no location
+			System.out.println("Current location unknown.");
+			return true;
+		}
+
+		// Check whether the new location fix is newer or older
+		long timeDelta = location.getTime() - currentBestLocation.getTime();
+		boolean isSignificantlyNewer = timeDelta > LOOKUP_LIFETIME;
+		boolean isSignificantlyOlder = timeDelta < -LOOKUP_LIFETIME;
+		boolean isNewer = timeDelta > 0;
+
+		// If it's been more than two minutes since the current location, use
+		// the new location
+		// because the user has likely moved
+		if (isSignificantlyNewer) {
+			System.out.println("Significantly newer.");
+			return true;
+			// If the new location is more than two minutes older, it must be
+			// worse
+		} else if (isSignificantlyOlder) {
+			System.out.println("Significantly older");
+			return false;
+		}
+
+		// Check whether the new location fix is more or less accurate
+		int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation
+				.getAccuracy());
+		boolean isLessAccurate = accuracyDelta > 0;
+		boolean isMoreAccurate = accuracyDelta < 0;
+		boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+		// Check if the old and new location are from the same provider
+		boolean isFromSameProvider = isSameProvider(location.getProvider(),
+				currentBestLocation.getProvider());
+
+		// Determine location quality using a combination of timeliness and
+		// accuracy
+		if (isMoreAccurate) {
+			System.out.println("More accurate.");
+			return true;
+		} else if (isSignificantlyNewer && !isLessAccurate) {
+			System.out.println("Significantly newer and not less accurate.");
+			return true;
+		} else if (isSignificantlyNewer && !isSignificantlyLessAccurate
+				&& isFromSameProvider) {
+			System.out
+					.println("Signifcantly newer, not significantly less accurate, from same provider.");
+			return true;
+		}
+
+		System.out.println("Not worthy of an update!");
+		return false;
 	}
 
-	private static String askFoursquareForVenuesAt(Location location)
-			throws ClientProtocolException, IOException {
+	private boolean isSameProvider(String provider1, String provider2) {
+		if (provider1 == null) {
+			return provider2 == null;
+		}
+		return provider1.equals(provider2);
+	}
+
+	private boolean searchForVenues() throws ClientProtocolException,
+			IOException, JSONException {
+		System.out.println("Searching for venues...");
+		boolean success = false;
+
+		venuesUpdated = false;
 		// initialize
 		InputStream is = null;
 		String result = "";
@@ -69,8 +164,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 		System.out.println("Contacting Foursquare...");
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url);
-		HttpResponse response = httpclient.execute(httpGet);
-		HttpEntity entity = response.getEntity();
+		HttpResponse httpResponse = httpclient.execute(httpGet);
+		HttpEntity entity = httpResponse.getEntity();
 		is = entity.getContent();
 
 		// convert response to string
@@ -85,11 +180,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 		is.close();
 		result = sb.toString();
 
-		return result;
-	}
-
-	private JSONArray parseFoursquareSearchResponse(String result)
-			throws JSONException {
 		JSONArray returnedVenues = null;
 
 		System.out.println("Parsing response...");
@@ -98,13 +188,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 		System.out.println("Selecting response...");
 		JSONObject response = jArray.getJSONObject("response");
 		returnedVenues = response.getJSONArray("venues");
-
-		return returnedVenues;
-	}
-
-	private boolean updateVenuesFromSearch(JSONArray returnedVenues)
-			throws JSONException {
-		boolean success = false;
 
 		venues.clear();
 		venueIDs.clear();
@@ -127,38 +210,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 			System.out.println("Adding venue: " + venueName);
 			venues.add(venueCategory + ": " + venueName);
 			venueIDs.add(e.getString("id"));
-			success = true;
 		}
+
+		success = true;
 
 		return success;
-	}
-
-	private void searchForVenues() {
-		try {
-
-			// Get user's location:
-
-			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			location = objLocation();
-
-			venuesUpdated = false;
-			String result = askFoursquareForVenuesAt(location);
-			JSONArray returnedVenues = parseFoursquareSearchResponse(result);
-			venuesUpdated = updateVenuesFromSearch(returnedVenues);
-
-		} catch (ClientProtocolException e) {
-			Toast.makeText(getApplicationContext(),
-					"Unable to connect to the Internet.", Toast.LENGTH_SHORT)
-					.show();
-		} catch (IOException e) {
-			Toast.makeText(getApplicationContext(),
-					"Unable to connect to the Internet.", Toast.LENGTH_SHORT)
-					.show();
-		} catch (JSONException e) {
-			Toast.makeText(getApplicationContext(),
-					"Foursquare sent me something I couldn't understand.",
-					Toast.LENGTH_SHORT).show();
-		}
 	}
 
 	private static String tryToCheckinTo(String venueID, String broadcast)
@@ -273,7 +329,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 			return true;
 		default:
-			System.out.println("Unkown action: " + item.getItemId());
+			System.out.println("Unknown action: " + item.getItemId());
 			return true;
 		}
 	}
@@ -283,17 +339,24 @@ public class FoursquareCheckinActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Ask Foursquare for venues
-		searchForVenues();
-
-		if (venuesUpdated) {
-			Toast.makeText(getApplicationContext(), "Updated venues.",
-					Toast.LENGTH_SHORT).show();
-		}
-
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.foursquare_checkin_venue, venues));
+
+		initialLookup = true;
+		locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+
+		// Get user's location:
+		System.out.println("Starting location services...");
+		Criteria criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+		String provider = locationManager.getBestProvider(criteria, true);
+		System.out.println("Updated location based on " + provider);
+
+		// Register the listener with the Location Manager to receive updates
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				5000, 0, locationListener);
 
 		ListView lv = getListView();
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -317,5 +380,47 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 	public void removeFoursquareAuthentication() {
 		Helpers.removeAccessToken();
+	}
+
+	private class SearchVenuesTask extends AsyncTask<Location, Void, Location> {
+		/**
+		 * The system calls this to perform work in a worker thread and delivers
+		 * it the parameters given to AsyncTask.execute()
+		 */
+		@Override
+		protected Location doInBackground(Location... newLocations) {
+			try {
+
+				searchForVenues();
+
+			} catch (ClientProtocolException e) {
+				Toast.makeText(getApplicationContext(),
+						"Unable to connect to the Internet.",
+						Toast.LENGTH_SHORT).show();
+			} catch (IOException e) {
+				Toast.makeText(getApplicationContext(),
+						"Unable to connect to the Internet.",
+						Toast.LENGTH_SHORT).show();
+			} catch (JSONException e) {
+				Toast.makeText(getApplicationContext(),
+						"Foursquare sent me something I couldn't understand.",
+						Toast.LENGTH_SHORT).show();
+			}
+
+			return newLocations[0];
+		}
+
+		/**
+		 * The system calls this to perform work in the UI thread and delivers
+		 * the result from doInBackground()
+		 */
+		protected void onPostExecute(Location newLocation) {
+
+			System.out.println("Updating view...");
+			ListView lst_Venues = getListView();
+			ListAdapter lst_Venues_Adaptor = lst_Venues.getAdapter();
+			((BaseAdapter) lst_Venues_Adaptor).notifyDataSetChanged();
+
+		}
 	}
 }
