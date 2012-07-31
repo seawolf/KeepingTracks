@@ -3,7 +3,7 @@
     android:id="@+id/MainMenu"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dp">
+    android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -14,51 +14,133 @@
         <TextView
             android:id="@+id/txt_AppName"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
             android:paddingBottom="20dp"
+            android:paddingTop="10dp"
             android:text="@string/app_name"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Button
-            android:id="@+id/btn_Add"
+        <LinearLayout
+            android:id="@+id/rowOne"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/add_new"
-            android:onClick="startAddActivity" />
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp" >
 
-        <Button
-            android:id="@+id/btn_ListSaved"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/list_saved"
-            android:onClick="startListSavedActivity" />
-        
-        <Button
-            android:id="@+id/btn_ClassInfo"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/class_info"
-            android:onClick="startClassInfoActivity" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="5dp" >
 
-        <Button
-            android:id="@+id/btn_Foursquared"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/foursquare_setup"
-            android:onClick="startFoursquareSetupActivity" />
+                <ImageButton
+                    android:id="@+id/btn_Add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_add"
+                    android:contentDescription="@string/add_new"
+                    android:onClick="startAddActivity" />
 
-        <Button
-            android:id="@+id/btn_Foursquare_Venues"
+                <TextView
+                    android:id="@+id/txt_Add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/add_new" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ImageButton
+                    android:id="@+id/btn_ListSaved"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_list"
+                    android:contentDescription="@string/list_saved"
+                    android:onClick="startListSavedActivity" />
+
+                <TextView
+                    android:id="@+id/txt_ListSaved"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/list_saved" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rowTwo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/foursquare_checkin"
-            android:onClick="startFoursquareCheckinActivity" />
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ImageButton
+                    android:id="@+id/btn_ClassInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_classes"
+                    android:contentDescription="@string/class_info"
+                    android:onClick="startClassInfoActivity" />
+
+                <TextView
+                    android:id="@+id/txt_ClassInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/class_info" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ImageButton
+                    android:id="@+id/btn_Foursquared"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_checkin"
+                    android:contentDescription="@string/foursquare_setup"
+                    android:onClick="startFoursquareSetupOrCheckinActivity" />
+
+                <TextView
+                    android:id="@+id/txt_Foursquared"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/dotdotdot" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

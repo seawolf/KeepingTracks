@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
 public class MenuActivity extends Activity {
 
@@ -35,28 +35,12 @@ public class MenuActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu_activity);
-	}
 
-	/** Called when the activity is displayed to the user */
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		View vg = findViewById(R.id.MainMenu);
-		vg.invalidate();
-
-		Button btn_SetupFoursquare = (Button) findViewById(R.id.btn_Foursquared);
-		Button btn_FoursquareVenues = (Button) findViewById(R.id.btn_Foursquare_Venues);
-
-		btn_SetupFoursquare.setVisibility(View.VISIBLE);
-		btn_FoursquareVenues.setVisibility(View.VISIBLE);
-
-		if (Helpers.readAccessToken() != "") {
-			// hide set-up button
-			btn_SetupFoursquare.setVisibility(View.GONE);
+		TextView txtFoursquared = (TextView) findViewById(R.id.txt_Foursquared);
+		if (Helpers.readAccessToken() == "") {
+			txtFoursquared.setText(R.string.foursquare_setup);
 		} else {
-			// hide check-in button
-			btn_FoursquareVenues.setVisibility(View.GONE);
+			txtFoursquared.setText(R.string.foursquare_checkin);
 		}
 	}
 
@@ -75,12 +59,20 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void startFoursquareSetupActivity(View v) {
+	public void startFoursquareSetupOrCheckinActivity(View v) {
+		if (Helpers.readAccessToken() == "") {
+			startFoursquareSetupActivity(v);
+		} else {
+			startFoursquareCheckinActivity(v);
+		}
+	}
+
+	private void startFoursquareSetupActivity(View v) {
 		Intent intent = new Intent(this, FoursquareSetupActivity.class);
 		startActivity(intent);
 	}
 
-	public void startFoursquareCheckinActivity(View v) {
+	private void startFoursquareCheckinActivity(View v) {
 		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
 		startActivity(intent);
 	}
