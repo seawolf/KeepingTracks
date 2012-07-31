@@ -55,6 +55,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.list_saved_activity);
 		setListAdapter(new ListSavedAdapter());
 		registerForContextMenu(getExpandableListView());
 

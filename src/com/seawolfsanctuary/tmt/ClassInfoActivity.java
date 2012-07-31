@@ -59,6 +59,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.class_info_activity);
+
 		setListAdapter(new ClassInfoAdapter());
 		registerForContextMenu(getExpandableListView());
 	}

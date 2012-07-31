@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:text="@string/list_saved"
+        android:text="@string/class_info"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -20,11 +20,11 @@
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingTop="10dp"
-        android:text="@string/list_saved_prompt" />
+        android:text="@string/class_info_prompt" />
 
     <include
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        layout="@layout/list_saved_activity_list" />
-    
+        layout="@layout/class_info_activity_list" />
+
 </LinearLayout>
