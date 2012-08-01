@@ -30,12 +30,15 @@ public class MenuActivity extends Activity {
 		}
 	}
 
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu_activity);
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
 		TextView txtFoursquared = (TextView) findViewById(R.id.txt_Foursquared);
 		if (Helpers.readAccessToken() == "") {
 			txtFoursquared.setText(R.string.foursquare_setup);
