@@ -33,11 +33,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
@@ -166,8 +166,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 					int position, long id) {
 
 				String visibility = "private";
-				ToggleButton tgl_Visibility = (ToggleButton) findViewById(R.id.tgl_Visibility);
-				if (tgl_Visibility.isChecked()) {
+				CheckBox chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
+				if (chk_Visibility.isChecked() == true) {
 					visibility = "public";
 				}
 
