@@ -42,7 +42,7 @@ import android.widget.ToggleButton;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
-	private static final int LOOKUP_LIFETIME = 1000 * 30;
+	private static final int LOOKUP_LIFETIME = 1000 * 60 * 1;
 	private static final int MIN_ACCURACY = 200;
 
 	private static boolean initialLookup = false;
