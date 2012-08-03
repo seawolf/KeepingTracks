@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -80,28 +79,9 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 		locationUpdateStatus = 0;
 
-		if (currentBestLocation == null) {
-			// A new location is always better than no location
-			return true;
-		}
-
-		long timeDelta = location.getTime() - currentBestLocation.getTime();
-		boolean isSignificantlyNewer = timeDelta > LOOKUP_LIFETIME;
-		boolean isSignificantlyOlder = timeDelta < -LOOKUP_LIFETIME;
-
-		if (isSignificantlyNewer) {
-			locationUpdateStatus = 1;
-			return true;
-		} else if (isSignificantlyOlder) {
-			locationUpdateStatus = -1;
-			return false;
-		}
-
 		int accuracyDelta = (int) (currentBestLocation.getAccuracy() - location
 				.getAccuracy());
-		System.out.println("New: " + location.getAccuracy() + " | Current: "
-				+ currentBestLocation.getAccuracy());
-		System.out.println(accuracyDelta < -MIN_ACCURACY);
+
 		boolean isLessAccurate = accuracyDelta > 0;
 		boolean isMoreAccurate = accuracyDelta < 0;
 		boolean isSignificantlyLessAccurate = accuracyDelta < -MIN_ACCURACY;
@@ -112,13 +92,12 @@ public class FoursquareCheckinActivity extends ListActivity {
 		if (isMoreAccurate) {
 			locationUpdateStatus = 2;
 			return true;
-		} else if (isSignificantlyNewer && !isLessAccurate) {
+		} else if (!isLessAccurate) {
 			locationUpdateStatus = 3;
 			return true;
-		} else if (isSignificantlyNewer && !isSignificantlyLessAccurate
-				&& isFromSameProvider) {
+		} else if (!isSignificantlyLessAccurate && isFromSameProvider) {
 			locationUpdateStatus = 4;
-			return true;
+			return false;
 		}
 
 		locationUpdateStatus = -2;
@@ -178,25 +157,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		// Get user's location:
-		String provider = null;
-		Criteria net_criteria = new Criteria();
-		net_criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-		provider = locationManager.getBestProvider(net_criteria, true);
-		Toast.makeText(getApplicationContext(),
-				"Creating location based on " + provider, Toast.LENGTH_SHORT)
-				.show();
-		locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, LOOKUP_LIFETIME, 0,
-				locationListener);
-
-		Criteria gps_criteria = new Criteria();
-		gps_criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		provider = locationManager.getBestProvider(gps_criteria, true);
-		Toast.makeText(getApplicationContext(),
-				"Creating location based on " + provider, Toast.LENGTH_SHORT)
-				.show();
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				LOOKUP_LIFETIME, 0, locationListener);
+		attachNetworkLocation();
+		attachGPSLocation();
 
 		ListView lv = getListView();
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -227,19 +189,40 @@ public class FoursquareCheckinActivity extends ListActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		locationManager.removeUpdates(locationListener);
+		removeLocationListener();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		locationManager.removeUpdates(locationListener);
+		removeLocationListener();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		locationManager.removeUpdates(locationListener);
+		removeLocationListener();
+	}
+
+	private void attachNetworkLocation() {
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, LOOKUP_LIFETIME, 0,
+				locationListener);
+		System.out.println("Attached network location provider.");
+	}
+
+	private void attachGPSLocation() {
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				LOOKUP_LIFETIME, 0, locationListener);
+		System.out.println("Attached GPS location provider.");
+	}
+
+	private void removeLocationListener() {
+		if (locationManager.getAllProviders().size() > 0) {
+			locationManager.removeUpdates(locationListener);
+			System.out.println("Removed location provider: "
+					+ locationListener.toString());
+		}
 	}
 
 	public void removeFoursquareAuthentication() {
@@ -345,7 +328,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 				JSONObject jArray = new JSONObject(result);
 
 				JSONObject response = jArray.getJSONObject("response");
-				returnedVenues = response.getJSONArray("venues");
+				try {
+					returnedVenues = response.getJSONArray("venues");
+				} catch (JSONException e) {
+					System.err.println(response.toString());
+				}
 
 				venues.clear();
 				venueIDs.clear();
@@ -374,13 +361,14 @@ public class FoursquareCheckinActivity extends ListActivity {
 				}
 
 			} catch (ClientProtocolException e) {
-				System.err.println("ClientProtocolException");
+				System.err.println("ClientProtocolException =>"
+						+ e.getMessage());
 				locationUpdateStatus = -3;
 			} catch (IOException e) {
-				System.err.println("IOException");
+				System.err.println("IOException =>" + e.getMessage());
 				locationUpdateStatus = -3;
 			} catch (JSONException e) {
-				System.err.println("JSONException");
+				System.err.println("JSONException =>" + e.getMessage());
 				locationUpdateStatus = -4;
 			}
 
@@ -491,11 +479,12 @@ public class FoursquareCheckinActivity extends ListActivity {
 				success = (returnedStatus == 200);
 
 			} catch (ClientProtocolException e) {
-				System.err.println("ClientProtocolException");
+				System.err.println("ClientProtocolException =>"
+						+ e.getMessage());
 			} catch (IOException e) {
-				System.err.println("IOException");
+				System.err.println("IOException =>" + e.getMessage());
 			} catch (JSONException e) {
-				System.err.println("JSONException");
+				System.err.println("JSONException =>" + e.getMessage());
 			}
 
 			return success;
