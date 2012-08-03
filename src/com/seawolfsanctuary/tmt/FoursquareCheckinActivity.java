@@ -32,9 +32,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -123,15 +121,17 @@ public class FoursquareCheckinActivity extends ListActivity {
 			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
 
 			if (lastUpdateTime < newLocation.getTime()) {
+				System.out.println("Location now timed out.");
 				spn_Locating.setVisibility(View.VISIBLE);
 				setLastLookup(newLocation.getTime());
+
 				new SearchVenuesTask().execute(newLocation);
 			} else {
+				System.out.println("Location recieved too soon.");
 				spn_Locating.setVisibility(View.INVISIBLE);
 			}
 
-			spn_Locating.invalidate();
-			spn_Locating.requestLayout();
+			spn_Locating.postInvalidate();
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -223,12 +223,9 @@ public class FoursquareCheckinActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		venues = getVenues();
-		venueIDs = getVenueIDs();
-
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
-				R.layout.foursquare_checkin_venue, venues));
+				R.layout.foursquare_checkin_venue, getVenues()));
 
 		setLocationManager((LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE));
@@ -250,8 +247,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 				try {
 					JSONObject params = new JSONObject();
-					params.put("venueID", venueIDs.get(position));
-					params.put("venueName", venues.get(position));
+					params.put("venueID", getVenueIDs().get(position));
+					params.put("venueName", getVenues().get(position));
 					params.put("position", position);
 					params.put("visibility", visibility);
 					new CheckinTask().execute(params);
@@ -307,6 +304,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Location... locations) {
 			Location newLocation = locations[0];
+			boolean venuesUpdated = false;
 
 			if (isUpdatingLocation() == false) {
 				amUpdatingLocation(false);
@@ -349,6 +347,9 @@ public class FoursquareCheckinActivity extends ListActivity {
 						break;
 					case 4:
 						message = "Signifcantly newer, not significantly less accurate, from same provider.";
+						break;
+					case 200:
+						message = "Venues updated.";
 						break;
 					}
 
@@ -431,26 +432,26 @@ public class FoursquareCheckinActivity extends ListActivity {
 					setVenues(venues);
 					setVenueIDs(venueIDs);
 
+					System.out.println(venues);
+
+					setLocationUpdateStatus(200);
 					amUpdatingLocation(false);
-					return true;
+					venuesUpdated = true;
 
 				} catch (ClientProtocolException e) {
 					System.err.println("ClientProtocolException =>"
 							+ e.getMessage());
 					setLocationUpdateStatus(-3);
-					return false;
 				} catch (IOException e) {
 					System.err.println("IOException =>" + e.getMessage());
 					setLocationUpdateStatus(-3);
-					return false;
 				} catch (JSONException e) {
 					System.err.println("JSONException =>" + e.getMessage());
 					setLocationUpdateStatus(-4);
-					return false;
 				}
 			}
 
-			return false;
+			return venuesUpdated;
 		}
 
 		protected void onPostExecute(Boolean venuesUpdated) {
@@ -458,28 +459,29 @@ public class FoursquareCheckinActivity extends ListActivity {
 			Location location = getLocation();
 
 			System.out.println(location.getProvider() + " > "
-					+ "Post-Execute! Venues "
-					+ (venuesUpdated == true ? "" : "not ")
-					+ " updated. Status: " + getLocationUpdateStatus());
+					+ "Post-Execute! Status: " + getLocationUpdateStatus());
 
 			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
 			spn_Locating.setVisibility(View.INVISIBLE);
-			spn_Locating.invalidate();
-			spn_Locating.requestLayout();
+			spn_Locating.postInvalidate();
 
-			if (venuesUpdated == true) {
-
+			if (venuesUpdated) {
 				System.out.println(location.getProvider() + " > "
 						+ "Venues Updated!");
 
-				Toast.makeText(getApplicationContext(),
-						"Updated venues from " + location.getProvider() + ".",
-						Toast.LENGTH_SHORT).show();
+				setListAdapter(new ArrayAdapter<String>(
+						FoursquareCheckinActivity.this,
+						R.layout.foursquare_checkin_venue, getVenues()));
 
-				ListView lst_Venues = getListView();
-				ListAdapter lst_Venues_Adaptor = lst_Venues.getAdapter();
-				((BaseAdapter) lst_Venues_Adaptor).notifyDataSetChanged();
+				Toast.makeText(
+						getApplicationContext(),
+						"Updated venues from " + location.getProvider()
+								+ " location.", Toast.LENGTH_SHORT).show();
+			} else {
+				System.out.println(location.getProvider()
+						+ " > Venues not updated.");
 			}
+
 		}
 	}
 
