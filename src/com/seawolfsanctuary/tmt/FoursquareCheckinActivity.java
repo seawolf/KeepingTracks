@@ -132,8 +132,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 			spn_Locating.invalidate();
 			spn_Locating.requestLayout();
-
-			new SearchVenuesTask().execute(newLocation);
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras) {
