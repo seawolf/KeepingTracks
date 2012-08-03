@@ -151,6 +151,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 		setLocationUpdateStatus(0);
 
+		if (currentBestLocation == null) {
+			setLocationUpdateStatus(200);
+			return true;
+		}
+
 		int accuracyDelta = (int) (currentBestLocation.getAccuracy() - location
 				.getAccuracy());
 
