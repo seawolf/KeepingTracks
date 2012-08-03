@@ -23,7 +23,7 @@
         <ProgressBar
             android:id="@+id/spn_Locating"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
@@ -41,8 +41,8 @@
         android:checked="true"
         android:paddingBottom="5dp"
         android:paddingTop="10dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/foursquare_venue_select_visibility_public" />
+        android:text="@string/foursquare_venue_select_visibility_public"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <ListView
         android:id="@android:id/list"
