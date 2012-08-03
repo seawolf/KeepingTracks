@@ -15,6 +15,7 @@
     <string name="foursquare_checkin">Station Check-In</string>
     <string name="foursquare_venue_select">Places Near You</string>
     <string name="foursquare_venue_select_prompt">Select then correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
+    <string name="foursquare_venue_select_visibility">Your check-in will be:</string>
     <string name="foursquare_deauthenticate">Log Out</string>
     <string name="save">Save</string>
     <string name="dotdotdot">…</string>

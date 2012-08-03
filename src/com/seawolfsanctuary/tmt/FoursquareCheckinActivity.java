@@ -36,7 +36,9 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
@@ -54,6 +56,12 @@ public class FoursquareCheckinActivity extends ListActivity {
 	LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location newLocation) {
 			// Called when a new location is found
+
+			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
+			spn_Locating.setVisibility(View.VISIBLE);
+			spn_Locating.invalidate();
+			spn_Locating.requestLayout();
+
 			new SearchVenuesTask().execute(newLocation);
 		}
 
@@ -195,12 +203,18 @@ public class FoursquareCheckinActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
+				String visibility = "private";
+				ToggleButton tgl_Visibility = (ToggleButton) findViewById(R.id.tgl_Visibility);
+				if (tgl_Visibility.isChecked()) {
+					visibility = "public";
+				}
+
 				try {
 					JSONObject params = new JSONObject();
 					params.put("venueID", venueIDs.get(position));
 					params.put("venueName", venues.get(position));
 					params.put("position", position);
-					params.put("visibility", "private");
+					params.put("visibility", visibility);
 					new CheckinTask().execute(params);
 				} catch (JSONException e) {
 					System.err.println("JSONException");
@@ -378,8 +392,13 @@ public class FoursquareCheckinActivity extends ListActivity {
 		 * the result from doInBackground()
 		 */
 		protected void onPostExecute(Boolean venuesUpdated) {
-			System.out
-					.println(location.getProvider() + " > " + "Post-Execute!");
+			System.out.println(location.getProvider() + " > "
+					+ "Post-Execute! Status:" + locationUpdateStatus);
+
+			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
+			spn_Locating.setVisibility(View.INVISIBLE);
+			spn_Locating.invalidate();
+			spn_Locating.requestLayout();
 
 			if (venuesUpdated) {
 
