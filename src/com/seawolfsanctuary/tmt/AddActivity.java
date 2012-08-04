@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 public class AddActivity extends TabActivity {
 
+	Bundle template = new Bundle();
+
 	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
 	TimePicker tp_FromTime;
@@ -66,6 +68,7 @@ public class AddActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		template = getIntent().getExtras();
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
@@ -88,6 +91,19 @@ public class AddActivity extends TabActivity {
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabID) {
+
+				if (tabID == "tc_Detail") {
+					// Show defaults from bundle
+					if (template != null) {
+						if (template.containsKey("txt_ClassInfo")) {
+							txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+							txt_DetailClass.setText(template
+									.getString("txt_ClassInfo"));
+							template.remove("txt_ClassInfo");
+						}
+					}
+				}
+
 				if (tabID == "tc_Summary") {
 					updateText();
 				}
@@ -122,6 +138,7 @@ public class AddActivity extends TabActivity {
 						Helpers.hideKeyboard(actv_ToSearch);
 					}
 				});
+
 	}
 
 	private String[] read_csv(String filename) {

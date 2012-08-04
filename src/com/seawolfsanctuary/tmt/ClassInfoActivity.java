@@ -24,7 +24,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,8 +64,28 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.class_info_activity);
 
-		setListAdapter(new ClassInfoAdapter());
+		final ClassInfoAdapter adaptor = new ClassInfoAdapter();
+		setListAdapter(adaptor);
 		registerForContextMenu(getExpandableListView());
+
+		ExpandableListView lv = getExpandableListView();
+		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					final int id, long position) {
+				ArrayList<String[]> data = adaptor.data;
+				String classNo = data.get(id)[0].toString();
+
+				Bundle template = new Bundle();
+				template.putString("txt_ClassInfo", classNo);
+
+				Intent intent = new Intent(view.getContext(), AddActivity.class);
+				intent.putExtras(template);
+				startActivity(intent);
+				ClassInfoActivity.this.finish();
+				return true;
+			}
+		});
 	}
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {

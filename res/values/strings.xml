@@ -9,7 +9,7 @@
     <string name="list_saved">Saved Journeys</string>
     <string name="list_saved_prompt">Tap a journey entry to see details. Tap and hold to delete.</string>
     <string name="class_info">Class Reference</string>
-    <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu.</string>
+    <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_authenticate">Authenticate with Foursquare</string>
     <string name="foursquare_checkin">Station Check-In</string>
