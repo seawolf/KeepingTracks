@@ -64,28 +64,36 @@ public class ListSavedActivity extends ExpandableListActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					final int id, long position) {
-				new AlertDialog.Builder(view.getContext())
-						.setTitle("Delete Entry")
-						.setMessage(
-								"Are you sure you want to delete this entry?")
-						.setPositiveButton("Yes", new OnClickListener() {
-							public void onClick(DialogInterface arg0, int arg1) {
-								deleteEntry(
-										(ArrayList<String>) loadSavedEntries(false),
-										id);
 
-								Intent intent = getIntent();
-								finish();
-								startActivity(intent);
-							}
-						}).setNegativeButton("No", new OnClickListener() {
-							public void onClick(DialogInterface arg0, int arg1) {
-								// ignore
-							}
-						}).show();
+				boolean isParentSelected = (position >= 0);
+				if (isParentSelected) {
+					// by some fluke we have a parent
+					new AlertDialog.Builder(view.getContext())
+							.setTitle("Delete Entry")
+							.setMessage(
+									"Are you sure you want to delete this entry?")
+							.setPositiveButton("Yes", new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
 
-				return true;
+									deleteEntry(
+											(ArrayList<String>) loadSavedEntries(false),
+											id);
 
+									Intent intent = getIntent();
+									finish();
+									startActivity(intent);
+								}
+							}).setNegativeButton("No", new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									// ignore
+								}
+							}).show();
+
+					return true;
+				}
+				return false;
 			}
 		});
 
