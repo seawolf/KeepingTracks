@@ -39,8 +39,8 @@ import android.widget.Toast;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
-	private static final long LOOKUP_LIFETIME = 1000 * 30;
-	private static final int MIN_ACCURACY = 200;
+	private static final long LONG_LOOKUP_LIFETIME = 1000 * 60;
+	private static final long SHORT_LOOKUP_LIFETIME = 1000 * 15;
 
 	private static long lastLookup = 0;
 
@@ -82,16 +82,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 		FoursquareCheckinActivity.updatingLocation = updatingLocation;
 	}
 
-	private static int locationUpdateStatus = -200;
-
-	private static int getLocationUpdateStatus() {
-		return locationUpdateStatus;
-	}
-
-	private static void setLocationUpdateStatus(int locationUpdateStatus) {
-		FoursquareCheckinActivity.locationUpdateStatus = locationUpdateStatus;
-	}
-
 	private static LocationManager locationManager = null;
 
 	private static LocationManager getLocationManager() {
@@ -116,18 +106,15 @@ public class FoursquareCheckinActivity extends ListActivity {
 	LocationListener locationListener = new LocationListener() {
 		public void onLocationChanged(Location newLocation) {
 			// Called when a new location is found
-			long lastUpdateTime = getLastLookup() + LOOKUP_LIFETIME;
-
 			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
+			System.out.println("New Location from: "
+					+ newLocation.getProvider());
 
-			if (lastUpdateTime < newLocation.getTime()) {
-				System.out.println("Location now timed out.");
+			if (isBetterLocation(newLocation, getLocation())) {
 				spn_Locating.setVisibility(View.VISIBLE);
 				setLastLookup(newLocation.getTime());
-
 				new SearchVenuesTask().execute(newLocation);
 			} else {
-				System.out.println("Location recieved too soon.");
 				spn_Locating.setVisibility(View.INVISIBLE);
 			}
 
@@ -147,36 +134,68 @@ public class FoursquareCheckinActivity extends ListActivity {
 	protected boolean isBetterLocation(Location location,
 			Location currentBestLocation) {
 
-		setLocationUpdateStatus(0);
+		if (isUpdatingLocation()) {
+			System.out
+					.println("FYI: Currently updating from another provider/status.");
+			// return false;
+		}
 
-		if (currentBestLocation == null) {
-			setLocationUpdateStatus(200);
+		// Initial Network update
+		if (currentBestLocation == null) {// && !isUpdatingLocation()) {
+			System.out.println("No current best location");// and am not
+															// currently
+															// updating.");
 			return true;
 		}
 
-		int accuracyDelta = (int) (currentBestLocation.getAccuracy() - location
-				.getAccuracy());
-
-		boolean isLessAccurate = accuracyDelta > 0;
-		boolean isMoreAccurate = accuracyDelta < 0;
-		boolean isSignificantlyLessAccurate = accuracyDelta < -MIN_ACCURACY;
+		int accuracyDelta = (int) ((currentBestLocation.getAccuracy() - location
+				.getAccuracy()));
+		boolean isMoreAccurate = accuracyDelta > -1;
 
 		boolean isFromSameProvider = isSameProvider(location.getProvider(),
 				currentBestLocation.getProvider());
 
-		if (isMoreAccurate) {
-			setLocationUpdateStatus(2);
+		boolean isVeryOld = ((location.getTime() - currentBestLocation
+				.getTime()) > LONG_LOOKUP_LIFETIME);
+		boolean isSlightlyOld = ((location.getTime() - currentBestLocation
+				.getTime()) > SHORT_LOOKUP_LIFETIME);
+
+		System.out.println("Provider: " + currentBestLocation.getProvider()
+				+ " -> " + location.getProvider());
+		System.out.println("Accuracy: " + currentBestLocation.getAccuracy()
+				+ " (" + accuracyDelta + " should be positive) "
+				+ location.getAccuracy() + " (more accurate? " + isMoreAccurate
+				+ ")");
+		System.out.println("Very Old: " + currentBestLocation.getTime() + " ("
+				+ (location.getTime() - currentBestLocation.getTime())
+				+ " should be more than " + LONG_LOOKUP_LIFETIME + ") "
+				+ location.getTime() + " (old enough? " + isVeryOld + ")");
+		System.out.println("Slightly Old: " + currentBestLocation.getTime()
+				+ " (" + (location.getTime() - currentBestLocation.getTime())
+				+ " should be more than " + SHORT_LOOKUP_LIFETIME + ") "
+				+ location.getTime() + " (nearly old enough? " + isSlightlyOld
+				+ ")");
+
+		if (isFromSameProvider && isMoreAccurate && isVeryOld) {
+			// Same provider giving better update
+			System.out.println("More accurate, same provider, old enough.");
 			return true;
-		} else if (!isLessAccurate) {
-			setLocationUpdateStatus(3);
+		} else if (!isFromSameProvider && isMoreAccurate && isSlightlyOld) {
+			// Different provider giving better update
+			System.out
+					.println("More accurate, another provider, nearly old enough.");
 			return true;
-		} else if (!isSignificantlyLessAccurate && isFromSameProvider) {
-			setLocationUpdateStatus(4);
+		} else {
+			System.out.println("No criteria met:");
+			System.out.println("!isVeryOld[" + isVeryOld
+					+ "] && isMoreAccurate[" + isMoreAccurate + "]");
+			System.out.println("!isFromSameProvider[" + !isFromSameProvider
+					+ "] && isMoreAccurate[" + isMoreAccurate
+					+ "] && isSlightlyOld[" + isSlightlyOld + "]");
+
 			return false;
 		}
 
-		setLocationUpdateStatus(-2);
-		return false;
 	}
 
 	private boolean isSameProvider(String provider1, String provider2) {
@@ -230,6 +249,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		setLocationManager((LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE));
 
+		removeLocationListener();
 		// Get user's location:
 		attachNetworkLocation();
 		attachGPSLocation();
@@ -280,20 +300,18 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 	private void attachNetworkLocation() {
 		getLocationManager().requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, LOOKUP_LIFETIME, 0,
+				LocationManager.NETWORK_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
 				locationListener);
 	}
 
 	private void attachGPSLocation() {
 		getLocationManager().requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, LOOKUP_LIFETIME, 0,
+				LocationManager.GPS_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
 				locationListener);
 	}
 
 	private void removeLocationListener() {
-		if (getLocationManager().getAllProviders().size() > 0) {
-			getLocationManager().removeUpdates(locationListener);
-		}
+		getLocationManager().removeUpdates(locationListener);
 	}
 
 	public void removeFoursquareAuthentication() {
@@ -304,151 +322,105 @@ public class FoursquareCheckinActivity extends ListActivity {
 		@Override
 		protected Boolean doInBackground(Location... locations) {
 			Location newLocation = locations[0];
-			boolean venuesUpdated = false;
+			Boolean venuesUpdated = false;
 
-			if (isUpdatingLocation() == false) {
+			if (!isUpdatingLocation()) {
 				amUpdatingLocation(false);
+			}
 
-				if (getLocation() == null
-						|| isBetterLocation(newLocation, getLocation()) == true) {
+			amUpdatingLocation(true);
+			setLastLookup(newLocation.getTime());
 
-					setLastLookup(newLocation.getTime());
-					amUpdatingLocation(true);
+			System.out.println("Accepting new Location from "
+					+ newLocation.getProvider() + " at "
+					+ newLocation.getTime());
 
-					System.out.println("Accepting new Location from "
-							+ newLocation.getProvider() + " at "
-							+ newLocation.getTime());
+			setLocation(newLocation);
 
-					String message = "...";
-					switch (getLocationUpdateStatus()) {
-					case -4:
-						message = "Foursquare sent me something I couldn't understand.";
-						break;
-					case -3:
-						message = "Could not connect to the Internet.";
-						break;
-					case -2:
-						message = "Not worthy of an update.";
-						break;
-					case -1:
-						message = "Significantly older.";
-						break;
-					case 0:
-						message = "Current location unknown. Please switch on GPS.";
-						break;
-					case 1:
-						message = "Significantly newer.";
-						break;
-					case 2:
-						message = "More accurate.";
-						break;
-					case 3:
-						message = "Significantly newer and not less accurate.";
-						break;
-					case 4:
-						message = "Signifcantly newer, not significantly less accurate, from same provider.";
-						break;
-					case 200:
-						message = "Venues updated.";
-						break;
-					}
+			try {
+				Location location = getLocation();
 
-					System.out.println(newLocation.getProvider() + " > "
-							+ message);
+				InputStream is = null;
+				String result = "";
+				String url = "https://api.foursquare.com/v2/venues/search?v=20120728&oauth_token="
+						+ Helpers.readAccessToken()
+						+ "&ll="
+						+ location.getLatitude()
+						+ ","
+						+ location.getLongitude();
+
+				System.out.println(location.getProvider() + " > "
+						+ "Contacting Foursquare...");
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpGet httpGet = new HttpGet(url);
+				HttpResponse httpResponse = httpclient.execute(httpGet);
+				HttpEntity entity = httpResponse.getEntity();
+				is = entity.getContent();
+
+				System.out.println(location.getProvider() + " > "
+						+ "Recieving response...");
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(is, "utf-8"), 8);
+				StringBuilder sb = new StringBuilder();
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + "\n");
 				}
+				is.close();
+				result = sb.toString();
 
-				setLocation(newLocation);
+				JSONArray returnedVenues = null;
 
+				System.out.println(location.getProvider() + " > "
+						+ "Parsing response...");
+				JSONObject jArray = new JSONObject(result);
+
+				JSONObject response = jArray.getJSONObject("response");
 				try {
-					Location location = getLocation();
-
-					InputStream is = null;
-					String result = "";
-					String url = "https://api.foursquare.com/v2/venues/search?v=20120728&oauth_token="
-							+ Helpers.readAccessToken()
-							+ "&ll="
-							+ location.getLatitude()
-							+ ","
-							+ location.getLongitude();
-
-					System.out.println(location.getProvider() + " > "
-							+ "Contacting Foursquare...");
-					HttpClient httpclient = new DefaultHttpClient();
-					HttpGet httpGet = new HttpGet(url);
-					HttpResponse httpResponse = httpclient.execute(httpGet);
-					HttpEntity entity = httpResponse.getEntity();
-					is = entity.getContent();
-
-					System.out.println(location.getProvider() + " > "
-							+ "Recieving response...");
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(is, "utf-8"), 8);
-					StringBuilder sb = new StringBuilder();
-					String line = null;
-					while ((line = reader.readLine()) != null) {
-						sb.append(line + "\n");
-					}
-					is.close();
-					result = sb.toString();
-
-					JSONArray returnedVenues = null;
-
-					System.out.println(location.getProvider() + " > "
-							+ "Parsing response...");
-					JSONObject jArray = new JSONObject(result);
-
-					JSONObject response = jArray.getJSONObject("response");
-					try {
-						returnedVenues = response.getJSONArray("venues");
-					} catch (JSONException e) {
-						System.err.println(response.toString());
-					}
-
-					ArrayList<String> venues = new ArrayList<String>();
-					ArrayList<String> venueIDs = new ArrayList<String>();
-
-					System.out.println(location.getProvider() + " > "
-							+ "Parsing venues...");
-					for (int i = 0; i < returnedVenues.length(); i++) {
-						JSONObject e = returnedVenues.getJSONObject(i);
-						String venueName = e.getString("name");
-
-						String venueCategory = "Uncategorised";
-						JSONArray venueCategories = e
-								.getJSONArray("categories");
-						for (int cc = 0; cc < venueCategories.length(); cc++) {
-							JSONObject c = venueCategories.getJSONObject(cc);
-							String categoryPrimary = c.getString("primary");
-							if (categoryPrimary == "true") {
-								venueCategory = c.getString("name");
-							}
-						}
-
-						venues.add(venueCategory + ": " + venueName);
-						venueIDs.add(e.getString("id"));
-
-					}
-
-					setVenues(venues);
-					setVenueIDs(venueIDs);
-
-					System.out.println(venues);
-
-					setLocationUpdateStatus(200);
-					amUpdatingLocation(false);
-					venuesUpdated = true;
-
-				} catch (ClientProtocolException e) {
-					System.err.println("ClientProtocolException =>"
-							+ e.getMessage());
-					setLocationUpdateStatus(-3);
-				} catch (IOException e) {
-					System.err.println("IOException =>" + e.getMessage());
-					setLocationUpdateStatus(-3);
+					returnedVenues = response.getJSONArray("venues");
 				} catch (JSONException e) {
-					System.err.println("JSONException =>" + e.getMessage());
-					setLocationUpdateStatus(-4);
+					System.err.println(response.toString());
 				}
+
+				ArrayList<String> venues = new ArrayList<String>();
+				ArrayList<String> venueIDs = new ArrayList<String>();
+
+				System.out.println(location.getProvider() + " > "
+						+ "Parsing venues...");
+				for (int i = 0; i < returnedVenues.length(); i++) {
+					JSONObject e = returnedVenues.getJSONObject(i);
+					String venueName = e.getString("name");
+
+					String venueCategory = "Uncategorised";
+					JSONArray venueCategories = e.getJSONArray("categories");
+					for (int cc = 0; cc < venueCategories.length(); cc++) {
+						JSONObject c = venueCategories.getJSONObject(cc);
+						String categoryPrimary = c.getString("primary");
+						if (categoryPrimary == "true") {
+							venueCategory = c.getString("name");
+						}
+					}
+
+					venues.add(venueCategory + ": " + venueName);
+					venueIDs.add(e.getString("id"));
+
+				}
+
+				setVenues(venues);
+				setVenueIDs(venueIDs);
+
+				System.out.println(venues);
+
+				amUpdatingLocation(false);
+				venuesUpdated = true;
+
+			} catch (ClientProtocolException e) {
+				System.err.println("ClientProtocolException =>"
+						+ e.getMessage());
+			} catch (IOException e) {
+				System.err.println("IOException =>" + e.getMessage());
+			} catch (JSONException e) {
+				System.err.println("JSONException =>" + e.getMessage());
 			}
 
 			return venuesUpdated;
@@ -458,8 +430,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 			amUpdatingLocation(false);
 			Location location = getLocation();
 
-			System.out.println(location.getProvider() + " > "
-					+ "Post-Execute! Status: " + getLocationUpdateStatus());
+			System.out.println("Post-Execute!");
 
 			ProgressBar spn_Locating = (ProgressBar) findViewById(R.id.spn_Locating);
 			spn_Locating.setVisibility(View.INVISIBLE);
@@ -475,7 +446,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 				Toast.makeText(
 						getApplicationContext(),
-						"Updated venues from " + location.getProvider()
+						"Updated venues based on " + location.getProvider()
 								+ " location.", Toast.LENGTH_SHORT).show();
 			} else {
 				System.out.println(location.getProvider()
