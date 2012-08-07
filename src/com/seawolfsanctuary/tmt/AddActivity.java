@@ -289,7 +289,16 @@ public class AddActivity extends TabActivity {
 
 				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 				if (chk_Checkin.isChecked()) {
-					foursquareCheckin();
+					Bundle details = new Bundle();
+					details.putString("from_station", actv_FromSearch.getText()
+							.toString());
+					details.putString("to_station", actv_ToSearch.getText()
+							.toString());
+					details.putString("class", txt_DetailClass.getText()
+							.toString());
+					details.putString("headcode", txt_DetailHeadcode.getText()
+							.toString());
+					foursquareCheckin(details);
 				}
 
 				AddActivity.this.finish();
@@ -321,14 +330,19 @@ public class AddActivity extends TabActivity {
 		chk_Visibility.setEnabled(chk_Checkin.isChecked());
 	}
 
-	private void foursquareCheckin() {
+	private void foursquareCheckin(Bundle details) {
 		chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
 		boolean publicVisibility = chk_Visibility.isChecked();
 
 		Toast.makeText(
 				getBaseContext(),
 				"You will check-in "
-						+ (publicVisibility ? "publically" : "privately") + ".",
+						+ (publicVisibility ? "publically" : "privately")
+						+ " at " + details.getString("from_station")
+						+ " and travelling to "
+						+ details.getString("to_station") + " by riding a "
+						+ details.getString("class") + " as "
+						+ details.getString("headcode") + ".",
 				Toast.LENGTH_LONG).show();
 	}
 
