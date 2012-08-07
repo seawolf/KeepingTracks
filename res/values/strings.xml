@@ -13,6 +13,7 @@
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_authenticate">Authenticate with Foursquare</string>
     <string name="foursquare_checkin">Station Check-In</string>
+    <string name="foursquare_checkin_journey">Check-In</string>
     <string name="foursquare_venue_select">Places Near You</string>
     <string name="foursquare_venue_select_prompt">Select then correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
     <string name="foursquare_venue_select_visibility_private">Your check-in will be private</string>

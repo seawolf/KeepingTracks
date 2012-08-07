@@ -42,6 +42,8 @@ public class AddActivity extends TabActivity {
 	AutoCompleteTextView actv_ToSearch;
 
 	TextView txt_Summary;
+	CheckBox chk_Checkin;
+	CheckBox chk_Visibility;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,6 +108,10 @@ public class AddActivity extends TabActivity {
 
 				if (tabID == "tc_Summary") {
 					updateText();
+					chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+					if (Helpers.readAccessToken().length() > 0) {
+						chk_Checkin.setEnabled(true);
+					}
 				}
 			}
 		});
@@ -281,6 +287,11 @@ public class AddActivity extends TabActivity {
 				Toast.makeText(getBaseContext(), "Entry saved.",
 						Toast.LENGTH_SHORT).show();
 
+				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+				if (chk_Checkin.isChecked()) {
+					foursquareCheckin();
+				}
+
 				AddActivity.this.finish();
 				Intent intent = new Intent(this, ListSavedActivity.class);
 				startActivity(intent);
@@ -302,6 +313,23 @@ public class AddActivity extends TabActivity {
 	public void startClassInfoActivity(View view) {
 		Intent intent = new Intent(this, ClassInfoActivity.class);
 		startActivity(intent);
+	}
+
+	public void enableFoursquareCheckin(View view) {
+		chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+		chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
+		chk_Visibility.setEnabled(chk_Checkin.isChecked());
+	}
+
+	private void foursquareCheckin() {
+		chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
+		boolean publicVisibility = chk_Visibility.isChecked();
+
+		Toast.makeText(
+				getBaseContext(),
+				"You will check-in "
+						+ (publicVisibility ? "publically" : "privately") + ".",
+				Toast.LENGTH_LONG).show();
 	}
 
 }
