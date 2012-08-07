@@ -39,6 +39,8 @@ import android.widget.Toast;
 
 public class FoursquareCheckinActivity extends ListActivity {
 
+	private Bundle checkin_details = new Bundle();
+
 	private static final long LONG_LOOKUP_LIFETIME = 1000 * 60;
 	private static final long SHORT_LOOKUP_LIFETIME = 1000 * 15;
 
@@ -271,6 +273,23 @@ public class FoursquareCheckinActivity extends ListActivity {
 					params.put("venueName", getVenues().get(position));
 					params.put("position", position);
 					params.put("visibility", visibility);
+
+					if (checkin_details != null) {
+						if (checkin_details.containsKey("from_station")) {
+							String checkinMessage = " I'm travelling between "
+									+ checkin_details.getString("from_station")
+									+ " and "
+									+ checkin_details.getString("to_station")
+									+ ", riding a class "
+									+ checkin_details.getString("class")
+									+ " train with the headcode "
+									+ checkin_details.getString("headcode")
+									+ "!";
+
+							params.put("message", checkinMessage);
+						}
+					}
+
 					new CheckinTask().execute(params);
 				} catch (JSONException e) {
 					System.err.println("JSONException");
