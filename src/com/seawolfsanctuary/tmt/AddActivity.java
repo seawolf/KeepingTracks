@@ -206,21 +206,30 @@ public class AddActivity extends TabActivity {
 
 		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
 
-		txt_Summary.setText("You selected:" + "\nFrom:"
-				+ actv_FromSearch.getText().toString() + "\nOn: "
-				+ dp_FromDate.getDayOfMonth() + "/" + dp_FromDate.getMonth()
-				+ "/" + dp_FromDate.getYear() + "\nAt: "
-				+ tp_FromTime.getCurrentHour() + ":"
-				+ tp_FromTime.getCurrentMinute() +
+		txt_Summary.setText("From:\t"
+				+ Helpers.trimCodeFromStation(actv_FromSearch.getText()
+						.toString())
+				+ "\nOn:\t\t"
+				+ dp_FromDate.getDayOfMonth()
+				+ "/"
+				+ dp_FromDate.getMonth()
+				+ "/"
+				+ dp_FromDate.getYear()
+				+ "\nAt:\t\t"
+				+ tp_FromTime.getCurrentHour()
+				+ ":"
+				+ tp_FromTime.getCurrentMinute()
+				+
 
-				"\nTo:" + actv_ToSearch.getText().toString() + "\nOn: "
-				+ dp_ToDate.getDayOfMonth() + "/" + dp_ToDate.getMonth() + "/"
-				+ dp_ToDate.getYear() + "\nAt: " + tp_ToTime.getCurrentHour()
-				+ ":" + tp_ToTime.getCurrentMinute() +
+				"\n\nTo:\t\t"
+				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
+						.toString()) + "\nOn:\t\t" + dp_ToDate.getDayOfMonth()
+				+ "/" + dp_ToDate.getMonth() + "/" + dp_ToDate.getYear()
+				+ "\nAt:\t\t" + tp_ToTime.getCurrentHour() + ":"
+				+ tp_ToTime.getCurrentMinute() +
 
-				"\nWith: " + txt_DetailClass.getText() +
-
-				"\nAs: " + txt_DetailHeadcode.getText());
+				"\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
+				+ txt_DetailHeadcode.getText());
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -302,10 +311,12 @@ public class AddActivity extends TabActivity {
 				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 				if (chk_Checkin.isChecked()) {
 					Bundle details = new Bundle();
-					details.putString("from_station", actv_FromSearch.getText()
-							.toString());
-					details.putString("to_station", actv_ToSearch.getText()
-							.toString());
+					details.putString("from_station", Helpers
+							.trimCodeFromStation(actv_FromSearch.getText()
+									.toString()));
+					details.putString("to_station", Helpers
+							.trimCodeFromStation(actv_ToSearch.getText()
+									.toString()));
 					details.putString("class", txt_DetailClass.getText()
 							.toString());
 					details.putString("headcode", txt_DetailHeadcode.getText()

@@ -118,4 +118,11 @@ public class Helpers {
 
 		return success;
 	}
+
+	public static String trimCodeFromStation(String station) {
+		if (station.length() > 4) {
+			station = station.substring(4);
+		}
+		return station;
+	}
 }
