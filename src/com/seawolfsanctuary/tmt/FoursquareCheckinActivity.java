@@ -268,6 +268,8 @@ public class FoursquareCheckinActivity extends ListActivity {
 					visibility = "public";
 				}
 
+				CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
+
 				try {
 					JSONObject params = new JSONObject();
 					params.put("venueID", getVenueIDs().get(position));
@@ -322,11 +324,14 @@ public class FoursquareCheckinActivity extends ListActivity {
 								+ params.getString("venueName") + ".";
 					}
 
-					params.put("message", checkinMessage);
-
-					Toast.makeText(getBaseContext(),
-							params.getString("message"), Toast.LENGTH_LONG)
-							.show();
+					if (chk_Shout.isChecked()) {
+						params.put("message", checkinMessage);
+						Toast.makeText(getBaseContext(),
+								params.getString("message"), Toast.LENGTH_LONG)
+								.show();
+					} else {
+						params.put("message", "");
+					}
 
 					new CheckinTask().execute(params);
 				} catch (JSONException e) {
