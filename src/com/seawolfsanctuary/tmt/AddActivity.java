@@ -107,10 +107,23 @@ public class AddActivity extends TabActivity {
 
 				if (tabID == "tc_Summary") {
 					updateText();
+					txt_Summary = (TextView) findViewById(R.id.txt_Summary);
 					chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+					actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
+					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+
 					if (Helpers.readAccessToken().length() > 0) {
 						chk_Checkin.setEnabled(true);
 					}
+
+					chk_Checkin.setChecked(false);
+					chk_Checkin.setEnabled(false);
+					if (actv_FromSearch.getText().toString().length() > 0
+							|| actv_ToSearch.getText().toString().length() > 0) {
+						chk_Checkin.setEnabled(true);
+						chk_Checkin.setChecked(true);
+					}
+
 				}
 			}
 		});
