@@ -243,6 +243,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		checkin_details = getIntent().getExtras();
 
 		setContentView(R.layout.foursquare_checkin_activity);
 		setListAdapter(new ArrayAdapter<String>(this,
@@ -274,21 +275,62 @@ public class FoursquareCheckinActivity extends ListActivity {
 					params.put("position", position);
 					params.put("visibility", visibility);
 
-					if (checkin_details != null) {
-						if (checkin_details.containsKey("from_station")) {
-							String checkinMessage = " I'm travelling between "
-									+ checkin_details.getString("from_station")
-									+ " and "
-									+ checkin_details.getString("to_station")
-									+ ", riding a class "
-									+ checkin_details.getString("class")
-									+ " train with the headcode "
-									+ checkin_details.getString("headcode")
-									+ "!";
+					String checkinMessage = "";
 
-							params.put("message", checkinMessage);
+					if (checkin_details.keySet().size() > 0) {
+						// Override with passed in values
+
+						String message = "I'm travelling";
+
+						if (checkin_details.getString("from_station").length() > 0) {
+							message += " from "
+									+ checkin_details.getString("from_station");
 						}
+
+						if (checkin_details.getString("to_station").length() > 0) {
+							message += " to "
+									+ checkin_details.getString("to_station");
+
+						}
+
+						if (checkin_details.getString("class").length() > 0
+								|| checkin_details.getString("headcode")
+										.length() > 0) {
+
+							message += " by riding";
+
+							if (checkin_details.getString("class").length() > 0) {
+								message += " a "
+										+ checkin_details.getString("class");
+							}
+
+							if (checkin_details.getString("class").length() > 0
+									&& checkin_details.getString("headcode")
+											.length() > 0) {
+								message += " as ";
+							}
+
+							if (checkin_details.getString("headcode").length() > 0) {
+								message += checkin_details
+										.getString("headcode");
+							}
+						}
+
+						message += ".";
+
+						Toast.makeText(getBaseContext(), message,
+								Toast.LENGTH_LONG).show();
+
+					} else {
+						checkinMessage = "I'm on a train at "
+								+ params.getString("venueName") + "!";
 					}
+
+					params.put("message", checkinMessage);
+
+					Toast.makeText(getBaseContext(),
+							params.getString("message"), Toast.LENGTH_LONG)
+							.show();
 
 					new CheckinTask().execute(params);
 				} catch (JSONException e) {
@@ -489,11 +531,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 				int position = checkin[0].getInt("position");
 				String visibility = checkin[0].getString("visibility");
 				String venueName = getVenues().get(position);
+				String message = checkin[0].getString("message");
 
 				InputStream is = null;
 				String result = "";
-				String encodedShout = URLEncoder.encode("I'm checking into "
-						+ venueName + " using TMT!", "utf-8");
+				String encodedShout = URLEncoder.encode(message, "utf-8");
 				String url = "https://api.foursquare.com/v2/checkins/add?v=20120728&oauth_token="
 						+ Helpers.readAccessToken()
 						+ "&venueId="
