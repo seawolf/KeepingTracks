@@ -277,7 +277,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 					String checkinMessage = "";
 
-					if (checkin_details.keySet().size() > 0) {
+					if (checkin_details != null) {
 						checkinMessage = "I'm travelling";
 
 						if (checkin_details.getString("from_station").length() > 0) {
