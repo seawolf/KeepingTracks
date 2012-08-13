@@ -278,17 +278,15 @@ public class FoursquareCheckinActivity extends ListActivity {
 					String checkinMessage = "";
 
 					if (checkin_details.keySet().size() > 0) {
-						// Override with passed in values
-
-						String message = "I'm travelling";
+						checkinMessage = "I'm travelling";
 
 						if (checkin_details.getString("from_station").length() > 0) {
-							message += " from "
+							checkinMessage += " from "
 									+ checkin_details.getString("from_station");
 						}
 
 						if (checkin_details.getString("to_station").length() > 0) {
-							message += " to "
+							checkinMessage += " to "
 									+ checkin_details.getString("to_station");
 
 						}
@@ -297,33 +295,31 @@ public class FoursquareCheckinActivity extends ListActivity {
 								|| checkin_details.getString("headcode")
 										.length() > 0) {
 
-							message += " by riding";
+							checkinMessage += " by riding ";
 
 							if (checkin_details.getString("class").length() > 0) {
-								message += " a "
+								checkinMessage += " a "
 										+ checkin_details.getString("class");
 							}
 
 							if (checkin_details.getString("class").length() > 0
 									&& checkin_details.getString("headcode")
 											.length() > 0) {
-								message += " as ";
+								checkinMessage += " as ";
 							}
 
 							if (checkin_details.getString("headcode").length() > 0) {
-								message += checkin_details
+								checkinMessage += checkin_details
 										.getString("headcode");
 							}
 						}
 
-						message += ".";
-
-						Toast.makeText(getBaseContext(), message,
-								Toast.LENGTH_LONG).show();
+						checkinMessage += ".";
 
 					} else {
+						// Delete this else block to check-in with no shout
 						checkinMessage = "I'm on a train at "
-								+ params.getString("venueName") + "!";
+								+ params.getString("venueName") + ".";
 					}
 
 					params.put("message", checkinMessage);
