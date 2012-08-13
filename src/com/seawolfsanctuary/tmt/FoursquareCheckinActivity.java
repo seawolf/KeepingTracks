@@ -605,6 +605,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 			if (checkinSuccessful) {
 				Toast.makeText(getApplicationContext(), "Checked in!",
 						Toast.LENGTH_SHORT).show();
+				FoursquareCheckinActivity.this.finish();
 			} else {
 				Toast.makeText(getApplicationContext(), "Could not check in.",
 						Toast.LENGTH_SHORT).show();
