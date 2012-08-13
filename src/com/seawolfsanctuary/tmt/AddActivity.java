@@ -43,7 +43,6 @@ public class AddActivity extends TabActivity {
 
 	TextView txt_Summary;
 	CheckBox chk_Checkin;
-	CheckBox chk_Visibility;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -324,26 +323,9 @@ public class AddActivity extends TabActivity {
 		startActivity(intent);
 	}
 
-	public void enableFoursquareCheckin(View view) {
-		chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
-		chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
-		chk_Visibility.setEnabled(chk_Checkin.isChecked());
-	}
-
 	private void foursquareCheckin(Bundle details) {
-		chk_Visibility = (CheckBox) findViewById(R.id.chk_Visibility);
-		boolean publicVisibility = chk_Visibility.isChecked();
-
-		Toast.makeText(
-				getBaseContext(),
-				"You will check-in "
-						+ (publicVisibility ? "publically" : "privately")
-						+ " at " + details.getString("from_station")
-						+ " and travelling to "
-						+ details.getString("to_station") + " by riding a "
-						+ details.getString("class") + " as "
-						+ details.getString("headcode") + ".",
-				Toast.LENGTH_LONG).show();
+		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
+		intent.putExtras(details);
+		startActivity(intent);
 	}
-
 }

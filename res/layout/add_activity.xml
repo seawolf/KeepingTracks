@@ -197,21 +197,9 @@
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:checked="false"
-					        android:onClick="enableFoursquareCheckin"
 					        android:paddingBottom="5dp"
 					        android:paddingTop="10dp"
 					        android:text="@string/foursquare_checkin_journey"
-					        android:textAppearance="?android:attr/textAppearanceSmall" />
-					                        
-					    <CheckBox
-					        android:id="@+id/chk_Visibility"
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:checked="true"
-					        android:enabled="false"
-					        android:paddingBottom="5dp"
-					        android:paddingTop="10dp"
-					        android:text="@string/foursquare_venue_select_visibility_public"
 					        android:textAppearance="?android:attr/textAppearanceSmall" />
     
                     </LinearLayout>
