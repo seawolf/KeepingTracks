@@ -297,12 +297,18 @@ public class AddActivity extends TabActivity {
 							.toString());
 					details.putString("headcode", txt_DetailHeadcode.getText()
 							.toString());
-					foursquareCheckin(details);
-				}
 
-				AddActivity.this.finish();
-				Intent intent = new Intent(this, ListSavedActivity.class);
-				startActivity(intent);
+					AddActivity.this.finish();
+					Intent intent = new Intent(this, ListSavedActivity.class);
+					startActivity(intent);
+
+					foursquareCheckin(details);
+
+				} else {
+					AddActivity.this.finish();
+					Intent intent = new Intent(this, ListSavedActivity.class);
+					startActivity(intent);
+				}
 
 				return true;
 
