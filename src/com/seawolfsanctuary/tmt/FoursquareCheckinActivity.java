@@ -243,9 +243,14 @@ public class FoursquareCheckinActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		checkin_details = getIntent().getExtras();
-
 		setContentView(R.layout.foursquare_checkin_activity);
+
+		checkin_details = getIntent().getExtras();
+		if (checkin_details == null) {
+			CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
+			chk_Shout.setVisibility(View.GONE);
+		}
+
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.foursquare_checkin_venue, getVenues()));
 
@@ -267,8 +272,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 				if (chk_Visibility.isChecked() == true) {
 					visibility = "public";
 				}
-
-				CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
 
 				try {
 					JSONObject params = new JSONObject();
@@ -324,6 +327,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 								+ params.getString("venueName") + ".";
 					}
 
+					CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
 					if (chk_Shout.isChecked()) {
 						params.put("message", checkinMessage);
 						Toast.makeText(getBaseContext(),
