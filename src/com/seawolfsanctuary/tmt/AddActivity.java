@@ -212,7 +212,7 @@ public class AddActivity extends TabActivity {
 				+ "\nOn:\t\t"
 				+ dp_FromDate.getDayOfMonth()
 				+ "/"
-				+ dp_FromDate.getMonth()
+				+ (dp_FromDate.getMonth() + 1)
 				+ "/"
 				+ dp_FromDate.getYear()
 				+ "\nAt:\t\t"
@@ -224,7 +224,7 @@ public class AddActivity extends TabActivity {
 				"\n\nTo:\t\t"
 				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
 						.toString()) + "\nOn:\t\t" + dp_ToDate.getDayOfMonth()
-				+ "/" + dp_ToDate.getMonth() + "/" + dp_ToDate.getYear()
+				+ "/" + (dp_ToDate.getMonth() + 1) + "/" + dp_ToDate.getYear()
 				+ "\nAt:\t\t" + tp_ToTime.getCurrentHour() + ":"
 				+ tp_ToTime.getCurrentMinute() +
 
@@ -290,13 +290,15 @@ public class AddActivity extends TabActivity {
 				String line = "";
 				line = "\"" + actv_FromSearch.getText().toString() + msep
 						+ dp_FromDate.getDayOfMonth() + msep
-						+ dp_FromDate.getMonth() + msep + dp_FromDate.getYear()
-						+ msep + tp_FromTime.getCurrentHour() + msep
+						+ (dp_FromDate.getMonth() + 1) + msep
+						+ dp_FromDate.getYear() + msep
+						+ tp_FromTime.getCurrentHour() + msep
 						+ tp_FromTime.getCurrentMinute() + msep
 						+ actv_ToSearch.getText().toString() + msep
 						+ dp_ToDate.getDayOfMonth() + msep
-						+ dp_ToDate.getMonth() + msep + dp_ToDate.getYear()
-						+ msep + tp_ToTime.getCurrentHour() + msep
+						+ (dp_ToDate.getMonth() + 1) + msep
+						+ dp_ToDate.getYear() + msep
+						+ tp_ToTime.getCurrentHour() + msep
 						+ tp_ToTime.getCurrentMinute() + msep
 						+ txt_DetailClass.getText() + msep
 						+ txt_DetailHeadcode.getText() + "\"";
