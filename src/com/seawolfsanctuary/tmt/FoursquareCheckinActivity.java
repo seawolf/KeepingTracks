@@ -246,10 +246,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 		setContentView(R.layout.foursquare_checkin_activity);
 
 		checkin_details = getIntent().getExtras();
-		if (checkin_details == null) {
-			CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
-			chk_Shout.setVisibility(View.GONE);
-		}
 
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.foursquare_checkin_venue, getVenues()));
