@@ -40,9 +40,8 @@ public class HeadcodeSelectionActivity extends ListActivity {
 
 		try {
 
-			URL url = new URL("http://trains.im/location/" + fromStation + "/"
-					+ year + "/" + month + "/" + day + "/" + section + "/"
-					+ toStation);
+			URL url = new URL("http://trains.im/departures/" + fromStation
+					+ "/" + year + "/" + month + "/" + day + "/" + section);
 
 			StringBuilder builder = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
