@@ -113,6 +113,14 @@
                             android:layout_weight="1"
                             android:inputType="text" >
                         </EditText>
+
+	                    <Button
+	                        android:id="@+id/btn_startHeadcodeSelectionActivity"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:onClick="startHeadcodeSelectionActivity"
+	                        android:text="@string/dotdotdot" />
+
 					</LinearLayout>
                 </LinearLayout>
             </ScrollView>

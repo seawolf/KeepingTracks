@@ -291,4 +291,9 @@ public class AddActivity extends TabActivity {
 		startActivity(intent);
 	}
 
+	public void startHeadcodeSelectionActivity(View view) {
+		Intent intent = new Intent(this, HeadcodeSelectionActivity.class);
+		startActivity(intent);
+	}
+
 }
