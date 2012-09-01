@@ -1,12 +1,17 @@
 package com.seawolfsanctuary.tmt;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.os.Bundle;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 
-public class HeadcodeSelectionActivity extends Activity {
+import android.annotation.SuppressLint;
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.widget.ListView;
+
+public class HeadcodeSelectionActivity extends ListActivity {
 
 	/** Called when the activity is first created. */
 	@SuppressLint("SetJavaScriptEnabled")
@@ -14,10 +19,9 @@ public class HeadcodeSelectionActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.headcode_selection_activity);
+		registerForContextMenu(getListView());
 
-		WebView webview = (WebView) findViewById(R.id.webview);
-		webview.getSettings().setJavaScriptEnabled(true);
-		webview.setWebViewClient(new WebViewClient());
+		ListView lv = getListView();
 
 		String fromStation = "";
 		String toStation = "";
@@ -30,15 +34,9 @@ public class HeadcodeSelectionActivity extends Activity {
 
 		String section = Integer
 				.toString((Integer.parseInt(hour) / pageDurationHours));
-
 		if (section.indexOf(".") != -1) {
 			section = section.substring(0, section.indexOf("."));
 		}
 
-		String url = "http://trains.im/location/" + fromStation + "/" + year
-				+ "/" + month + "/" + day + "/" + section + "/" + toStation;
-
-		webview.loadUrl(url);
 	}
-
 }
