@@ -9,12 +9,16 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 public class HeadcodeSelectionActivity extends ListActivity {
 
+	private ProgressDialog dialog;
 	private ArrayList<String> allJourneys;
 	private ArrayAdapter<String> adapter;
 
@@ -24,12 +28,25 @@ public class HeadcodeSelectionActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.headcode_selection_activity);
 
-		allJourneys = new ArrayList<String>();
-		allJourneys.add("Downloading departures...");
+		dialog = ProgressDialog.show(HeadcodeSelectionActivity.this,
+				"Downloading Departures",
+				"Downloading departure board. Please wait...", true);
 
+		allJourneys = new ArrayList<String>();
 		new DownloadJourneysTask().execute();
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, allJourneys);
+
+		getListView().setOnItemClickListener(
+				new AdapterView.OnItemClickListener() {
+					public void onItemClick(AdapterView parent, View v,
+							int position, long id) {
+						String text = allJourneys.get(position);
+						String headcode = text.substring(0, text.indexOf(":"));
+						System.out.println("Selected: " + headcode);
+					}
+				});
+
 	}
 
 	private ArrayList<String> fetchJourneys() {
@@ -153,6 +170,7 @@ public class HeadcodeSelectionActivity extends ListActivity {
 
 	private class DownloadJourneysTask extends
 			AsyncTask<String, Void, ArrayList<String>> {
+
 		/**
 		 * The system calls this to perform work in a worker thread and delivers
 		 * it the parameters given to AsyncTask.execute()
@@ -166,10 +184,12 @@ public class HeadcodeSelectionActivity extends ListActivity {
 		 * the result from doInBackground()
 		 */
 		protected void onPostExecute(ArrayList<String> result) {
-			System.out.println(result.size());
+			dialog.dismiss();
+
 			if (result.size() > 0) {
 				allJourneys = result;
 			} else {
+				allJourneys.clear();
 				allJourneys.add("Download failed.");
 			}
 
