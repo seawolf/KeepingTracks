@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
@@ -51,7 +52,72 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				builder.append(line.trim());
 			}
 
-			System.out.println(builder.toString());
+			String tableStart = "<table class=\"table table-striped\">";
+			String tableEnd = "</table>";
+			String tablePart = builder.substring(builder.indexOf(tableStart)
+					+ tableStart.length());
+			String table = tablePart.substring(0, tablePart.indexOf(tableEnd));
+
+			String bodyStart = "<tbody>";
+			String bodyEnd = "</tbody>";
+			String bodyPart = table.substring(table.indexOf(bodyStart)
+					+ bodyStart.length());
+			String body = bodyPart.substring(0, bodyPart.indexOf(bodyEnd));
+
+			String rowStart = "<tr";
+			String rowEnd = "</tr>";
+			ArrayList<String> rows = new ArrayList<String>();
+
+			String[] rawRows = body.split(rowStart);
+			for (int r = 1; r < rawRows.length; r++) {
+				String row = rawRows[r];
+				String rowPart = table.substring(table.indexOf(rowStart)
+						+ rowStart.length());
+				row = rowPart.substring(0, rowPart.indexOf(rowEnd));
+				System.out.println("New Row: " + row);
+				rows.add(row);
+			}
+
+			ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
+
+			for (int r = 1; r < rows.size(); r++) {
+				String row = rows.get(r);
+
+				// Split into array of cells
+				String cellStart = "<td";
+				String cellEnd = "</";
+
+				ArrayList<String> cells = new ArrayList<String>();
+				String[] rawCells = body.split(cellStart);
+				for (int i = 0; i < rawCells.length; i++) {
+					cells.add(rawCells[i]);
+				}
+				cells.remove(0);
+
+				ArrayList<String> journey = new ArrayList<String>();
+
+				// Get cell contents and remove any more HTML tags from inside
+				// it
+				for (int c = 0; c < cells.size(); c++) {
+					String cellPart = cells.get(c);
+					String cell = cellPart.substring(cellPart.indexOf(">") + 1,
+							cellPart.indexOf(cellEnd));
+					cells.set(c, android.text.Html.fromHtml(cell).toString());
+				}
+
+				// Pick out elements
+				// System.out.println("Headcode: " + cells.get(0));
+				// System.out.println("Departure: " + cells.get(1));
+				// System.out.println("Destination: " + cells.get(2));
+				// System.out.println("Platform: " + cells.get(3));
+				// System.out.println("Operator: " + cells.get(4));
+
+				for (int i = 0; i < cells.size(); i++) {
+					journey.add(cells.get(i));
+				}
+
+				journeys.add(journey);
+			}
 
 			try {
 				reader.close();
