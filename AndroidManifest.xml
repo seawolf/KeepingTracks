@@ -35,6 +35,10 @@
             android:name=".ClassInfoActivity"
             android:label="@string/class_info" >
         </activity>
+        <activity
+            android:name=".HeadcodeSelectionActivity"
+            android:label="@string/headcode_selection" >
+        </activity>
     </application>
 
 </manifest>
