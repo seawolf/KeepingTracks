@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 
 public class HeadcodeSelectionActivity extends ListActivity {
 
+	private Bundle journeyDetails = new Bundle();
+
 	private ProgressDialog dialog;
 	private ArrayList<String> allJourneys;
 	private ArrayAdapter<String> adapter;
@@ -26,6 +28,7 @@ public class HeadcodeSelectionActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		journeyDetails = getIntent().getExtras();
 		setContentView(R.layout.headcode_selection_activity);
 
 		dialog = ProgressDialog.show(HeadcodeSelectionActivity.this,
@@ -52,13 +55,14 @@ public class HeadcodeSelectionActivity extends ListActivity {
 	private ArrayList<String> fetchJourneys() {
 		ArrayList<String> formattedJourneys = new ArrayList<String>();
 
-		String fromStation = "";
-		String toStation = "";
-		String hour = "";
-		String minute = "";
-		String year = "";
-		String month = "";
-		String day = "";
+		String fromStation = journeyDetails.getString("fromStation");
+		String toStation = journeyDetails.getString("toStation");
+		String hour = journeyDetails.getString("hour");
+		String minute = journeyDetails.getString("minute");
+		String year = journeyDetails.getString("year");
+		String month = journeyDetails.getString("month");
+		String day = journeyDetails.getString("day");
+		System.out.println("Hour: " + hour);
 		Integer pageDurationHours = 2;
 
 		String section = Integer
@@ -71,6 +75,7 @@ public class HeadcodeSelectionActivity extends ListActivity {
 
 			URL url = new URL("http://trains.im/departures/" + fromStation
 					+ "/" + year + "/" + month + "/" + day + "/" + section);
+			System.out.println("URL: " + url.toString());
 
 			StringBuilder builder = new StringBuilder();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -176,7 +181,11 @@ public class HeadcodeSelectionActivity extends ListActivity {
 		 * it the parameters given to AsyncTask.execute()
 		 */
 		protected ArrayList<String> doInBackground(String... stations) {
-			return fetchJourneys();
+			if (journeyDetails != null) {
+				return fetchJourneys();
+			} else {
+				return new ArrayList<String>();
+			}
 		}
 
 		/**

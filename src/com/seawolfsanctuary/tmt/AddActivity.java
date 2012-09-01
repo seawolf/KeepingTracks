@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 public class AddActivity extends TabActivity {
 
+	private Bundle journeyDetails = new Bundle();
+
 	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
 	TimePicker tp_FromTime;
@@ -190,6 +192,27 @@ public class AddActivity extends TabActivity {
 				"\nWith: " + txt_DetailClass.getText() +
 
 				"\nAs: " + txt_DetailHeadcode.getText());
+
+		// Update Bundle
+
+		journeyDetails.clear();
+
+		String fromStation = "";
+		if (actv_FromSearch.getText().length() > 2) {
+			fromStation = actv_FromSearch.getText().toString().substring(0, 3);
+		}
+		String toStation = "";
+		if (actv_ToSearch.getText().length() > 2) {
+			toStation = actv_ToSearch.getText().toString().substring(0, 3);
+		}
+
+		journeyDetails.putString("fromStation", fromStation);
+		journeyDetails.putString("toStation", toStation);
+		journeyDetails.putString("hour", "" + tp_FromTime.getCurrentHour());
+		journeyDetails.putString("minute", "" + tp_FromTime.getCurrentMinute());
+		journeyDetails.putString("year", "" + dp_FromDate.getYear());
+		journeyDetails.putString("month", "" + dp_FromDate.getMonth() + 1);
+		journeyDetails.putString("day", "" + dp_FromDate.getDayOfMonth());
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -293,7 +316,7 @@ public class AddActivity extends TabActivity {
 
 	public void startHeadcodeSelectionActivity(View view) {
 		Intent intent = new Intent(this, HeadcodeSelectionActivity.class);
+		intent.putExtras(journeyDetails);
 		startActivity(intent);
 	}
-
 }
