@@ -139,14 +139,11 @@ public class FoursquareCheckinActivity extends ListActivity {
 		if (isUpdatingLocation()) {
 			System.out
 					.println("FYI: Currently updating from another provider/status.");
-			// return false;
 		}
 
 		// Initial Network update
-		if (currentBestLocation == null) {// && !isUpdatingLocation()) {
-			System.out.println("No current best location");// and am not
-															// currently
-															// updating.");
+		if (currentBestLocation == null) {
+			System.out.println("No current best location");
 			return true;
 		}
 
@@ -254,7 +251,6 @@ public class FoursquareCheckinActivity extends ListActivity {
 				.getSystemService(Context.LOCATION_SERVICE));
 
 		removeLocationListener();
-		// Get user's location:
 		attachNetworkLocation();
 		attachGPSLocation();
 
@@ -278,6 +274,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 
 					String checkinMessage = "";
 
+					// When Checking-In from AddActivity
 					if (checkin_details != null) {
 						checkinMessage = "I'm travelling";
 
