@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -15,7 +14,6 @@ import android.widget.ArrayAdapter;
 public class HeadcodeSelectionActivity extends ListActivity {
 
 	/** Called when the activity is first created. */
-	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
