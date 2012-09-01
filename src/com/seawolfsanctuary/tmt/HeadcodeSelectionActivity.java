@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import android.app.ListActivity;
 import android.os.AsyncTask;
@@ -78,12 +79,9 @@ public class HeadcodeSelectionActivity extends ListActivity {
 			String rowEnd = "</tr>";
 			ArrayList<String> rows = new ArrayList<String>();
 
-			String[] rawRows = body.split(rowStart);
+			String[] rawRows = body.split(Pattern.quote(rowStart));
 			for (int r = 1; r < rawRows.length; r++) {
 				String row = rawRows[r];
-				String rowPart = table.substring(table.indexOf(rowStart)
-						+ rowStart.length());
-				row = rowPart.substring(0, rowPart.indexOf(rowEnd));
 				rows.add(row);
 			}
 
@@ -97,7 +95,7 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				String cellEnd = "</";
 
 				ArrayList<String> cells = new ArrayList<String>();
-				String[] rawCells = body.split(cellStart);
+				String[] rawCells = row.split(Pattern.quote(cellStart));
 				for (int i = 0; i < rawCells.length; i++) {
 					cells.add(rawCells[i]);
 				}
@@ -106,7 +104,6 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				ArrayList<String> journey = new ArrayList<String>();
 
 				// Get cell contents and remove any more HTML tags from inside
-				// it
 				for (int c = 0; c < cells.size(); c++) {
 					String cellPart = cells.get(c);
 					String cell = cellPart.substring(cellPart.indexOf(">") + 1,
@@ -130,7 +127,6 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				}
 
 				for (int i = 0; i < cells.size(); i++) {
-					System.out.println("Adding: " + cells.get(i));
 					journey.add(cells.get(i));
 				}
 
