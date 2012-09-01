@@ -38,5 +38,34 @@ public class HeadcodeSelectionActivity extends ListActivity {
 			section = section.substring(0, section.indexOf("."));
 		}
 
+		try {
+
+			URL url = new URL("http://trains.im/location/" + fromStation + "/"
+					+ year + "/" + month + "/" + day + "/" + section + "/"
+					+ toStation);
+
+			StringBuilder builder = new StringBuilder();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					url.openStream(), "UTF-8"));
+
+			for (String line; (line = reader.readLine()) != null;) {
+				builder.append(line.trim());
+			}
+
+			System.out.println(builder.toString());
+
+			try {
+				reader.close();
+			} catch (IOException logOrIgnore) {
+				// TODO ignore
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
