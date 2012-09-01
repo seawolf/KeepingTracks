@@ -3,19 +3,20 @@
     android:id="@+id/MainMenu"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:padding="5dp" >
 
     <TextView
         android:id="@+id/txt_Title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
+        android:paddingBottom="10dp"
         android:paddingTop="10dp"
         android:text="@string/headcode_selection"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
-        android:id="@android:id/list"
+    	android:id="@+id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

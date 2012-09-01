@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.widget.ListView;
+import android.widget.ArrayAdapter;
 
 public class HeadcodeSelectionActivity extends ListActivity {
 
@@ -20,9 +20,21 @@ public class HeadcodeSelectionActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.headcode_selection_activity);
-		registerForContextMenu(getListView());
 
-		ListView lv = getListView();
+		ArrayList<String> allJourneys = fetchJourneys();
+		String[] journeys = new String[allJourneys.size()];
+		for (int i = 0; i < allJourneys.size(); i++) {
+			journeys[i] = allJourneys.get(i);
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, journeys);
+
+		getListView().setAdapter(adapter);
+	}
+
+	private ArrayList<String> fetchJourneys() {
+		ArrayList<String> formattedJourneys = new ArrayList<String>();
 
 		String fromStation = "";
 		String toStation = "";
@@ -74,7 +86,6 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				String rowPart = table.substring(table.indexOf(rowStart)
 						+ rowStart.length());
 				row = rowPart.substring(0, rowPart.indexOf(rowEnd));
-				System.out.println("New Row: " + row);
 				rows.add(row);
 			}
 
@@ -112,11 +123,21 @@ public class HeadcodeSelectionActivity extends ListActivity {
 				// System.out.println("Platform: " + cells.get(3));
 				// System.out.println("Operator: " + cells.get(4));
 
+				String line = cells.get(0);
+				line += ": " + cells.get(1);
+				line += " to " + cells.get(2);
+
+				if (cells.get(3).length() > 0) {
+					line += " (platform " + cells.get(3) + ")";
+				}
+
 				for (int i = 0; i < cells.size(); i++) {
+					System.out.println("Adding: " + cells.get(i));
 					journey.add(cells.get(i));
 				}
 
 				journeys.add(journey);
+				formattedJourneys.add(line);
 			}
 
 			try {
@@ -132,5 +153,7 @@ public class HeadcodeSelectionActivity extends ListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		return formattedJourneys;
 	}
 }
