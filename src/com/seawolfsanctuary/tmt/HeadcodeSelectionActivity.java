@@ -8,10 +8,14 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 public class HeadcodeSelectionActivity extends ListActivity {
+
+	private ArrayList<String> allJourneys;
+	private ArrayAdapter<String> adapter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -19,16 +23,12 @@ public class HeadcodeSelectionActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.headcode_selection_activity);
 
-		ArrayList<String> allJourneys = fetchJourneys();
-		String[] journeys = new String[allJourneys.size()];
-		for (int i = 0; i < allJourneys.size(); i++) {
-			journeys[i] = allJourneys.get(i);
-		}
+		allJourneys = new ArrayList<String>();
+		allJourneys.add("Downloading departures...");
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, journeys);
-
-		getListView().setAdapter(adapter);
+		new DownloadJourneysTask().execute();
+		adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, allJourneys);
 	}
 
 	private ArrayList<String> fetchJourneys() {
@@ -153,5 +153,35 @@ public class HeadcodeSelectionActivity extends ListActivity {
 		}
 
 		return formattedJourneys;
+	}
+
+	private class DownloadJourneysTask extends
+			AsyncTask<String, Void, ArrayList<String>> {
+		/**
+		 * The system calls this to perform work in a worker thread and delivers
+		 * it the parameters given to AsyncTask.execute()
+		 */
+		protected ArrayList<String> doInBackground(String... stations) {
+			return fetchJourneys();
+		}
+
+		/**
+		 * The system calls this to perform work in the UI thread and delivers
+		 * the result from doInBackground()
+		 */
+		protected void onPostExecute(ArrayList<String> result) {
+			System.out.println(result.size());
+			if (result.size() > 0) {
+				allJourneys = result;
+			} else {
+				allJourneys.add("Download failed.");
+			}
+
+			adapter = new ArrayAdapter<String>(
+					HeadcodeSelectionActivity.this.getApplicationContext(),
+					android.R.layout.simple_list_item_1, allJourneys);
+			adapter.notifyDataSetChanged();
+			getListView().setAdapter(adapter);
+		}
 	}
 }
