@@ -1,11 +1,22 @@
 package com.seawolfsanctuary.tmt;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -24,8 +35,6 @@ import android.widget.Toast;
 
 public class AddActivity extends TabActivity {
 
-	private Bundle journeyDetails = new Bundle();
-
 	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
 	TimePicker tp_FromTime;
@@ -42,6 +51,8 @@ public class AddActivity extends TabActivity {
 	AutoCompleteTextView actv_ToSearch;
 
 	TextView txt_Summary;
+
+	private ProgressDialog dialog;
 
 	public static final String dataFilePath = Environment
 			.getExternalStorageDirectory().toString()
@@ -193,10 +204,6 @@ public class AddActivity extends TabActivity {
 
 				"\nAs: " + txt_DetailHeadcode.getText());
 
-		// Update Bundle
-
-		journeyDetails.clear();
-
 		String fromStation = "";
 		if (actv_FromSearch.getText().length() > 2) {
 			fromStation = actv_FromSearch.getText().toString().substring(0, 3);
@@ -205,14 +212,6 @@ public class AddActivity extends TabActivity {
 		if (actv_ToSearch.getText().length() > 2) {
 			toStation = actv_ToSearch.getText().toString().substring(0, 3);
 		}
-
-		journeyDetails.putString("fromStation", fromStation);
-		journeyDetails.putString("toStation", toStation);
-		journeyDetails.putString("hour", "" + tp_FromTime.getCurrentHour());
-		journeyDetails.putString("minute", "" + tp_FromTime.getCurrentMinute());
-		journeyDetails.putString("year", "" + dp_FromDate.getYear());
-		journeyDetails.putString("month", "" + dp_FromDate.getMonth() + 1);
-		journeyDetails.putString("day", "" + dp_FromDate.getDayOfMonth());
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -315,8 +314,204 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void startHeadcodeSelectionActivity(View view) {
-		Intent intent = new Intent(this, HeadcodeSelectionActivity.class);
-		intent.putExtras(journeyDetails);
-		startActivity(intent);
+		dialog = ProgressDialog.show(AddActivity.this,
+				"Downloading Departures",
+				"Downloading departure board. Please wait...", true);
+
+		String from = "";
+		if (actv_FromSearch.getText().toString().length() > 2) {
+			from = actv_FromSearch.getText().toString().substring(0, 3);
+		}
+		String to = "";
+		if (actv_ToSearch.getText().toString().length() > 2) {
+			from = actv_ToSearch.getText().toString().substring(0, 3);
+		}
+		String month = "";
+		if (("" + dp_FromDate.getMonth()).length() > 0) {
+			month = "" + (dp_FromDate.getMonth() + 1);
+		}
+
+		String[] journeyDetails = { from, to,
+				tp_FromTime.getCurrentHour().toString(),
+				tp_FromTime.getCurrentMinute().toString(),
+				"" + dp_FromDate.getYear(), month,
+				"" + dp_FromDate.getDayOfMonth() };
+
+		new DownloadJourneysTask().execute(journeyDetails);
+	}
+
+	private class DownloadJourneysTask extends
+			AsyncTask<String[], Void, ArrayList<String>> {
+
+		/**
+		 * The system calls this to perform work in a worker thread and delivers
+		 * it the parameters given to AsyncTask.execute()
+		 */
+		protected ArrayList<String> doInBackground(String[]... journeysDetails) {
+			ArrayList<String> formattedJourneys = new ArrayList<String>();
+
+			String[] journeyDetails = journeysDetails[0];
+			String fromStation = journeyDetails[0];
+			String toStation = journeyDetails[1];
+			String hour = journeyDetails[2];
+			String minute = journeyDetails[3];
+			String year = journeyDetails[4];
+			String month = journeyDetails[5];
+			String day = journeyDetails[6];
+
+			Integer pageDurationHours = 2;
+
+			String section = Integer
+					.toString((Integer.parseInt(hour) / pageDurationHours));
+			if (section.indexOf(".") != -1) {
+				section = section.substring(0, section.indexOf("."));
+			}
+
+			try {
+				System.out.println("From: " + fromStation);
+				System.out.println("JourneyDetails: "
+						+ journeyDetails.toString());
+
+				URL url = new URL("http://trains.im/departures/" + fromStation
+						+ "/" + year + "/" + month + "/" + day + "/" + section);
+				System.out.println("URL: " + url.toString());
+
+				StringBuilder builder = new StringBuilder();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(url.openStream(), "UTF-8"));
+
+				for (String line; (line = reader.readLine()) != null;) {
+					builder.append(line.trim());
+				}
+
+				String tableStart = "<table class=\"table table-striped\">";
+				String tableEnd = "</table>";
+				String tablePart = builder.substring(builder
+						.indexOf(tableStart) + tableStart.length());
+				System.out.println(tablePart);
+				String table = tablePart.substring(0,
+						tablePart.indexOf(tableEnd));
+
+				String bodyStart = "<tbody>";
+				String bodyEnd = "</tbody>";
+				String bodyPart = table.substring(table.indexOf(bodyStart)
+						+ bodyStart.length());
+				String body = bodyPart.substring(0, bodyPart.indexOf(bodyEnd));
+
+				String rowStart = "<tr";
+				String rowEnd = "</tr>";
+				ArrayList<String> rows = new ArrayList<String>();
+
+				String[] rawRows = body.split(Pattern.quote(rowStart));
+				for (int r = 1; r < rawRows.length; r++) {
+					String row = rawRows[r];
+					rows.add(row);
+				}
+
+				ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
+
+				for (int r = 1; r < rows.size(); r++) {
+					String row = rows.get(r);
+
+					// Split into array of cells
+					String cellStart = "<td";
+					String cellEnd = "</";
+
+					ArrayList<String> cells = new ArrayList<String>();
+					String[] rawCells = row.split(Pattern.quote(cellStart));
+					for (int i = 0; i < rawCells.length; i++) {
+						cells.add(rawCells[i]);
+					}
+					cells.remove(0);
+
+					ArrayList<String> journey = new ArrayList<String>();
+
+					// Get cell contents and remove any more HTML tags from
+					// inside
+					for (int c = 0; c < cells.size(); c++) {
+						String cellPart = cells.get(c);
+						String cell = cellPart.substring(
+								cellPart.indexOf(">") + 1,
+								cellPart.indexOf(cellEnd));
+						cells.set(c, android.text.Html.fromHtml(cell)
+								.toString());
+					}
+
+					// Pick out elements
+					// System.out.println("Headcode: " + cells.get(0));
+					// System.out.println("Departure: " + cells.get(1));
+					// System.out.println("Destination: " + cells.get(2));
+					// System.out.println("Platform: " + cells.get(3));
+					// System.out.println("Operator: " + cells.get(4));
+
+					String line = cells.get(0);
+					line += ": " + cells.get(1);
+					line += " to " + cells.get(2);
+
+					if (cells.get(3).length() > 0) {
+						line += " (platform " + cells.get(3) + ")";
+					}
+
+					for (int i = 0; i < cells.size(); i++) {
+						journey.add(cells.get(i));
+					}
+
+					journeys.add(journey);
+					formattedJourneys.add(line);
+				}
+
+				try {
+					reader.close();
+				} catch (IOException logOrIgnore) {
+					// TODO ignore
+				}
+
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return formattedJourneys;
+		}
+
+		/**
+		 * The system calls this to perform work in the UI thread and delivers
+		 * the result from doInBackground()
+		 */
+		protected void onPostExecute(ArrayList<String> resultList) {
+			dialog.dismiss();
+
+			if (resultList.size() > 0) {
+
+				String[] tempResults = new String[resultList.size()];
+				for (int i = 0; i < resultList.size(); i++) {
+					tempResults[i] = resultList.get(i);
+				}
+
+				final String[] results = tempResults;
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						AddActivity.this);
+				builder.setTitle("Select Journey");
+				builder.setSingleChoiceItems(results, -1,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int item) {
+								txt_DetailHeadcode.setText(results[item]
+										.substring(0,
+												results[item].indexOf(":")));
+								dialog.dismiss();
+							}
+						});
+				AlertDialog alert = builder.create();
+				alert.show();
+			} else {
+				Toast.makeText(getBaseContext(),
+						"Download failed. Check your Internet connection.",
+						Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 }
