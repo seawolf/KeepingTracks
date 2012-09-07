@@ -301,30 +301,48 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void startHeadcodeSelectionActivity(View view) {
-		dialog = ProgressDialog.show(AddActivity.this,
-				"Downloading Departures",
-				"Downloading departure board. Please wait...", true);
+		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
+		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
+		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
-		String from = "";
-		if (actv_FromSearch.getText().toString().length() > 2) {
-			from = actv_FromSearch.getText().toString().substring(0, 3);
-		}
-		String to = "";
-		if (actv_ToSearch.getText().toString().length() > 2) {
-			from = actv_ToSearch.getText().toString().substring(0, 3);
-		}
+		String from = actv_FromSearch.getText().toString();
+		String to = actv_ToSearch.getText().toString();
 		String month = "";
-		if (("" + dp_FromDate.getMonth()).length() > 0) {
-			month = "" + (dp_FromDate.getMonth() + 1);
+		int m = -1;
+
+		if (from.length() > 2) {
+			from = from.substring(0, 3);
 		}
 
-		String[] journeyDetails = { from, to,
-				tp_FromTime.getCurrentHour().toString(),
-				tp_FromTime.getCurrentMinute().toString(),
-				"" + dp_FromDate.getYear(), month,
-				"" + dp_FromDate.getDayOfMonth() };
+		if (to.length() > 2) {
+			to = to.substring(0, 3);
+		}
 
-		new DownloadJourneysTask().execute(journeyDetails);
+		m = dp_FromDate.getMonth();
+		if (Integer.toString(m).length() > 0) {
+			month = Integer.toString(m + 1);
+		}
+
+		if (from.length() < 3) {
+			Toast.makeText(getBaseContext(),
+					"Enter a 'From' station code to fetch journeys.",
+					Toast.LENGTH_LONG).show();
+			mTabHost.setCurrentTab(0);
+		} else {
+			String[] journeyDetails = { from, to,
+					"" + tp_FromTime.getCurrentHour(),
+					"" + tp_FromTime.getCurrentMinute(),
+					"" + dp_FromDate.getYear(), month,
+					"" + dp_FromDate.getDayOfMonth() };
+
+			dialog = ProgressDialog.show(AddActivity.this,
+					"Downloading Departures",
+					"Downloading departure board. Please wait...", true);
+
+			new DownloadJourneysTask().execute(journeyDetails);
+		}
+
 	}
 
 	private class DownloadJourneysTask extends
@@ -468,6 +486,7 @@ public class AddActivity extends TabActivity {
 			dialog.dismiss();
 
 			if (resultList.size() > 0) {
+				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 
 				String[] tempResults = new String[resultList.size()];
 				for (int i = 0; i < resultList.size(); i++) {
