@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content" >
 
                         <CheckBox
-                            android:id="@+id/cb_DetailClass"
+                            android:id="@+id/chk_DetailClass"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
@@ -98,7 +98,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" >
                         <CheckBox
-                            android:id="@+id/cb_DetailHeadcode"
+                            android:id="@+id/chk_DetailHeadcode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"

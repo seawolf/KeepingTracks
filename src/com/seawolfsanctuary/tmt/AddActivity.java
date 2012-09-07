@@ -40,9 +40,9 @@ public class AddActivity extends TabActivity {
 	TimePicker tp_FromTime;
 	AutoCompleteTextView actv_FromSearch;
 
-	CheckBox cb_DetailClass;
+	CheckBox chk_DetailClass;
 	TextView txt_DetailClass;
-	CheckBox cb_DetailHeadcode;
+	CheckBox chk_DetailHeadcode;
 	TextView txt_DetailHeadcode;
 
 	TextView txt_ToSearch;
@@ -215,17 +215,17 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void onClassCheckboxClicked(View view) {
-		CheckBox cb_DetailClass = (CheckBox) findViewById(R.id.cb_DetailClass);
+		CheckBox chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
 		TextView txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
-		txt_DetailClass.setEnabled(((CheckBox) cb_DetailClass).isChecked());
+		txt_DetailClass.setEnabled(((CheckBox) chk_DetailClass).isChecked());
 
 		Helpers.hideKeyboard(view);
 	}
 
 	public void onHeadcodeCheckboxClicked(View view) {
-		CheckBox cb_DetailHeadcode = (CheckBox) findViewById(R.id.cb_DetailHeadcode);
+		CheckBox chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 		TextView txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-		txt_DetailHeadcode.setEnabled(((CheckBox) cb_DetailHeadcode)
+		txt_DetailHeadcode.setEnabled(((CheckBox) chk_DetailHeadcode)
 				.isChecked());
 
 		Helpers.hideKeyboard(view);
