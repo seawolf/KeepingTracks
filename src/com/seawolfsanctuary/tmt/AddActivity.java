@@ -19,8 +19,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -121,41 +119,21 @@ public class AddActivity extends TabActivity {
 
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
-
-		TextWatcher tw_FromToTextChanged = new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				updateTyped();
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-		};
 		OnItemClickListener cl_FromToClickListener = new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				updateText();
-				updateTyped();
 				Helpers.hideKeyboard(view);
 			}
 		};
 
 		actv_FromSearch.setAdapter(adapter);
 		actv_FromSearch.setThreshold(2);
-		actv_FromSearch.addTextChangedListener(tw_FromToTextChanged);
 		actv_FromSearch.setOnItemClickListener(cl_FromToClickListener);
 
 		actv_ToSearch.setAdapter(adapter);
 		actv_ToSearch.setThreshold(2);
-		actv_ToSearch.addTextChangedListener(tw_FromToTextChanged);
 		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
 	}
 
@@ -221,18 +199,6 @@ public class AddActivity extends TabActivity {
 				"\nWith: " + txt_DetailClass.getText() +
 
 				"\nAs: " + txt_DetailHeadcode.getText());
-	}
-
-	private void updateTyped() {
-
-		String fromStation = "";
-		if (actv_FromSearch.getText().length() > 2) {
-			fromStation = actv_FromSearch.getText().toString().substring(0, 3);
-		}
-		String toStation = "";
-		if (actv_ToSearch.getText().length() > 2) {
-			toStation = actv_ToSearch.getText().toString().substring(0, 3);
-		}
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -389,10 +355,6 @@ public class AddActivity extends TabActivity {
 			}
 
 			try {
-				System.out.println("From: " + fromStation);
-				System.out.println("JourneyDetails: "
-						+ journeyDetails.toString());
-
 				URL url = new URL("http://trains.im/departures/" + fromStation
 						+ "/" + year + "/" + month + "/" + day + "/" + section);
 				System.out.println("URL: " + url.toString());
