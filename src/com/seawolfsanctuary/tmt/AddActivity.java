@@ -19,11 +19,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -34,6 +37,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class AddActivity extends TabActivity {
+
+	TabHost mTabHost;
 
 	TextView txt_FromSearch;
 	DatePicker dp_FromDate;
@@ -91,7 +96,7 @@ public class AddActivity extends TabActivity {
 
 		setContentView(R.layout.add_activity);
 
-		TabHost mTabHost = getTabHost();
+		mTabHost = getTabHost();
 
 		mTabHost.addTab(mTabHost.newTabSpec("tc_From").setIndicator("From")
 				.setContent(R.id.tc_From));
@@ -105,6 +110,7 @@ public class AddActivity extends TabActivity {
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabID) {
+				// if detail then update 'from', try 'to'
 				if (tabID == "tc_Summary") {
 					updateText();
 				}
@@ -116,29 +122,41 @@ public class AddActivity extends TabActivity {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
+		TextWatcher tw_FromToTextChanged = new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				updateTyped();
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		};
+		OnItemClickListener cl_FromToClickListener = new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				updateText();
+				updateTyped();
+				Helpers.hideKeyboard(view);
+			}
+		};
+
 		actv_FromSearch.setAdapter(adapter);
 		actv_FromSearch.setThreshold(2);
-		actv_FromSearch
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						updateText();
-						Helpers.hideKeyboard(actv_FromSearch);
-					}
-				});
+		actv_FromSearch.addTextChangedListener(tw_FromToTextChanged);
+		actv_FromSearch.setOnItemClickListener(cl_FromToClickListener);
 
 		actv_ToSearch.setAdapter(adapter);
 		actv_ToSearch.setThreshold(2);
-		actv_ToSearch
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						updateText();
-						Helpers.hideKeyboard(actv_ToSearch);
-					}
-				});
+		actv_ToSearch.addTextChangedListener(tw_FromToTextChanged);
+		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
 	}
 
 	private String[] read_csv(String filename) {
@@ -203,6 +221,9 @@ public class AddActivity extends TabActivity {
 				"\nWith: " + txt_DetailClass.getText() +
 
 				"\nAs: " + txt_DetailHeadcode.getText());
+	}
+
+	private void updateTyped() {
 
 		String fromStation = "";
 		if (actv_FromSearch.getText().length() > 2) {
