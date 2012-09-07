@@ -46,6 +46,10 @@
             android:name=".FoursquareCheckinActivity"
             android:label="foursquare_venue_select" >
         </activity>
+        <activity
+            android:name=".HeadcodeSelectionActivity"
+            android:label="@string/headcode_selection" >
+        </activity>
     </application>
 
 </manifest>
