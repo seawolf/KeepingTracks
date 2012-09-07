@@ -296,7 +296,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 							checkinMessage += " by riding ";
 
 							if (checkin_details.getString("class").length() > 0) {
-								checkinMessage += " a "
+								checkinMessage += "a "
 										+ checkin_details.getString("class");
 							}
 
