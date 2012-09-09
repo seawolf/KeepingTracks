@@ -311,16 +311,16 @@ public class AddActivity extends TabActivity {
 				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 				if (chk_Checkin.isChecked()) {
 					Bundle details = new Bundle();
-					details.putString("from_station", Helpers
+					details.putString("from_stn", Helpers
 							.trimCodeFromStation(actv_FromSearch.getText()
 									.toString()));
-					details.putString("to_station", Helpers
+					details.putString("to_stn", Helpers
 							.trimCodeFromStation(actv_ToSearch.getText()
 									.toString()));
-					details.putString("class", txt_DetailClass.getText()
+					details.putString("detail_class", txt_DetailClass.getText()
 							.toString());
-					details.putString("headcode", txt_DetailHeadcode.getText()
-							.toString());
+					details.putString("detail_headcode", txt_DetailHeadcode
+							.getText().toString());
 
 					AddActivity.this.finish();
 					Intent intent = new Intent(this, ListSavedActivity.class);
@@ -353,14 +353,15 @@ public class AddActivity extends TabActivity {
 		if (template == null) {
 			template = new Bundle();
 		}
+
 		Intent intent = new Intent(this, ClassInfoActivity.class);
 		intent.putExtras(template);
 		startActivity(intent);
 	}
 
-	private void foursquareCheckin(Bundle details) {
+	private void foursquareCheckin(Bundle journey) {
 		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
-		intent.putExtras(details);
+		intent.putExtras(journey);
 		startActivity(intent);
 	}
 }

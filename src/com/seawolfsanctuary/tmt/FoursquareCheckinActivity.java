@@ -278,37 +278,41 @@ public class FoursquareCheckinActivity extends ListActivity {
 					if (checkin_details != null) {
 						checkinMessage = "I'm travelling";
 
-						if (checkin_details.getString("from_station").length() > 0) {
+						if (checkin_details.getString("from_stn").length() > 0) {
 							checkinMessage += " from "
-									+ checkin_details.getString("from_station");
+									+ checkin_details.getString("from_stn");
 						}
 
-						if (checkin_details.getString("to_station").length() > 0) {
+						if (checkin_details.getString("to_stn").length() > 0) {
 							checkinMessage += " to "
-									+ checkin_details.getString("to_station");
+									+ checkin_details.getString("to_stn");
 
 						}
 
-						if (checkin_details.getString("class").length() > 0
-								|| checkin_details.getString("headcode")
+						if (checkin_details.getString("detail_class").length() > 0
+								|| checkin_details.getString("detail_headcode")
 										.length() > 0) {
 
 							checkinMessage += " by riding ";
 
-							if (checkin_details.getString("class").length() > 0) {
+							if (checkin_details.getString("detail_class")
+									.length() > 0) {
 								checkinMessage += "a "
-										+ checkin_details.getString("class");
+										+ checkin_details
+												.getString("detail_class");
 							}
 
-							if (checkin_details.getString("class").length() > 0
-									&& checkin_details.getString("headcode")
-											.length() > 0) {
+							if (checkin_details.getString("detail_class")
+									.length() > 0
+									&& checkin_details.getString(
+											"detail_headcode").length() > 0) {
 								checkinMessage += " as ";
 							}
 
-							if (checkin_details.getString("headcode").length() > 0) {
+							if (checkin_details.getString("detail_headcode")
+									.length() > 0) {
 								checkinMessage += checkin_details
-										.getString("headcode");
+										.getString("detail_headcode");
 							}
 						}
 

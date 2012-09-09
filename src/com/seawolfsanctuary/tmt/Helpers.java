@@ -152,8 +152,9 @@ public class Helpers {
 				.findViewById(R.id.txt_DetailClass);
 		TextView txt_DetailHeadcode = (TextView) src
 				.findViewById(R.id.txt_DetailHeadcode);
-		journey.putCharSequence("detail_class", txt_DetailClass.getText());
-		journey.putCharSequence("detail_headcode", txt_DetailHeadcode.getText());
+		journey.putString("detail_class", txt_DetailClass.getText().toString());
+		journey.putString("detail_headcode", txt_DetailHeadcode.getText()
+				.toString());
 
 		AutoCompleteTextView actv_ToSearch = (AutoCompleteTextView) src
 				.findViewById(R.id.actv_ToSearch);
@@ -205,20 +206,19 @@ public class Helpers {
 			}
 
 			if (journey.containsKey("detail_class")) {
-				if (journey.getCharSequence("detail_class").length() > 0) {
+				if (journey.getString("detail_class").length() > 0) {
 					TextView txt_DetailClass = (TextView) dest
 							.findViewById(R.id.txt_DetailClass);
-					txt_DetailClass.setText(journey
-							.getCharSequence("detail_class"));
+					txt_DetailClass.setText(journey.getString("detail_class"));
 				}
 			}
 
 			if (journey.containsKey("detail_headcode")) {
-				if (journey.getCharSequence("detail_headcode").length() > 0) {
+				if (journey.getString("detail_headcode").length() > 0) {
 					TextView txt_DetailHeadcode = (TextView) dest
 							.findViewById(R.id.txt_DetailHeadcode);
 					txt_DetailHeadcode.setText(journey
-							.getCharSequence("detail_headcode"));
+							.getString("detail_headcode"));
 				}
 			}
 
