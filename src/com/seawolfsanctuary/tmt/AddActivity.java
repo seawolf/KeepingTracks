@@ -69,7 +69,6 @@ public class AddActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		template = getIntent().getExtras();
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
@@ -92,16 +91,13 @@ public class AddActivity extends TabActivity {
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabID) {
+				template = Helpers.saveCurrentJourney(AddActivity.this);
 
 				if (tabID == "tc_Detail") {
-					// Show defaults from bundle
-					if (template != null) {
-						if (template.containsKey("txt_ClassInfo")) {
-							txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
-							txt_DetailClass.setText(template
-									.getString("txt_ClassInfo"));
-							template.remove("txt_ClassInfo");
-						}
+					if (template.containsKey("detail_class")) {
+						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+						txt_DetailClass.setText(template
+								.getCharSequence("detail_class"));
 					}
 				}
 
@@ -157,6 +153,8 @@ public class AddActivity extends TabActivity {
 					}
 				});
 
+		template = getIntent().getExtras();
+		Helpers.loadCurrentJourney(template, AddActivity.this);
 	}
 
 	private String[] read_csv(String filename) {
@@ -351,7 +349,12 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void startClassInfoActivity(View view) {
+		template = Helpers.saveCurrentJourney(AddActivity.this);
+		if (template == null) {
+			template = new Bundle();
+		}
 		Intent intent = new Intent(this, ClassInfoActivity.class);
+		intent.putExtras(template);
 		startActivity(intent);
 	}
 
