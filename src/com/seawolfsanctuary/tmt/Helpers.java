@@ -170,46 +170,89 @@ public class Helpers {
 	}
 
 	public static void loadCurrentJourney(Bundle journey, Activity dest) {
-		try {
-			AutoCompleteTextView actv_FromSearch = (AutoCompleteTextView) dest
-					.findViewById(R.id.actv_FromSearch);
-			actv_FromSearch.setText(journey.getString("from_stn"));
+		if (journey != null) {
+			System.out.println("Loading journey...");
+			if (journey.containsKey("from_stn")) {
+				if (journey.getString("from_stn").length() > 0) {
+					AutoCompleteTextView actv_FromSearch = (AutoCompleteTextView) dest
+							.findViewById(R.id.actv_FromSearch);
+					actv_FromSearch.setText(journey.getString("from_stn"));
+				}
+			}
 
-			DatePicker dp_FromDate = (DatePicker) dest
-					.findViewById(R.id.dp_FromDate);
-			dp_FromDate.init(journey.getInt("from_date_year"),
-					journey.getInt("from_date_month"),
-					journey.getInt("from_date_day"), null);
+			if (journey.containsKey("from_date_year")) {
+				if (journey.getInt("from_date_year")
+						+ journey.getInt("from_date_month")
+						+ journey.getInt("from_date_day") > 0) {
+					DatePicker dp_FromDate = (DatePicker) dest
+							.findViewById(R.id.dp_FromDate);
+					dp_FromDate.init(journey.getInt("from_date_year"),
+							journey.getInt("from_date_month"),
+							journey.getInt("from_date_day"), null);
+				}
+			}
 
-			TimePicker tp_FromTime = (TimePicker) dest
-					.findViewById(R.id.tp_FromTime);
-			tp_FromTime.setCurrentHour(journey.getInt("from_time_hour"));
-			tp_FromTime.setCurrentMinute(journey.getInt("from_time_minute"));
+			if (journey.containsKey("from_time_hour")) {
+				if (journey.getInt("from_time_hour")
+						+ journey.getInt("from_time_minute") > 0) {
+					TimePicker tp_FromTime = (TimePicker) dest
+							.findViewById(R.id.tp_FromTime);
+					tp_FromTime
+							.setCurrentHour(journey.getInt("from_time_hour"));
+					tp_FromTime.setCurrentMinute(journey
+							.getInt("from_time_minute"));
+				}
+			}
 
-			TextView txt_DetailClass = (TextView) dest
-					.findViewById(R.id.txt_DetailClass);
-			txt_DetailClass.setText(journey.getCharSequence("detail_class"));
+			if (journey.containsKey("detail_class")) {
+				if (journey.getCharSequence("detail_class").length() > 0) {
+					TextView txt_DetailClass = (TextView) dest
+							.findViewById(R.id.txt_DetailClass);
+					txt_DetailClass.setText(journey
+							.getCharSequence("detail_class"));
+				}
+			}
 
-			TextView txt_DetailHeadcode = (TextView) dest
-					.findViewById(R.id.txt_DetailHeadcode);
-			txt_DetailHeadcode.setText(journey
-					.getCharSequence("detail_headcode"));
+			if (journey.containsKey("detail_headcode")) {
+				if (journey.getCharSequence("detail_headcode").length() > 0) {
+					TextView txt_DetailHeadcode = (TextView) dest
+							.findViewById(R.id.txt_DetailHeadcode);
+					txt_DetailHeadcode.setText(journey
+							.getCharSequence("detail_headcode"));
+				}
+			}
 
-			AutoCompleteTextView actv_ToSearch = (AutoCompleteTextView) dest
-					.findViewById(R.id.actv_ToSearch);
-			actv_ToSearch.setText(journey.getString("to_stn"));
+			if (journey.containsKey("to_stn")) {
+				if (journey.getString("to_stn").length() > 0) {
+					AutoCompleteTextView actv_ToSearch = (AutoCompleteTextView) dest
+							.findViewById(R.id.actv_ToSearch);
+					actv_ToSearch.setText(journey.getString("to_stn"));
+				}
+			}
 
-			DatePicker dp_ToDate = (DatePicker) dest
-					.findViewById(R.id.dp_ToDate);
-			dp_ToDate.init(journey.getInt("to_date_year"),
-					journey.getInt("to_date_month"),
-					journey.getInt("to_date_day"), null);
+			if (journey.containsKey("to_date_year")) {
+				if (journey.getInt("to_date_year")
+						+ journey.getInt("to_date_month")
+						+ journey.getInt("to_date_day") > 0) {
+					DatePicker dp_ToDate = (DatePicker) dest
+							.findViewById(R.id.dp_ToDate);
+					dp_ToDate.init(journey.getInt("to_date_year"),
+							journey.getInt("to_date_month"),
+							journey.getInt("to_date_day"), null);
+				}
+			}
 
-			TimePicker tp_ToTime = (TimePicker) dest
-					.findViewById(R.id.tp_ToTime);
-			tp_ToTime.setCurrentHour(journey.getInt("to_time_hour"));
-			tp_ToTime.setCurrentMinute(journey.getInt("to_time_minute"));
-		} catch (Exception e) {
+			if (journey.containsKey("to_time_hour")) {
+				if (journey.getInt("to_time_hour")
+						+ journey.getInt("to_time_minute") > 0) {
+
+					TimePicker tp_ToTime = (TimePicker) dest
+							.findViewById(R.id.tp_ToTime);
+					tp_ToTime.setCurrentHour(journey.getInt("to_time_hour"));
+					tp_ToTime
+							.setCurrentMinute(journey.getInt("to_time_minute"));
+				}
+			}
 		}
 	}
 }
