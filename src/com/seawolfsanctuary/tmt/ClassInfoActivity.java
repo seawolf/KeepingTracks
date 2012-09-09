@@ -71,6 +71,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		if (template == null) {
 			template = new Bundle();
 		}
+
 		final ClassInfoAdapter adaptor = new ClassInfoAdapter();
 		setListAdapter(adaptor);
 		registerForContextMenu(getExpandableListView());

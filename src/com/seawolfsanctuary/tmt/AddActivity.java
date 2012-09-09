@@ -357,11 +357,15 @@ public class AddActivity extends TabActivity {
 		Intent intent = new Intent(this, ClassInfoActivity.class);
 		intent.putExtras(template);
 		startActivity(intent);
+		// TODO: can we finish this if a class is selected from new activity,
+		// but keep it if 'Back' is pushed instead?
+		AddActivity.this.finish();
 	}
 
 	private void foursquareCheckin(Bundle journey) {
 		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
 		intent.putExtras(journey);
 		startActivity(intent);
+		AddActivity.this.finish();
 	}
 }

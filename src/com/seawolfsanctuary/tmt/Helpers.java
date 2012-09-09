@@ -172,7 +172,6 @@ public class Helpers {
 
 	public static void loadCurrentJourney(Bundle journey, Activity dest) {
 		if (journey != null) {
-			System.out.println("Loading journey...");
 			if (journey.containsKey("from_stn")) {
 				if (journey.getString("from_stn").length() > 0) {
 					AutoCompleteTextView actv_FromSearch = (AutoCompleteTextView) dest
