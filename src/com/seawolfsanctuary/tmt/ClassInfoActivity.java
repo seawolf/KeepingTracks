@@ -36,6 +36,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	public static final int IMAGE_POSITION = 0;
 
+	private Bundle template;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -64,6 +66,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.class_info_activity);
 
+		template = getIntent().getExtras();
+
+		if (template == null) {
+			template = new Bundle();
+		}
+
 		final ClassInfoAdapter adaptor = new ClassInfoAdapter();
 		setListAdapter(adaptor);
 		registerForContextMenu(getExpandableListView());
@@ -76,9 +84,13 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				ArrayList<String[]> data = adaptor.data;
 				String classNo = data.get(id)[0].toString();
 
-				Bundle template = new Bundle();
-				template.putString("txt_ClassInfo", classNo);
+				if (template == null) {
+					template = new Bundle();
+				} else {
+					template.remove("detail_class");
+				}
 
+				template.putCharSequence("detail_class", classNo);
 				Intent intent = new Intent(view.getContext(), AddActivity.class);
 				intent.putExtras(template);
 				startActivity(intent);

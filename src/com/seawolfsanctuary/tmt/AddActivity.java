@@ -86,7 +86,6 @@ public class AddActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		template = getIntent().getExtras();
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
@@ -109,16 +108,13 @@ public class AddActivity extends TabActivity {
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabID) {
+				template = Helpers.saveCurrentJourney(AddActivity.this);
 
 				if (tabID == "tc_Detail") {
-					// Show defaults from bundle
-					if (template != null) {
-						if (template.containsKey("txt_ClassInfo")) {
-							txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
-							txt_DetailClass.setText(template
-									.getString("txt_ClassInfo"));
-							template.remove("txt_ClassInfo");
-						}
+					if (template.containsKey("detail_class")) {
+						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+						txt_DetailClass.setText(template
+								.getCharSequence("detail_class"));
 					}
 				}
 
@@ -165,6 +161,9 @@ public class AddActivity extends TabActivity {
 		actv_ToSearch.setAdapter(adapter);
 		actv_ToSearch.setThreshold(2);
 		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
+
+		template = getIntent().getExtras();
+		Helpers.loadCurrentJourney(template, AddActivity.this);
 	}
 
 	private String[] read_csv(String filename) {
@@ -321,16 +320,16 @@ public class AddActivity extends TabActivity {
 				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 				if (chk_Checkin.isChecked()) {
 					Bundle details = new Bundle();
-					details.putString("from_station", Helpers
+					details.putString("from_stn", Helpers
 							.trimCodeFromStation(actv_FromSearch.getText()
 									.toString()));
-					details.putString("to_station", Helpers
+					details.putString("to_stn", Helpers
 							.trimCodeFromStation(actv_ToSearch.getText()
 									.toString()));
-					details.putString("class", txt_DetailClass.getText()
+					details.putString("detail_class", txt_DetailClass.getText()
 							.toString());
-					details.putString("headcode", txt_DetailHeadcode.getText()
-							.toString());
+					details.putString("detail_headcode", txt_DetailHeadcode
+							.getText().toString());
 
 					AddActivity.this.finish();
 					Intent intent = new Intent(this, ListSavedActivity.class);
@@ -359,14 +358,24 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void startClassInfoActivity(View view) {
+		template = Helpers.saveCurrentJourney(AddActivity.this);
+		if (template == null) {
+			template = new Bundle();
+		}
+
 		Intent intent = new Intent(this, ClassInfoActivity.class);
+		intent.putExtras(template);
 		startActivity(intent);
+		// TODO: can we finish this if a class is selected from new activity,
+		// but keep it if 'Back' is pushed instead?
+		AddActivity.this.finish();
 	}
 
-	private void foursquareCheckin(Bundle details) {
+	private void foursquareCheckin(Bundle journey) {
 		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
-		intent.putExtras(details);
+		intent.putExtras(journey);
 		startActivity(intent);
+		AddActivity.this.finish();
 	}
 
 	public void startHeadcodeSelectionActivity(View view) {
