@@ -1,13 +1,16 @@
 package com.seawolfsanctuary.tmt;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -92,6 +95,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			}
 		});
 
+		checkForImport(this.getExpandableListView());
 	}
 
 	class ListSavedAdapter extends BaseExpandableListAdapter {
@@ -280,5 +284,69 @@ public class ListSavedActivity extends ExpandableListActivity {
 		}
 
 		return success;
+	}
+
+	private void checkForImport(final View view) {
+		// do we have a CSV file on the SD card?
+		if (new File(Helpers.dataDirectoryPath + "/routes.csv").exists()) {
+			new AlertDialog.Builder(view.getContext())
+					.setTitle("Old Data Found")
+					.setMessage(
+							"The SD card has a file containing previous journeys."
+									+ " "
+									+ "Would you like to import it into the database?")
+					.setPositiveButton("Yes", new OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							ProgressDialog progressDialog = new ProgressDialog(
+									view.getContext());
+							progressDialog
+									.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+							progressDialog.setTitle("Importing...");
+							progressDialog
+									.setMessage("Importing routes from CSV file...");
+							progressDialog.setCancelable(false);
+							new ImportTask(progressDialog).execute();
+						}
+					}).setNegativeButton("No", new OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							// ignore
+						}
+					}).show();
+		}
+	}
+
+	private class ImportTask extends AsyncTask<Void, Void, ArrayList<Boolean>> {
+		private ProgressDialog progressDialog;
+
+		public ImportTask(ProgressDialog dialogFromActivity) {
+			progressDialog = dialogFromActivity;
+		}
+
+		public void onPreExecute() {
+			progressDialog.show();
+		}
+
+		protected ArrayList<Boolean> doInBackground(Void... args) {
+			return new Journey(progressDialog.getContext()).importFromCSV();
+		}
+
+		protected void onPostExecute(ArrayList<Boolean> statuses) {
+			progressDialog.dismiss();
+
+			int successes = 0;
+			int failures = 0;
+			for (Boolean status : statuses) {
+				if (status == true) {
+					successes += 1;
+				} else {
+					failures += 1;
+				}
+			}
+
+			Toast.makeText(
+					getApplicationContext(),
+					"Imported " + successes + " routes, " + failures
+							+ " failed.", Toast.LENGTH_LONG).show();
+		}
 	}
 }
