@@ -101,8 +101,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 	class ListSavedAdapter extends BaseExpandableListAdapter {
 
-		ArrayList<String> entries = loadSavedEntries(true);
-		ArrayList<String[]> data = parseEntries(entries);
+		ArrayList<String[]> data = loadSavedEntries(true);
 		ArrayList<String> names = new ArrayList<String>(getNames(data));
 
 		private String[] presentedNames = Helpers
@@ -218,68 +217,44 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 	}
 
-	public ArrayList<String> loadSavedEntries(boolean showToast) {
+	public ArrayList<String[]> loadSavedEntries(boolean showToast) {
 
-		try {
-			ArrayList<String> array = new ArrayList<String>();
+		ArrayList<String[]> allJourneys = new ArrayList<String[]>();
 
-			Journey db_journeys = new Journey(this);
-			db_journeys.open();
-			Cursor c = db_journeys.getAllJourneys();
-			if (c.moveToFirst()) {
-				do {
-					array.add("" + c.getString(1) + "," + c.getInt(2) + ","
-							+ c.getInt(3) + "," + c.getInt(4) + ","
-							+ c.getInt(5) + "," + c.getInt(6) + ","
-							+ c.getString(7) + "," + c.getInt(8) + ","
-							+ c.getInt(9) + "," + c.getInt(10) + ","
-							+ c.getInt(11) + "," + c.getInt(12) + ","
-							+ c.getString(13) + "," + c.getString(14));
-					System.out.println("Row " + c.getInt(0) + ": "
-							+ array.toString());
-				} while (c.moveToNext());
-			}
-			db_journeys.close();
-
-			if (showToast) {
-				String msg = "Loaded " + array.size() + " entr"
-						+ (array.size() == 1 ? "y" : "ies") + " from database.";
-				System.out.println(msg);
-				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT)
-						.show();
-			}
-			return array;
-
-		} catch (Exception e) {
-			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
-
-			return new ArrayList<String>();
+		Journey db_journeys = new Journey(this);
+		db_journeys.open();
+		Cursor c = db_journeys.getAllJourneys();
+		if (c.moveToFirst()) {
+			do {
+				String[] entry = new String[14];
+				System.out.println("Reading row #" + c.getInt(0) + "...");
+				entry[0] = c.getString(1);
+				entry[1] = "" + c.getInt(2);
+				entry[2] = "" + c.getInt(3);
+				entry[3] = "" + c.getInt(4);
+				entry[4] = "" + c.getInt(5);
+				entry[5] = "" + c.getInt(6);
+				entry[6] = c.getString(7);
+				entry[7] = "" + c.getInt(8);
+				entry[8] = "" + c.getInt(9);
+				entry[9] = "" + c.getInt(10);
+				entry[10] = "" + c.getInt(11);
+				entry[11] = "" + c.getInt(12);
+				entry[12] = c.getString(13);
+				entry[13] = c.getString(14);
+				allJourneys.add(entry);
+			} while (c.moveToNext());
 		}
+		db_journeys.close();
 
-	}
-
-	private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
-		ArrayList<String[]> data = new ArrayList<String[]>();
-
-		try {
-			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
-				String str = (String) i.next();
-				String[] elements = str.split(",");
-				String[] entry = new String[elements.length];
-
-				for (int j = 0; j < entry.length; j++) {
-					entry[j] = Helpers.trimCSVSpeech(elements[j]);
-				}
-
-				data.add(entry);
-			}
-		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
+		if (showToast) {
+			String msg = "Loaded " + allJourneys.size() + " entr"
+					+ (allJourneys.size() == 1 ? "y" : "ies")
+					+ " from database.";
+			System.out.println(msg);
+			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
 		}
-
-		return data;
+		return allJourneys;
 	}
 
 	public boolean deleteEntry(ArrayList<String> entries, long long_position) {
