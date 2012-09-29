@@ -1,9 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
@@ -76,9 +73,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 								public void onClick(DialogInterface arg0,
 										int arg1) {
 
-									deleteEntry(
-											(ArrayList<String>) loadSavedEntries(false),
-											id);
+									deleteEntry(id);
 
 									Intent intent = getIntent();
 									finish();
@@ -257,36 +252,24 @@ public class ListSavedActivity extends ExpandableListActivity {
 		return allJourneys;
 	}
 
-	public boolean deleteEntry(ArrayList<String> entries, long long_position) {
+	public boolean deleteEntry(int position) {
 		boolean success = false;
-		int position = (int) long_position;
+		int id = -1;
 
 		try {
-			entries.remove(position);
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
 
-			File modified = new File(Helpers.dataDirectoryPath
-					+ "/routes.csv.new");
-			if (!modified.exists()) {
-				modified.createNewFile();
+			// Fetch all journeys so we can find out the id to delete
+			Cursor c = db_journeys.getAllJourneys();
+			if (c.moveToFirst()) {
+				c.moveToPosition(position);
+				id = c.getInt(0);
+				System.out.println("Deleting row #" + id + "...");
+				success = db_journeys.deleteJourney(id);
 			}
 
-			FileWriter writer = new FileWriter(modified, true);
-
-			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
-				String str = (String) i.next();
-				writer.append(str);
-				writer.write(System.getProperty("line.separator"));
-			}
-			writer.close();
-
-			File existing = new File(Helpers.dataDirectoryPath + "/routes.csv");
-			if (!existing.exists()) {
-				existing.createNewFile();
-			}
-
-			modified.renameTo(existing);
-			modified.delete();
-
+			db_journeys.close();
 			Toast.makeText(getBaseContext(), "Entry deleted.",
 					Toast.LENGTH_SHORT).show();
 
@@ -298,5 +281,4 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 		return success;
 	}
-
 }
