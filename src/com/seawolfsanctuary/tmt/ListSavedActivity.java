@@ -1,8 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,8 +10,8 @@ import android.app.ExpandableListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +25,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.database.Journey;
 
 public class ListSavedActivity extends ExpandableListActivity {
 
@@ -219,43 +219,44 @@ public class ListSavedActivity extends ExpandableListActivity {
 	}
 
 	public ArrayList<String> loadSavedEntries(boolean showToast) {
-		String state = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(state)
-				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 
-			try {
-				String line = null;
-				ArrayList<String> array = new ArrayList<String>();
+		try {
+			ArrayList<String> array = new ArrayList<String>();
 
-				File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
-				BufferedReader reader = new BufferedReader(new FileReader(f));
-
-				while ((line = reader.readLine()) != null) {
-					String str = new String(line);
-					array.add(str);
-				}
-				reader.close();
-
-				if (showToast) {
-					Toast.makeText(
-							getBaseContext(),
-							"Loaded " + array.size() + " entr"
-									+ (array.size() == 1 ? "y" : "ies")
-									+ " from CSV file.", Toast.LENGTH_SHORT)
-							.show();
-				}
-				return array;
-
-			} catch (Exception e) {
-				Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-
-				return new ArrayList<String>();
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
+			Cursor c = db_journeys.getAllJourneys();
+			if (c.moveToFirst()) {
+				do {
+					array.add("" + c.getString(1) + "," + c.getInt(2) + ","
+							+ c.getInt(3) + "," + c.getInt(4) + ","
+							+ c.getInt(5) + "," + c.getInt(6) + ","
+							+ c.getString(7) + "," + c.getInt(8) + ","
+							+ c.getInt(9) + "," + c.getInt(10) + ","
+							+ c.getInt(11) + "," + c.getInt(12) + ","
+							+ c.getString(13) + "," + c.getString(14));
+					System.out.println("Row " + c.getInt(0) + ": "
+							+ array.toString());
+				} while (c.moveToNext());
 			}
+			db_journeys.close();
 
-		} else {
+			if (showToast) {
+				String msg = "Loaded " + array.size() + " entr"
+						+ (array.size() == 1 ? "y" : "ies") + " from database.";
+				System.out.println(msg);
+				Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT)
+						.show();
+			}
+			return array;
+
+		} catch (Exception e) {
+			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+
 			return new ArrayList<String>();
 		}
+
 	}
 
 	private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
