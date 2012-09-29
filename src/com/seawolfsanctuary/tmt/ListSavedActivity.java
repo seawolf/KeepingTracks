@@ -98,7 +98,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 		checkForImport(this.getExpandableListView());
 	}
 
-	class ListSavedAdapter extends BaseExpandableListAdapter {
+	private class ListSavedAdapter extends BaseExpandableListAdapter {
 
 		ArrayList<String[]> data = loadSavedEntries(true);
 		ArrayList<String> names = new ArrayList<String>(getNames(data));
