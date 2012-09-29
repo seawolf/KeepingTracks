@@ -1,8 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +30,8 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.database.Journey;
 
 public class AddActivity extends TabActivity {
 
@@ -268,93 +267,49 @@ public class AddActivity extends TabActivity {
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
-		boolean mExternalStorageWritable = false;
-		String state = Environment.getExternalStorageState();
+		Journey db_journeys = new Journey(this);
+		db_journeys.open();
+		long id;
+		id = db_journeys.insertJourney(actv_FromSearch.getText().toString(),
+				dp_FromDate.getYear(), (dp_FromDate.getMonth() + 1),
+				dp_FromDate.getDayOfMonth(), tp_FromTime.getCurrentHour(),
+				tp_FromTime.getCurrentMinute(), actv_ToSearch.getText()
+						.toString(), dp_ToDate.getYear(),
+				(dp_ToDate.getMonth() + 1), dp_ToDate.getDayOfMonth(),
+				tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
+				txt_DetailClass.getText().toString(), txt_DetailHeadcode
+						.getText().toString());
+		System.out.println("Saved: " + id);
+		db_journeys.close();
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			mExternalStorageWritable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// We can only read the media
-			mExternalStorageWritable = false;
-		} else {
-			// Something else is wrong. It may be one of many other states, but
-			// all we need to know is we can neither read nor write
-			mExternalStorageWritable = false;
-		}
+		Toast.makeText(getBaseContext(), "Entry saved.", Toast.LENGTH_SHORT)
+				.show();
 
-		if (mExternalStorageWritable) {
-			try {
-				File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
+		chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+		if (chk_Checkin.isChecked()) {
+			Bundle details = new Bundle();
+			details.putString("from_stn", Helpers
+					.trimCodeFromStation(actv_FromSearch.getText().toString()));
+			details.putString("to_stn", Helpers
+					.trimCodeFromStation(actv_ToSearch.getText().toString()));
+			details.putString("detail_class", txt_DetailClass.getText()
+					.toString());
+			details.putString("detail_headcode", txt_DetailHeadcode.getText()
+					.toString());
 
-				if (!f.exists()) {
-					f.createNewFile();
-				}
+			AddActivity.this.finish();
+			Intent intent = new Intent(this, ListSavedActivity.class);
+			startActivity(intent);
 
-				FileWriter writer = new FileWriter(f, true);
-
-				String msep = "\",\"";
-				String line = "";
-				line = "\"" + actv_FromSearch.getText().toString() + msep
-						+ dp_FromDate.getDayOfMonth() + msep
-						+ (dp_FromDate.getMonth() + 1) + msep
-						+ dp_FromDate.getYear() + msep
-						+ tp_FromTime.getCurrentHour() + msep
-						+ tp_FromTime.getCurrentMinute() + msep
-						+ actv_ToSearch.getText().toString() + msep
-						+ dp_ToDate.getDayOfMonth() + msep
-						+ (dp_ToDate.getMonth() + 1) + msep
-						+ dp_ToDate.getYear() + msep
-						+ tp_ToTime.getCurrentHour() + msep
-						+ tp_ToTime.getCurrentMinute() + msep
-						+ txt_DetailClass.getText() + msep
-						+ txt_DetailHeadcode.getText() + "\"";
-
-				writer.write(line);
-				writer.write(System.getProperty("line.separator"));
-				writer.close();
-
-				Toast.makeText(getBaseContext(), "Entry saved.",
-						Toast.LENGTH_SHORT).show();
-
-				chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
-				if (chk_Checkin.isChecked()) {
-					Bundle details = new Bundle();
-					details.putString("from_stn", Helpers
-							.trimCodeFromStation(actv_FromSearch.getText()
-									.toString()));
-					details.putString("to_stn", Helpers
-							.trimCodeFromStation(actv_ToSearch.getText()
-									.toString()));
-					details.putString("detail_class", txt_DetailClass.getText()
-							.toString());
-					details.putString("detail_headcode", txt_DetailHeadcode
-							.getText().toString());
-
-					AddActivity.this.finish();
-					Intent intent = new Intent(this, ListSavedActivity.class);
-					startActivity(intent);
-
-					foursquareCheckin(details);
-
-				} else {
-					AddActivity.this.finish();
-					Intent intent = new Intent(this, ListSavedActivity.class);
-					startActivity(intent);
-				}
-
-				return true;
-
-			} catch (Exception e) {
-				Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-
-				return false;
-			}
+			foursquareCheckin(details);
 
 		} else {
-			return false;
+			AddActivity.this.finish();
+			Intent intent = new Intent(this, ListSavedActivity.class);
+			startActivity(intent);
 		}
+
+		return true;
 	}
 
 	public void startClassInfoActivity(View view) {
