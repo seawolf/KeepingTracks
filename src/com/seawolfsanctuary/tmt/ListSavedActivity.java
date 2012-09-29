@@ -343,6 +343,10 @@ public class ListSavedActivity extends ExpandableListActivity {
 				}
 			}
 
+			Intent intent = ListSavedActivity.this.getIntent();
+			ListSavedActivity.this.finish();
+			startActivity(intent);
+
 			Toast.makeText(
 					getApplicationContext(),
 					"Imported " + successes + " routes, " + failures
