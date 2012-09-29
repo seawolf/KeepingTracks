@@ -1,11 +1,21 @@
 package com.seawolfsanctuary.tmt.database;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.Helpers;
 
 public class Journey {
 	private DatabaseHelper DBHelper;
@@ -171,5 +181,93 @@ public class Journey {
 
 		return db.update(DATABASE_TABLE, updatedValues,
 				KEY_ROWID + "=" + rowId, null) > 0;
+	}
+
+	public ArrayList<Boolean> importFromCSV() {
+		ArrayList<Boolean> statuses = new ArrayList<Boolean>();
+		ArrayList<String> saved_entries = loadSavedEntries();
+		ArrayList<String[]> parsed_entries = parseEntries(saved_entries);
+
+		Journey db_journeys = new Journey(this.context);
+		db_journeys.open();
+
+		for (String[] entry : parsed_entries) {
+			try {
+				System.out.println("Importing...");
+				db_journeys.insertJourney(entry[0], Integer.parseInt(entry[3]),
+						Integer.parseInt(entry[2]), Integer.parseInt(entry[1]),
+						Integer.parseInt(entry[4]), Integer.parseInt(entry[5]),
+						entry[6], Integer.parseInt(entry[9]),
+						Integer.parseInt(entry[8]), Integer.parseInt(entry[7]),
+						Integer.parseInt(entry[10]),
+						Integer.parseInt(entry[11]), entry[12], entry[13]);
+				System.out.println("Success!");
+				statuses.add(true);
+			} catch (Exception e) {
+				System.out.println("Error!");
+				statuses.add(false);
+			}
+		}
+
+		File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
+		f.renameTo(new File(Helpers.dataDirectoryPath + "/routes.csv.old"));
+
+		return statuses;
+	}
+
+	public ArrayList<String> loadSavedEntries() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+
+			try {
+				String line = null;
+				ArrayList<String> array = new ArrayList<String>();
+
+				File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
+				BufferedReader reader = new BufferedReader(new FileReader(f));
+
+				while ((line = reader.readLine()) != null) {
+					String str = new String(line);
+					array.add(str);
+				}
+				reader.close();
+				return array;
+
+			} catch (Exception e) {
+				Toast.makeText(this.context,
+						"Error reading old routes: " + e.getMessage(),
+						Toast.LENGTH_LONG).show();
+
+				return new ArrayList<String>();
+			}
+
+		} else {
+			return new ArrayList<String>();
+		}
+	}
+
+	private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
+		ArrayList<String[]> data = new ArrayList<String[]>();
+
+		try {
+			for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+				String str = (String) i.next();
+				String[] elements = str.split(",");
+				String[] entry = new String[elements.length];
+
+				for (int j = 0; j < entry.length; j++) {
+					entry[j] = Helpers.trimCSVSpeech(elements[j]);
+				}
+
+				data.add(entry);
+			}
+		} catch (Exception e) {
+			Toast.makeText(this.context,
+					"Error parsing old routes: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return data;
 	}
 }
