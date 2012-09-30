@@ -19,6 +19,9 @@ import android.widget.TimePicker;
 
 public class Helpers {
 
+	public static final String exportDirectoryPath = Environment
+			.getExternalStorageDirectory().toString();
+
 	public static final String dataDirectoryPath = Environment
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.tmt";

@@ -22,6 +22,8 @@
     <string name="foursquare_venue_select_shout">Include journey details as shout</string>
     <string name="foursquare_deauthenticate">Log Out</string>
     <string name="save">Save</string>
+    <string name="import_csv">Import…</string>
+    <string name="export_csv">Export…</string>
     <string name="dotdotdot">…</string>
     <string name="exit">Exit</string>
 

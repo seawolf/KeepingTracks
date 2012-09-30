@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -45,6 +46,43 @@ public class ListSavedActivity extends ExpandableListActivity {
 			Intent intent = new Intent(this, AddActivity.class);
 			ListSavedActivity.this.finish();
 			startActivity(intent);
+			return true;
+		case R.id.import_csv:
+			final Context context = this;
+			new AlertDialog.Builder(context)
+					.setTitle("Import Journeys")
+					.setMessage(
+							"Ensure a quoted CSV import file exists at '"
+									+ Helpers.exportDirectoryPath
+									+ "/routes.csv' before proceeding.")
+					.setPositiveButton("OK", new OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							ProgressDialog progressDialog = new ProgressDialog(
+									context);
+							progressDialog
+									.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+							progressDialog.setTitle("Importing...");
+							progressDialog
+									.setMessage("Importing journeys from CSV file at '"
+											+ Helpers.exportDirectoryPath
+											+ "/routes.csv' ...");
+							progressDialog.setCancelable(false);
+							new ExportTask(progressDialog).execute();
+						}
+					}).setNegativeButton("Cancel", new OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							// ignore
+						}
+					}).show();
+			return true;
+		case R.id.export_csv:
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setTitle("Exporting...");
+			progressDialog.setMessage("Exporting routes to CSV file at '"
+					+ Helpers.exportDirectoryPath + "/routes.csv' ...");
+			progressDialog.setCancelable(false);
+			new ExportTask(progressDialog).execute();
 			return true;
 		default:
 			return true;
@@ -351,6 +389,36 @@ public class ListSavedActivity extends ExpandableListActivity {
 					getApplicationContext(),
 					"Imported " + successes + " routes, " + failures
 							+ " failed.", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private class ExportTask extends AsyncTask<Void, Void, Boolean> {
+		private ProgressDialog progressDialog;
+
+		public ExportTask(ProgressDialog dialogFromActivity) {
+			progressDialog = dialogFromActivity;
+		}
+
+		public void onPreExecute() {
+			progressDialog.show();
+		}
+
+		protected Boolean doInBackground(Void... args) {
+			return new Journey(progressDialog.getContext()).exportToCSV();
+		}
+
+		protected void onPostExecute(Boolean status) {
+			progressDialog.dismiss();
+			String msg;
+			if (status == true) {
+				msg = "Journeys exported to " + Helpers.exportDirectoryPath
+						+ "/routes.csv";
+			} else {
+				msg = "Failed to export journeys. Check the SD card is available and writable.";
+			}
+
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+					.show();
 		}
 	}
 }

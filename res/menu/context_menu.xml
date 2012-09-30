@@ -4,4 +4,8 @@
           android:title="@string/add_new" />
     <item android:id="@+id/list"
           android:title="@string/list_saved" />
+    <item android:id="@+id/import_csv"
+          android:title="@string/import_csv" />
+    <item android:id="@+id/export_csv"
+          android:title="@string/export_csv" />
 </menu>

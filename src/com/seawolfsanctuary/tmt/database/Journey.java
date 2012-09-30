@@ -3,6 +3,7 @@ package com.seawolfsanctuary.tmt.database;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -269,5 +270,66 @@ public class Journey {
 		}
 
 		return data;
+	}
+
+	public Boolean exportToCSV() {
+		boolean mExternalStorageWritable = false;
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			// We can read and write the media
+			mExternalStorageWritable = true;
+		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			// We can only read the media
+			mExternalStorageWritable = false;
+		} else {
+			// Something else is wrong. It may be one of many other states, but
+			// all we need to know is we can neither read nor write
+			mExternalStorageWritable = false;
+		}
+
+		if (mExternalStorageWritable) {
+			try {
+
+				File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
+				if (f.exists()) {
+					f.delete();
+				}
+				f.createNewFile();
+				FileWriter writer = new FileWriter(f, true);
+				String msep = "\",\"";
+
+				ArrayList<String[]> allJourneys = new ArrayList<String[]>();
+				Journey db_journeys = new Journey(context);
+				db_journeys.open();
+				Cursor c = db_journeys.getAllJourneys();
+				if (c.moveToFirst()) {
+					do {
+						String line = "";
+						line = "\"" + c.getString(1) + msep + c.getInt(4)
+								+ msep + (c.getInt(3) + 1) + msep + c.getInt(2)
+								+ msep + c.getInt(5) + msep + c.getInt(6)
+								+ msep + c.getString(7) + msep + c.getInt(10)
+								+ msep + (c.getInt(9) + 1) + msep + c.getInt(8)
+								+ msep + c.getInt(11) + msep + c.getInt(12)
+								+ msep + c.getString(13) + msep
+								+ c.getString(14) + "\"";
+
+						writer.write(line);
+						writer.write(System.getProperty("line.separator"));
+					} while (c.moveToNext());
+				}
+				writer.close();
+				db_journeys.close();
+
+				return true;
+
+			} catch (Exception e) {
+				return false;
+			}
+
+		} else {
+			return false;
+		}
 	}
 }
