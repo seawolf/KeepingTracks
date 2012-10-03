@@ -4,6 +4,15 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:orientation="horizontal">  
-    
+    android:orientation="horizontal">
+
+    <com.androidplot.xy.XYPlot
+            android:id="@+id/xy_JourneysMonth"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px"
+            title="Journeys By Month"/>
+
 </LinearLayout>
