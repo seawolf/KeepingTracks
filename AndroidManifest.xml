@@ -52,7 +52,7 @@
         </activity>
         <activity
             android:name=".stats.StatsActivity"
-            android:label="@string/title_activity_stats" >
+            android:label="@string/stats" >
         </activity>
     </application>
 

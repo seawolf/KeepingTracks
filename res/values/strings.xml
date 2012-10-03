@@ -21,6 +21,8 @@
     <string name="foursquare_venue_select_visibility_public">Your check-in will be public</string>
     <string name="foursquare_venue_select_shout">Include journey details as shout</string>
     <string name="foursquare_deauthenticate">Log Out</string>
+    <string name="stats">Statistics</string>
+    <string name="stats_jouneys_month">Journeys by Month</string>
     <string name="save">Save</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
