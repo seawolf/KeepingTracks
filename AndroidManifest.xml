@@ -50,6 +50,10 @@
             android:name=".HeadcodeSelectionActivity"
             android:label="@string/headcode_selection" >
         </activity>
+        <activity
+            android:name=".stats.StatsActivity"
+            android:label="@string/title_activity_stats" >
+        </activity>
     </application>
 
 </manifest>
