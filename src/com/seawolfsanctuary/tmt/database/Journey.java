@@ -136,7 +136,9 @@ public class Journey {
 				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
 				KEY_TO_HOUR, KEY_TO_MINUTE,
 
-				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, null);
+				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, ""
+				+ KEY_FROM_YEAR + "," + KEY_FROM_MONTH + "," + KEY_FROM_DAY
+				+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE);
 	}
 
 	public Cursor getJourney(long rowId) throws SQLException {
