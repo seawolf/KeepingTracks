@@ -1,18 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/chart"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:orientation="horizontal">
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
 
-    <com.androidplot.xy.XYPlot
-            android:id="@+id/xy_JourneysMonth"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="10px"
-            android:layout_marginLeft="10px"
-            android:layout_marginRight="10px"
-            title="Journeys by Month"/>
+    <TextView
+        android:id="@+id/txt_Title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/stats"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <include
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/stats_activity_list" />
 
 </LinearLayout>

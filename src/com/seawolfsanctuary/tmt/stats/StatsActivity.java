@@ -1,71 +1,49 @@
 package com.seawolfsanctuary.tmt.stats;
 
-import java.util.ArrayList;
-
-import android.app.Activity;
-import android.database.Cursor;
-import android.graphics.Color;
+import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import com.androidplot.series.XYSeries;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYPlot;
 import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.database.Journey;
 
-public class StatsActivity extends Activity {
-	private XYPlot mySimpleXYPlot;
+public class StatsActivity extends ListActivity {
 
+	private String[] names = { "Journeys by Month", "Journeys by Station" };
+	private String[] activities = { "stats.JourneysByMonth",
+			"ClassInfoActivity" };
+
+	/** Called when the activity is first created. */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.stats_activity);
-		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_JourneysMonth);
-		// Create a couple arrays of y-values to plot:
-		Integer[] series1Integers = new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0 };
-		ArrayList<Number> series1Numbers = new ArrayList<Number>();
-		int i = 0;
-		Journey db_journeys = new Journey(this);
-		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneys();
-		if (c.moveToFirst()) {
-			do {
-				i = i + 1;
-				series1Integers[c.getInt(3)] = series1Integers[c.getInt(3)] + 1;
-			} while (c.moveToNext());
-		}
-		db_journeys.close();
+		setListAdapter(new ArrayAdapter<String>(this,
+				R.layout.stats_activity_list, names));
 
-		for (int j = 0; j < 13; j++) {
-			series1Numbers.add(series1Integers[j]);
-		}
-		series1Numbers.remove(0);
-
-		// Turn the above arrays into XYSeries':
-		XYSeries series1 = new SimpleXYSeries(series1Numbers,
-				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, // Y_VALS_ONLY means use
-				// the element index as
-				// the x value
-				"Month"); // Set the display title of the series
-
-		// Create a formatter to use for drawing a series using
-		// LineAndPointRenderer:
-		LineAndPointFormatter series1Format = new LineAndPointFormatter(
-				Color.rgb(0, 200, 0), // line color
-				Color.rgb(0, 100, 0), // point color
-				null); // fill color (none)
-
-		// add a new series' to the xyplot:
-		mySimpleXYPlot.addSeries(series1, series1Format);
-
-		// reduce the number of range labels
-		mySimpleXYPlot.setTicksPerRangeLabel(3);
-
-		// by default, AndroidPlot displays developer guides to aid in laying
-		// out your plot.
-		// To get rid of them call disableAllMarkup():
-		mySimpleXYPlot.disableAllMarkup();
+		ListView lv = getListView();
+		registerForContextMenu(lv);
+		lv.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				String className = "com.seawolfsanctuary.tmt."
+						+ activities[position];
+				try {
+					Intent intent;
+					intent = new Intent(view.getContext(), Class
+							.forName(className));
+					startActivity(intent);
+				} catch (ClassNotFoundException e) {
+					Toast.makeText(
+							getBaseContext(),
+							"Could not launch the requested activity: "
+									+ className, Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 	}
 }
