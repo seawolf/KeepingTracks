@@ -14,9 +14,8 @@ import com.seawolfsanctuary.tmt.R;
 
 public class StatsActivity extends ListActivity {
 
-	private String[] names = { "Journeys by Month", "Journeys by Station" };
-	private String[] activities = { "stats.JourneysByMonth",
-			"ClassInfoActivity" };
+	private String[] names = { "Journeys by Month" };
+	private String[] activities = { "stats.JourneysByMonth" };
 
 	/** Called when the activity is first created. */
 	@Override
