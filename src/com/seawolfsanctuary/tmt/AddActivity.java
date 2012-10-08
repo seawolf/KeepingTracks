@@ -440,11 +440,12 @@ public class AddActivity extends TabActivity {
 				for (int r = 1; r < rawRows.length; r++) {
 					String row = rawRows[r];
 					rows.add(row);
+					// System.out.println("Added row " + r + ": " + row);
 				}
 
 				ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
 
-				for (int r = 1; r < rows.size(); r++) {
+				for (int r = 0; r < rows.size(); r++) {
 					String row = rows.get(r);
 
 					// Split into array of cells
