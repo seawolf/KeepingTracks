@@ -115,11 +115,57 @@ public class AddActivity extends TabActivity {
 
 				template = Helpers.saveCurrentJourney(template,
 						AddActivity.this);
+
+				if (tabID == "tc_From") {
+					if (template.containsKey("from_stn")) {
+						actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
+						actv_FromSearch.setText(template.getString("from_stn"));
+					}
+					if (template.containsKey("from_year")) {
+						dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
+						dp_FromDate.init(template.getInt("from_date_year"),
+								template.getInt("from_date_month"),
+								template.getInt("from_date_day"), null);
+					}
+					if (template.containsKey("from_time_hour")) {
+						tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+						tp_FromTime.setCurrentHour(template
+								.getInt("from_time_hour"));
+						tp_FromTime.setCurrentMinute(template
+								.getInt("from_time_minute"));
+					}
+				}
 				if (tabID == "tc_Detail") {
 					if (template.containsKey("detail_class")) {
 						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 						txt_DetailClass.setText(template
 								.getCharSequence("detail_class"));
+					}
+
+					if (template.containsKey("detail_headcode")) {
+						txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+						txt_DetailHeadcode.setText(template
+								.getCharSequence("detail_headcode"));
+					}
+				}
+
+				if (tabID == "tc_To") {
+					if (template.containsKey("to_stn")) {
+						actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+						actv_ToSearch.setText(template.getString("to_stn"));
+					}
+					if (template.containsKey("to_date_year")) {
+						dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
+						dp_ToDate.init(template.getInt("to_date_year"),
+								template.getInt("to_date_month"),
+								template.getInt("to_date_day"), null);
+					}
+					if (template.containsKey("to_time_hour")) {
+						tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+						tp_ToTime.setCurrentHour(template
+								.getInt("to_time_hour"));
+						tp_ToTime.setCurrentMinute(template
+								.getInt("to_time_minute"));
 					}
 				}
 
@@ -273,23 +319,47 @@ public class AddActivity extends TabActivity {
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
-		Journey db_journeys = new Journey(this);
-		db_journeys.open();
-		long id;
-		id = db_journeys.insertJourney(actv_FromSearch.getText().toString(),
-				dp_FromDate.getYear(), (dp_FromDate.getMonth() + 1),
-				dp_FromDate.getDayOfMonth(), tp_FromTime.getCurrentHour(),
-				tp_FromTime.getCurrentMinute(), actv_ToSearch.getText()
-						.toString(), dp_ToDate.getYear(),
-				(dp_ToDate.getMonth() + 1), dp_ToDate.getDayOfMonth(),
-				tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
-				txt_DetailClass.getText().toString(), txt_DetailHeadcode
-						.getText().toString());
-		System.out.println("Saved: " + id);
-		db_journeys.close();
+		if (template.containsKey("editing")) {
+			// Editing an existing journey
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
+			if (db_journeys.updateJourney(template.getInt("id"),
+					actv_FromSearch.getText().toString(),
+					dp_FromDate.getYear(), (dp_FromDate.getMonth() + 1),
+					dp_FromDate.getDayOfMonth(), tp_FromTime.getCurrentHour(),
+					tp_FromTime.getCurrentMinute(), actv_ToSearch.getText()
+							.toString(), dp_ToDate.getYear(), (dp_ToDate
+							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
+					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
+					txt_DetailClass.getText().toString(), txt_DetailHeadcode
+							.getText().toString())) {
 
-		Toast.makeText(getBaseContext(), "Entry saved.", Toast.LENGTH_SHORT)
-				.show();
+				Toast.makeText(getBaseContext(), "Entry edited.",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				System.out.println("Error saving: " + template.getInt("id"));
+			}
+			db_journeys.close();
+		} else {
+			// Adding a new journey
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
+			long id;
+			id = db_journeys.insertJourney(
+					actv_FromSearch.getText().toString(),
+					dp_FromDate.getYear(), (dp_FromDate.getMonth() + 1),
+					dp_FromDate.getDayOfMonth(), tp_FromTime.getCurrentHour(),
+					tp_FromTime.getCurrentMinute(), actv_ToSearch.getText()
+							.toString(), dp_ToDate.getYear(), (dp_ToDate
+							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
+					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
+					txt_DetailClass.getText().toString(), txt_DetailHeadcode
+							.getText().toString());
+			db_journeys.close();
+
+			Toast.makeText(getBaseContext(), "Entry saved.", Toast.LENGTH_SHORT)
+					.show();
+		}
 
 		chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 		if (chk_Checkin.isChecked()) {
@@ -308,7 +378,6 @@ public class AddActivity extends TabActivity {
 			startActivity(intent);
 
 			foursquareCheckin(details);
-
 		} else {
 			AddActivity.this.finish();
 			Intent intent = new Intent(this, ListSavedActivity.class);

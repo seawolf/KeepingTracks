@@ -107,10 +107,19 @@ public class ListSavedActivity extends ExpandableListActivity {
 				if (isParentSelected) {
 					// by some fluke we have a parent
 					new AlertDialog.Builder(view.getContext())
-							.setTitle("Delete Entry")
+							.setTitle("Modify Entry")
 							.setMessage(
-									"Are you sure you want to delete this entry?")
-							.setPositiveButton("Yes", new OnClickListener() {
+									"Do you want to edit or delete this entry?")
+							.setPositiveButton("Edit", new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+
+									editEntry(id);
+									// save will move create new
+									// ListSavedActivity
+								}
+							})
+							.setNegativeButton("Delete", new OnClickListener() {
 								public void onClick(DialogInterface arg0,
 										int arg1) {
 
@@ -119,11 +128,6 @@ public class ListSavedActivity extends ExpandableListActivity {
 									Intent intent = getIntent();
 									finish();
 									startActivity(intent);
-								}
-							}).setNegativeButton("No", new OnClickListener() {
-								public void onClick(DialogInterface arg0,
-										int arg1) {
-									// ignore
 								}
 							}).show();
 
@@ -294,6 +298,61 @@ public class ListSavedActivity extends ExpandableListActivity {
 		return allJourneys;
 	}
 
+	public boolean editEntry(int position) {
+		boolean success = false;
+		int id = -1;
+		Bundle entry = new Bundle();
+
+		try {
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
+
+			// Fetch all journeys so we can find out the id to delete
+			Cursor c = db_journeys.getAllJourneys();
+			if (c.moveToFirst()) {
+				c.moveToPosition(position);
+				id = c.getInt(0);
+				System.out.println("Fetching row #" + id + "...");
+				Cursor journey = db_journeys.getJourney(id);
+
+				entry.putBoolean("editing", true);
+				entry.putInt("id", journey.getInt(0));
+
+				entry.putString("from_stn", journey.getString(1));
+				entry.putInt("from_date_day", journey.getInt(2));
+				entry.putInt("from_date_month", journey.getInt(3));
+				entry.putInt("from_date_year", journey.getInt(4));
+				entry.putInt("from_time_hour", journey.getInt(5));
+				entry.putInt("from_time_minute", journey.getInt(6));
+
+				entry.putString("to_stn", journey.getString(7));
+				entry.putInt("to_date_day", journey.getInt(8));
+				entry.putInt("to_date_month", journey.getInt(9));
+				entry.putInt("to_date_year", journey.getInt(10));
+				entry.putInt("to_time_hour", journey.getInt(11));
+				entry.putInt("to_time_minute", journey.getInt(12));
+
+				entry.putString("detail_class", journey.getString(13));
+				entry.putString("detail_headcode", journey.getString(14));
+
+			}
+			db_journeys.close();
+			success = true;
+
+			System.out.println("Editing entry: " + entry.getInt("id"));
+			Intent intent = new Intent(this, AddActivity.class);
+			ListSavedActivity.this.finish();
+			intent.putExtras(entry);
+			startActivity(intent);
+
+		} catch (Exception e) {
+			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return success;
+	}
+
 	public boolean deleteEntry(int position) {
 		boolean success = false;
 		int id = -1;
@@ -310,12 +369,11 @@ public class ListSavedActivity extends ExpandableListActivity {
 				System.out.println("Deleting row #" + id + "...");
 				success = db_journeys.deleteJourney(id);
 			}
-
 			db_journeys.close();
+			success = true;
+
 			Toast.makeText(getBaseContext(), "Entry deleted.",
 					Toast.LENGTH_SHORT).show();
-
-			success = true;
 		} catch (Exception e) {
 			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
 					Toast.LENGTH_LONG).show();

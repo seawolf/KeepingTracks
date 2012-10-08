@@ -138,6 +138,18 @@ public class Helpers {
 	public static Bundle saveCurrentJourney(Bundle previousBundle, Activity src) {
 		Bundle journey = new Bundle();
 
+		// Static
+
+		if (previousBundle.containsKey("editing")) {
+			journey.putBoolean("editing", previousBundle.getBoolean("editing"));
+		}
+
+		if (previousBundle.containsKey("id")) {
+			journey.putInt("id", previousBundle.getInt("id"));
+		}
+
+		// Possibly Updated in View
+
 		AutoCompleteTextView actv_FromSearch = (AutoCompleteTextView) src
 				.findViewById(R.id.actv_FromSearch);
 		DatePicker dp_FromDate = (DatePicker) src
