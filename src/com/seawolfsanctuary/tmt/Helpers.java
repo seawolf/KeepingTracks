@@ -202,7 +202,7 @@ public class Helpers {
 					DatePicker dp_FromDate = (DatePicker) dest
 							.findViewById(R.id.dp_FromDate);
 					dp_FromDate.init(journey.getInt("from_date_year"),
-							journey.getInt("from_date_month"),
+							journey.getInt("from_date_month") - 1,
 							journey.getInt("from_date_day"), null);
 				}
 			}
@@ -251,7 +251,7 @@ public class Helpers {
 					DatePicker dp_ToDate = (DatePicker) dest
 							.findViewById(R.id.dp_ToDate);
 					dp_ToDate.init(journey.getInt("to_date_year"),
-							journey.getInt("to_date_month"),
+							journey.getInt("to_date_month") - 1,
 							journey.getInt("to_date_day"), null);
 				}
 			}
