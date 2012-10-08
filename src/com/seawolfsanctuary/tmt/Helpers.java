@@ -135,7 +135,7 @@ public class Helpers {
 		return station;
 	}
 
-	public static Bundle saveCurrentJourney(Activity src) {
+	public static Bundle saveCurrentJourney(Bundle previousBundle, Activity src) {
 		Bundle journey = new Bundle();
 
 		AutoCompleteTextView actv_FromSearch = (AutoCompleteTextView) src

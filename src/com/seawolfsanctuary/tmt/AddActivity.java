@@ -35,7 +35,7 @@ import com.seawolfsanctuary.tmt.database.Journey;
 
 public class AddActivity extends TabActivity {
 
-	Bundle template = new Bundle();
+	Bundle template;
 
 	TabHost mTabHost;
 
@@ -107,8 +107,14 @@ public class AddActivity extends TabActivity {
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabID) {
-				template = Helpers.saveCurrentJourney(AddActivity.this);
+				try {
+					template.isEmpty();
+				} catch (NullPointerException e) {
+					template = new Bundle();
+				}
 
+				template = Helpers.saveCurrentJourney(template,
+						AddActivity.this);
 				if (tabID == "tc_Detail") {
 					if (template.containsKey("detail_class")) {
 						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
@@ -313,7 +319,7 @@ public class AddActivity extends TabActivity {
 	}
 
 	public void startClassInfoActivity(View view) {
-		template = Helpers.saveCurrentJourney(AddActivity.this);
+		template = Helpers.saveCurrentJourney(template, AddActivity.this);
 		if (template == null) {
 			template = new Bundle();
 		}
