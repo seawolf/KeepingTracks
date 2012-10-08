@@ -308,6 +308,7 @@ public class AddActivity extends TabActivity {
 	}
 
 	public boolean writeEntry(View view) {
+		boolean success = false;
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
@@ -323,7 +324,7 @@ public class AddActivity extends TabActivity {
 			// Editing an existing journey
 			Journey db_journeys = new Journey(this);
 			db_journeys.open();
-			if (db_journeys.updateJourney(template.getInt("id"),
+			boolean updated = db_journeys.updateJourney(template.getInt("id"),
 					actv_FromSearch.getText().toString(),
 					dp_FromDate.getYear(), (dp_FromDate.getMonth() + 1),
 					dp_FromDate.getDayOfMonth(), tp_FromTime.getCurrentHour(),
@@ -332,14 +333,17 @@ public class AddActivity extends TabActivity {
 							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
 					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
 					txt_DetailClass.getText().toString(), txt_DetailHeadcode
-							.getText().toString())) {
+							.getText().toString());
+			db_journeys.close();
 
+			if (updated == true) {
+				success = true;
 				Toast.makeText(getBaseContext(), "Entry edited.",
 						Toast.LENGTH_SHORT).show();
 			} else {
-				System.out.println("Error saving: " + template.getInt("id"));
+				Toast.makeText(getBaseContext(), "Error editing entry.",
+						Toast.LENGTH_SHORT).show();
 			}
-			db_journeys.close();
 		} else {
 			// Adding a new journey
 			Journey db_journeys = new Journey(this);
@@ -357,34 +361,44 @@ public class AddActivity extends TabActivity {
 							.getText().toString());
 			db_journeys.close();
 
-			Toast.makeText(getBaseContext(), "Entry saved.", Toast.LENGTH_SHORT)
-					.show();
+			if (id != -1) {
+				success = true;
+				Toast.makeText(getBaseContext(), "Entry saved.",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getBaseContext(), "Error saving entry.",
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 
-		chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
-		if (chk_Checkin.isChecked()) {
-			Bundle details = new Bundle();
-			details.putString("from_stn", Helpers
-					.trimCodeFromStation(actv_FromSearch.getText().toString()));
-			details.putString("to_stn", Helpers
-					.trimCodeFromStation(actv_ToSearch.getText().toString()));
-			details.putString("detail_class", txt_DetailClass.getText()
-					.toString());
-			details.putString("detail_headcode", txt_DetailHeadcode.getText()
-					.toString());
+		if (success == true) {
+			chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
+			if (chk_Checkin.isChecked()) {
+				Bundle details = new Bundle();
+				details.putString("from_stn", Helpers
+						.trimCodeFromStation(actv_FromSearch.getText()
+								.toString()));
+				details.putString("to_stn",
+						Helpers.trimCodeFromStation(actv_ToSearch.getText()
+								.toString()));
+				details.putString("detail_class", txt_DetailClass.getText()
+						.toString());
+				details.putString("detail_headcode", txt_DetailHeadcode
+						.getText().toString());
 
-			AddActivity.this.finish();
-			Intent intent = new Intent(this, ListSavedActivity.class);
-			startActivity(intent);
+				AddActivity.this.finish();
+				Intent intent = new Intent(this, ListSavedActivity.class);
+				startActivity(intent);
 
-			foursquareCheckin(details);
-		} else {
-			AddActivity.this.finish();
-			Intent intent = new Intent(this, ListSavedActivity.class);
-			startActivity(intent);
+				foursquareCheckin(details);
+			} else {
+				AddActivity.this.finish();
+				Intent intent = new Intent(this, ListSavedActivity.class);
+				startActivity(intent);
+			}
 		}
 
-		return true;
+		return success;
 	}
 
 	public void startClassInfoActivity(View view) {
