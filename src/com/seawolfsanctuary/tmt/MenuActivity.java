@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.seawolfsanctuary.tmt.stats.StatsActivity;
+
 public class MenuActivity extends Activity {
 
 	@Override
@@ -77,6 +79,11 @@ public class MenuActivity extends Activity {
 
 	private void startFoursquareCheckinActivity(View v) {
 		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
+		startActivity(intent);
+	}
+
+	public void startStatsActivity(View v) {
+		Intent intent = new Intent(this, StatsActivity.class);
 		startActivity(intent);
 	}
 

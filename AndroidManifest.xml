@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.seawolfsanctuary.tmt"
-    android:versionCode="20120909"
-    android:versionName="0.40" >
+    android:versionCode="20121010"
+    android:versionName="0.50" >
 
     <uses-sdk android:minSdkVersion="7" />
 
@@ -49,6 +49,14 @@
         <activity
             android:name=".HeadcodeSelectionActivity"
             android:label="@string/headcode_selection" >
+        </activity>
+        <activity
+            android:name=".stats.StatsActivity"
+            android:label="@string/stats" >
+        </activity>
+        <activity
+            android:name=".stats.JourneysByMonth"
+            android:label="@string/stats" >
         </activity>
     </application>
 

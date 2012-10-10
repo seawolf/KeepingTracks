@@ -139,6 +139,40 @@
                     android:text="@string/dotdotdot" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/rowThree"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="10dp" >
+
+                <ImageButton
+                    android:id="@+id/btn_Stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_classes"
+                    android:contentDescription="@string/stats"
+                    android:onClick="startStatsActivity" />
+
+                <TextView
+                    android:id="@+id/txt_Stats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="@string/stats" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>
