@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import android.app.Activity;
 import android.content.Context;
@@ -268,5 +269,23 @@ public class Helpers {
 				}
 			}
 		}
+	}
+
+	public static String guageSizeToName(String guage) {
+		String result = guage;
+
+		String[] definitions = new String[] { "broad", "standard", "medium",
+				"metre", "narrow", "minumum" };
+		Hashtable<String, String> relationships = new Hashtable<String, String>();
+		relationships.put("1435", definitions[0]);
+
+		if (guage == "") {
+			result = "(unknown)";
+		}
+		if (relationships.containsKey(guage)) {
+			result = relationships.get(guage);
+		}
+
+		return result;
 	}
 }

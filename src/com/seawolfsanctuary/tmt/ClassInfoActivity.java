@@ -304,7 +304,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				}
 
 				split.add(null);
-				split.add("Guage: " + entry[2] + "\nEngine: " + entry[3]);
+				split.add("Guage: " + Helpers.guageSizeToName(entry[2])
+						+ "\nEngine: " + entry[3]);
 				split.add("Entered Service: " + entry[4] + "\nRetired: "
 						+ entry[5]);
 
