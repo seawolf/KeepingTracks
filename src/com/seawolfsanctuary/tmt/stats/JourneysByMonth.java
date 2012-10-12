@@ -1,5 +1,9 @@
 package com.seawolfsanctuary.tmt.stats;
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -12,6 +16,7 @@ import com.androidplot.xy.BarFormatter;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYStepMode;
 import com.seawolfsanctuary.tmt.R;
 import com.seawolfsanctuary.tmt.database.Journey;
 
@@ -23,7 +28,7 @@ public class JourneysByMonth extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stats_journeys_month);
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_JourneysMonth);
-		// Create a couple arrays of y-values to plot:
+
 		Integer[] series1Integers = new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0 };
 		ArrayList<Number> series1Numbers = new ArrayList<Number>();
@@ -44,15 +49,9 @@ public class JourneysByMonth extends Activity {
 		}
 		series1Numbers.remove(0);
 
-		// Turn the above arrays into XYSeries':
 		XYSeries series1 = new SimpleXYSeries(series1Numbers,
-				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, // Y_VALS_ONLY means use
-				// the element index as
-				// the x value
-				"Month"); // Set the display title of the series
+				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "");
 
-		// Create a formatter to use for drawing a series using
-		// LineAndPointRenderer:
 		LineAndPointFormatter series1Format = new LineAndPointFormatter(
 				Color.rgb(0, 200, 0), // line color
 				Color.rgb(0, 100, 0), // point color
@@ -61,15 +60,33 @@ public class JourneysByMonth extends Activity {
 		BarFormatter series1BarFormat = new BarFormatter(Color.rgb(0, 200, 0),
 				Color.rgb(0, 100, 0));
 
-		// add a new series' to the xyplot:
 		mySimpleXYPlot.addSeries(series1, series1BarFormat);
 
-		// reduce the number of range labels
-		// mySimpleXYPlot.setTicksPerRangeLabel(3);
-
-		// by default, AndroidPlot displays developer guides to aid in laying
-		// out your plot.
-		// To get rid of them call disableAllMarkup():
+		mySimpleXYPlot.getLegendWidget().setVisible(false);
 		mySimpleXYPlot.disableAllMarkup();
+
+		mySimpleXYPlot.setRangeLabel("Count");
+		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 2);
+		mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("#"));
+
+		mySimpleXYPlot.setDomainLabel("Month");
+		mySimpleXYPlot.setDomainStep(XYStepMode.SUBDIVIDE, 12);
+		mySimpleXYPlot.setDomainValueFormat(new Format() {
+			@Override
+			public StringBuffer format(Object object, StringBuffer buffer,
+					FieldPosition field) {
+				String[] months = new String[] { "J", "F", "M", "A", "M", "J",
+						"J", "A", "S", "O", "N", "D" };
+				int pos = (int) Math.round((Double) object);
+				StringBuffer result = new StringBuffer(months[pos]);
+				return result;
+			}
+
+			@Override
+			public Object parseObject(String string, ParsePosition position) {
+				return null;
+			}
+
+		});
 	}
 }
