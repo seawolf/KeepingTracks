@@ -268,25 +268,26 @@ public class AddActivity extends TabActivity {
 				+ Helpers.trimCodeFromStation(actv_FromSearch.getText()
 						.toString())
 				+ "\nOn:\t\t"
-				+ dp_FromDate.getDayOfMonth()
+				+ Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2)
 				+ "/"
-				+ (dp_FromDate.getMonth() + 1)
+				+ Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2)
 				+ "/"
-				+ dp_FromDate.getYear()
+				+ Helpers.leftPad("" + dp_FromDate.getYear(), 4)
 				+ "\nAt:\t\t"
-				+ tp_FromTime.getCurrentHour()
+				+ Helpers.leftPad("" + tp_FromTime.getCurrentHour(), 2)
 				+ ":"
-				+ tp_FromTime.getCurrentMinute()
+				+ Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2)
 				+
 
 				"\n\nTo:\t\t"
 				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
-						.toString()) + "\nOn:\t\t" + dp_ToDate.getDayOfMonth()
-				+ "/" + (dp_ToDate.getMonth() + 1) + "/" + dp_ToDate.getYear()
-				+ "\nAt:\t\t" + tp_ToTime.getCurrentHour() + ":"
-				+ tp_ToTime.getCurrentMinute() +
-
-				"\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
+						.toString()) + "\nOn:\t\t"
+				+ Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2) + "/"
+				+ Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2) + "/"
+				+ Helpers.leftPad("" + dp_ToDate.getYear(), 4) + "\nAt:\t\t"
+				+ Helpers.leftPad("" + tp_ToTime.getCurrentHour(), 2) + ":"
+				+ Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2)
+				+ "\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
 				+ txt_DetailHeadcode.getText());
 	}
 
