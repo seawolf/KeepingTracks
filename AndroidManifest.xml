@@ -58,6 +58,10 @@
             android:name=".stats.JourneysByMonth"
             android:label="@string/stats" >
         </activity>
+        <activity
+            android:name=".stats.FavouriteStations"
+            android:label="@string/stats" >
+        </activity>
     </application>
 
 </manifest>
