@@ -122,21 +122,21 @@
                 android:padding="10dp" >
 
                 <ImageButton
-                    android:id="@+id/btn_Foursquared"
+                    android:id="@+id/btn_Stats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/menu_checkin"
-                    android:contentDescription="@string/foursquare_setup"
-                    android:onClick="startFoursquareSetupOrCheckinActivity" />
+                    android:background="@drawable/menu_classes"
+                    android:contentDescription="@string/stats"
+                    android:onClick="startStatsActivity" />
 
                 <TextView
-                    android:id="@+id/txt_Foursquared"
+                    android:id="@+id/txt_Stats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:padding="5dp"
-                    android:text="@string/dotdotdot" />
+                    android:text="@string/stats" />
             </LinearLayout>
         </LinearLayout>
 
@@ -157,21 +157,21 @@
                 android:padding="10dp" >
 
                 <ImageButton
-                    android:id="@+id/btn_Stats"
+                    android:id="@+id/btn_Foursquared"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/menu_classes"
-                    android:contentDescription="@string/stats"
-                    android:onClick="startStatsActivity" />
+                    android:background="@drawable/menu_checkin"
+                    android:contentDescription="@string/foursquare_setup"
+                    android:onClick="startFoursquareSetupOrCheckinActivity" />
 
                 <TextView
-                    android:id="@+id/txt_Stats"
+                    android:id="@+id/txt_Foursquared"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:padding="5dp"
-                    android:text="@string/stats" />
+                    android:text="@string/dotdotdot" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
