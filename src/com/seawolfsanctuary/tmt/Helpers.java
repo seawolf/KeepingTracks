@@ -136,6 +136,13 @@ public class Helpers {
 		return station;
 	}
 
+	public static String trimNameFromStation(String station) {
+		if (station.length() > 3) {
+			station = station.substring(0, 3);
+		}
+		return station;
+	}
+
 	public static Bundle saveCurrentJourney(Bundle previousBundle, Activity src) {
 		Bundle journey = new Bundle();
 
