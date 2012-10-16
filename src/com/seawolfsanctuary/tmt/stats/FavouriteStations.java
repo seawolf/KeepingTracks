@@ -33,7 +33,8 @@ public class FavouriteStations extends Activity {
 		setContentView(R.layout.stats_favourite_stations);
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_FavouriteStations);
 
-		final Hashtable<String, Integer> stationVisits = new Hashtable<String, Integer>();
+		final Hashtable<String, Integer> departures = new Hashtable<String, Integer>();
+		final Hashtable<String, Integer> arrivals = new Hashtable<String, Integer>();
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
@@ -41,29 +42,50 @@ public class FavouriteStations extends Activity {
 		// Collect count of departure stations
 		if (c.moveToFirst()) {
 			do {
-				Integer count = 0;
-				if (stationVisits.containsKey(c.getString(1))) {
-					count += stationVisits.get(c.getString(1));
+				Integer depCount = 0;
+				Integer arrCount = 0;
+
+				if (departures.containsKey(c.getString(1))) {
+					depCount += departures.get(c.getString(1));
 				}
-				stationVisits.put(c.getString(1), (count + 1));
+				departures.put(c.getString(1), (depCount + 1));
+
+				if (arrivals.containsKey(c.getString(7))) {
+					arrCount += arrivals.get(c.getString(7));
+				}
+				arrivals.put(c.getString(7), (arrCount + 1));
 			} while (c.moveToNext());
 		}
 		db_journeys.close();
 
+		final Hashtable<String, Integer> merged = new Hashtable<String, Integer>();
+		for (Iterator i = departures.keySet().iterator(); i.hasNext();) {
+			String depStn = i.next().toString();
+
+			// Use departure count, add arrival count
+			Integer total = departures.get(depStn);
+			if (arrivals.containsKey(depStn)) {
+				total += arrivals.get(depStn);
+			}
+			merged.put(depStn, total);
+		}
+
+		// Add arrival-only counts
+		// ...
+
 		// Sort the keys (stations) and match up the values (count)
-		final ArrayList<String> sortedKeys = new ArrayList(
-				stationVisits.keySet());
+		final ArrayList<String> sortedKeys = new ArrayList(merged.keySet());
 		Collections.sort(sortedKeys);
-		Number[] sortedValues = new Number[stationVisits.size()];
+		Number[] sortedValues = new Number[merged.size()];
 		for (int i = 0; i < sortedKeys.size(); i++) {
-			sortedValues[i] = stationVisits.get(sortedKeys.get(i));
+			sortedValues[i] = merged.get(sortedKeys.get(i));
 		}
 
 		// Collect the visit counts / hastable values
 		ArrayList<Number> series1Numbers = new ArrayList<Number>();
 		for (Iterator iterator = sortedKeys.iterator(); iterator.hasNext();) {
 			Object station = (Object) iterator.next();
-			series1Numbers.add(stationVisits.get(station));
+			series1Numbers.add(merged.get(station));
 		}
 
 		// padding, ensure zero at axis
