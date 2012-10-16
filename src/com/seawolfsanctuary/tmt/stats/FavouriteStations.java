@@ -71,7 +71,12 @@ public class FavouriteStations extends Activity {
 		}
 
 		// Add arrival-only counts
-		// ...
+		for (Iterator i = arrivals.keySet().iterator(); i.hasNext();) {
+			String arrStn = i.next().toString();
+			if (!departures.containsKey(arrStn)) {
+				merged.put(arrStn, arrivals.get(arrStn));
+			}
+		}
 
 		// Sort the keys (stations) and match up the values (count)
 		final ArrayList<String> sortedKeys = new ArrayList(merged.keySet());
