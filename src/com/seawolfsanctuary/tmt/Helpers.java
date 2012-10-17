@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -171,11 +172,18 @@ public class Helpers {
 		journey.putInt("from_time_hour", tp_FromTime.getCurrentHour());
 		journey.putInt("from_time_minute", tp_FromTime.getCurrentMinute());
 
+		CheckBox chk_DetailClass = (CheckBox) src
+				.findViewById(R.id.chk_DetailClass);
 		TextView txt_DetailClass = (TextView) src
 				.findViewById(R.id.txt_DetailClass);
+		CheckBox chk_DetailHeadcode = (CheckBox) src
+				.findViewById(R.id.chk_DetailHeadcode);
 		TextView txt_DetailHeadcode = (TextView) src
 				.findViewById(R.id.txt_DetailHeadcode);
+		journey.putBoolean("detail_class_enabled", chk_DetailClass.isChecked());
 		journey.putString("detail_class", txt_DetailClass.getText().toString());
+		journey.putBoolean("detail_headcode_checked",
+				chk_DetailHeadcode.isChecked());
 		journey.putString("detail_headcode", txt_DetailHeadcode.getText()
 				.toString());
 
@@ -227,12 +235,36 @@ public class Helpers {
 				}
 			}
 
+			if (journey.containsKey("detail_class_checked")) {
+				CheckBox chk_DetailClass = (CheckBox) dest
+						.findViewById(R.id.chk_DetailClass);
+				chk_DetailClass.setChecked(journey
+						.getBoolean("detail_class_checked"));
+
+				TextView txt_DetailClass = (TextView) dest
+						.findViewById(R.id.txt_DetailClass);
+				txt_DetailClass.setEnabled(journey
+						.getBoolean("detail_class_checked"));
+			}
+
 			if (journey.containsKey("detail_class")) {
 				if (journey.getString("detail_class").length() > 0) {
 					TextView txt_DetailClass = (TextView) dest
 							.findViewById(R.id.txt_DetailClass);
 					txt_DetailClass.setText(journey.getString("detail_class"));
 				}
+			}
+
+			if (journey.containsKey("detail_headcode_checked")) {
+				CheckBox chk_DetailHeadcode = (CheckBox) dest
+						.findViewById(R.id.chk_DetailHeadcode);
+				chk_DetailHeadcode.setChecked(journey
+						.getBoolean("detail_headcode_checked"));
+
+				TextView txt_DetailHeadcode = (TextView) dest
+						.findViewById(R.id.txt_DetailHeadcode);
+				txt_DetailHeadcode.setEnabled(journey
+						.getBoolean("detail_headcode_checked"));
 			}
 
 			if (journey.containsKey("detail_headcode")) {

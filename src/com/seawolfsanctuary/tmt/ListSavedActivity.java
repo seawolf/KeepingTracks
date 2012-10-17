@@ -332,6 +332,13 @@ public class ListSavedActivity extends ExpandableListActivity {
 				entry.putInt("to_time_hour", journey.getInt(11));
 				entry.putInt("to_time_minute", journey.getInt(12));
 
+				if (journey.getString(13).length() < 1) {
+					entry.putBoolean("detail_class_checked", false);
+				}
+				if (journey.getString(14).length() < 1) {
+					entry.putBoolean("detail_headcode_checked", false);
+				}
+
 				entry.putString("detail_class", journey.getString(13));
 				entry.putString("detail_headcode", journey.getString(14));
 

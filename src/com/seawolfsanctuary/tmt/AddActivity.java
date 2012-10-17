@@ -136,10 +136,28 @@ public class AddActivity extends TabActivity {
 					}
 				}
 				if (tabID == "tc_Detail") {
+					if (template.containsKey("detail_class_checked")) {
+						chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
+						chk_DetailClass.setChecked(template
+								.getBoolean("detail_class_checked"));
+						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+						txt_DetailClass.setEnabled(template
+								.getBoolean("detail_class_checked"));
+					}
+
 					if (template.containsKey("detail_class")) {
 						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 						txt_DetailClass.setText(template
 								.getCharSequence("detail_class"));
+					}
+
+					if (template.containsKey("detail_headcode_checked")) {
+						chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
+						chk_DetailHeadcode.setChecked(template
+								.getBoolean("detail_headcode_checked"));
+						txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+						txt_DetailHeadcode.setEnabled(template
+								.getBoolean("detail_headcode_checked"));
 					}
 
 					if (template.containsKey("detail_headcode")) {
