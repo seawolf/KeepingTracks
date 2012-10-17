@@ -480,6 +480,7 @@ public class AddActivity extends TabActivity {
 			dialog = ProgressDialog.show(AddActivity.this,
 					"Downloading Departures",
 					"Downloading departure board. Please wait...", true);
+			dialog.setCancelable(true);
 
 			new DownloadJourneysTask().execute(journeyDetails);
 		}
