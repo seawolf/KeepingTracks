@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -27,6 +28,7 @@ import com.seawolfsanctuary.tmt.database.Journey;
 public class FavouriteStations extends Activity {
 	private XYPlot mySimpleXYPlot;
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,8 +60,8 @@ public class FavouriteStations extends Activity {
 		}
 		db_journeys.close();
 
-		final Hashtable<String, Integer> merged = new Hashtable<String, Integer>();
-		for (Iterator i = departures.keySet().iterator(); i.hasNext();) {
+		final TreeMap<String, Integer> merged = new TreeMap<String, Integer>();
+		for (Iterator<String> i = departures.keySet().iterator(); i.hasNext();) {
 			String depStn = i.next().toString();
 
 			// Use departure count, add arrival count
@@ -71,35 +73,59 @@ public class FavouriteStations extends Activity {
 		}
 
 		// Add arrival-only counts
-		for (Iterator i = arrivals.keySet().iterator(); i.hasNext();) {
+		for (Iterator<String> i = arrivals.keySet().iterator(); i.hasNext();) {
 			String arrStn = i.next().toString();
 			if (!departures.containsKey(arrStn)) {
 				merged.put(arrStn, arrivals.get(arrStn));
 			}
 		}
 
-		// Sort the keys (stations) and match up the values (count)
-		final ArrayList<String> sortedKeys = new ArrayList(merged.keySet());
-		Collections.sort(sortedKeys);
-		Number[] sortedValues = new Number[merged.size()];
-		for (int i = 0; i < sortedKeys.size(); i++) {
-			sortedValues[i] = merged.get(sortedKeys.get(i));
+		// Create a reverse of merged: visitCounts = { :count1 => [stn1, stn2] }
+		ArrayList<Integer> countVisits = new ArrayList<Integer>();
+		Hashtable<Integer, ArrayList<String>> visitCounts = new Hashtable<Integer, ArrayList<String>>();
+		for (Iterator<String> s = merged.keySet().iterator(); s.hasNext();) {
+			String stn = s.next().toString();
+			Integer visits = merged.get(stn);
+
+			// Get any previous visit counts
+			ArrayList<String> stations = new ArrayList<String>();
+			if (visitCounts.containsKey(visits)) {
+				stations = visitCounts.get(visits);
+			}
+
+			// Update
+			stations.add(Helpers.trimNameFromStation(stn));
+
+			// Save
+			visitCounts.put(visits, stations);
+			countVisits.add(visits);
 		}
 
-		// Collect the visit counts / hastable values
-		ArrayList<Number> series1Numbers = new ArrayList<Number>();
-		for (Iterator iterator = sortedKeys.iterator(); iterator.hasNext();) {
-			Object station = (Object) iterator.next();
-			series1Numbers.add(merged.get(station));
-		}
+		final ArrayList<String> sortedKeys = new ArrayList<String>();
+		final ArrayList<Number> series1Numbers = new ArrayList<Number>();
 
-		// padding, ensure zero at axis
-		sortedKeys.add("");
-		series1Numbers.add(0);
+		// Sort visitCounts for iteration
+		// visitCounts = { :count1 => [stn1, stn2] }
+		Collections.sort(countVisits);
+		int count = 0;
+		for (Integer i : countVisits) {
+			if (count < 10 && (!series1Numbers.contains(i))) {
+				ArrayList<String> stns = visitCounts.get(i);
+				String names = "";
+				for (String stn : stns) {
+					names = names + stn + " ";
+				}
+
+				sortedKeys.add(names);
+				series1Numbers.add(i);
+				count += 1;
+			}
+		}
 
 		XYSeries series1 = new SimpleXYSeries(series1Numbers,
 				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "");
 
+		@SuppressWarnings("unused")
 		LineAndPointFormatter series1Format = new LineAndPointFormatter(
 				Color.rgb(0, 200, 0), // line color
 				Color.rgb(0, 100, 0), // point color
@@ -124,8 +150,7 @@ public class FavouriteStations extends Activity {
 			public StringBuffer format(Object object, StringBuffer buffer,
 					FieldPosition field) {
 				int pos = (int) Math.round((Double) object);
-				String station = Helpers.trimNameFromStation(sortedKeys
-						.get(pos).toString());
+				String station = sortedKeys.get(pos).toString();
 				StringBuffer result = new StringBuffer(station);
 				return result;
 			}
