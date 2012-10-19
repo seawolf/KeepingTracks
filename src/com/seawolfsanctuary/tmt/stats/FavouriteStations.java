@@ -35,8 +35,8 @@ public class FavouriteStations extends Activity {
 		setContentView(R.layout.stats_favourite_stations);
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_FavouriteStations);
 
-		final Hashtable<String, Integer> departures = new Hashtable<String, Integer>();
-		final Hashtable<String, Integer> arrivals = new Hashtable<String, Integer>();
+		Hashtable<String, Integer> departures = new Hashtable<String, Integer>();
+		Hashtable<String, Integer> arrivals = new Hashtable<String, Integer>();
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
@@ -60,7 +60,7 @@ public class FavouriteStations extends Activity {
 		}
 		db_journeys.close();
 
-		final TreeMap<String, Integer> merged = new TreeMap<String, Integer>();
+		TreeMap<String, Integer> merged = new TreeMap<String, Integer>();
 		for (Iterator<String> i = departures.keySet().iterator(); i.hasNext();) {
 			String depStn = i.next().toString();
 
@@ -79,6 +79,9 @@ public class FavouriteStations extends Activity {
 				merged.put(arrStn, arrivals.get(arrStn));
 			}
 		}
+
+		departures = null;
+		arrivals = null;
 
 		// Create a reverse of merged: visitCounts = { :count1 => [stn1, stn2] }
 		ArrayList<Integer> countVisits = new ArrayList<Integer>();
@@ -101,6 +104,8 @@ public class FavouriteStations extends Activity {
 			countVisits.add(visits);
 		}
 
+		merged = null;
+
 		final ArrayList<String> sortedKeys = new ArrayList<String>();
 		final ArrayList<Number> series1Numbers = new ArrayList<Number>();
 
@@ -111,16 +116,19 @@ public class FavouriteStations extends Activity {
 		for (Integer i : countVisits) {
 			if (count < 10 && (!series1Numbers.contains(i))) {
 				ArrayList<String> stns = visitCounts.get(i);
-				String names = "";
+				StringBuilder names = new StringBuilder();
 				for (String stn : stns) {
-					names = names + stn + " ";
+					names.append(stn).append(" ");
 				}
 
-				sortedKeys.add(names);
+				sortedKeys.add(names.toString());
 				series1Numbers.add(i);
 				count += 1;
 			}
 		}
+
+		visitCounts = null;
+		countVisits = null;
 
 		XYSeries series1 = new SimpleXYSeries(series1Numbers,
 				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "");
