@@ -13,6 +13,6 @@
             android:layout_marginTop="10px"
             android:layout_marginLeft="10px"
             android:layout_marginRight="10px"
-            title="Station Visits"/>
+            title="@string/stats_favourite_stations"/>
 
 </LinearLayout>

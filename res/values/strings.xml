@@ -23,6 +23,7 @@
     <string name="foursquare_deauthenticate">Log Out</string>
     <string name="stats">Statistics</string>
     <string name="stats_jouneys_month">Journeys by Month</string>
+    <string name="stats_favourite_stations">Most Visited Stations</string>
     <string name="save">Save</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>

@@ -56,11 +56,11 @@
         </activity>
         <activity
             android:name=".stats.JourneysByMonth"
-            android:label="@string/stats" >
+            android:label="@string/stats_jouneys_month" >
         </activity>
         <activity
             android:name=".stats.FavouriteStations"
-            android:label="@string/stats" >
+            android:label="@string/stats_favourite_stations" >
         </activity>
     </application>
 
