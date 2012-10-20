@@ -2,6 +2,7 @@ package com.seawolfsanctuary.tmt.stats;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 
 import android.app.ListActivity;
 import android.database.Cursor;
@@ -20,19 +21,31 @@ public class ClassesUsed extends ListActivity {
 		setContentView(R.layout.stats_classes_used);
 
 		ArrayList<String> allClasses = loadSavedEntries(true);
-		ArrayList<String> classesUsed = new ArrayList<String>();
+		Hashtable<String, Integer> classesUsed = new Hashtable<String, Integer>();
 		for (String journeyClasses : allClasses) {
 			for (String classUsed : Journey
 					.classesStringToArrayList(journeyClasses)) {
-				if (!classesUsed.contains(classUsed)) {
-					classesUsed.add(classUsed);
+				int count = 0;
+				if (classesUsed.keySet().contains(classUsed)) {
+					count = classesUsed.get(classUsed);
 				}
+				classesUsed.put(classUsed, 1 + count);
 			}
 		}
-		Collections.sort(classesUsed);
+
+		ArrayList<String> listContents = new ArrayList<String>();
+		for (String classUsed : classesUsed.keySet()) {
+			String time = " time";
+			if (classesUsed.get(classUsed) > 1) {
+				time += "s";
+			}
+			listContents.add(classUsed + " (" + classesUsed.get(classUsed)
+					+ time + ")");
+		}
+		Collections.sort(listContents);
 
 		setListAdapter(new ArrayAdapter<String>(this,
-				R.layout.stats_classes_used_list, classesUsed));
+				R.layout.stats_classes_used_list, listContents));
 	}
 
 	private ArrayList<String> loadSavedEntries(boolean showToast) {
