@@ -284,6 +284,8 @@ public class ListSavedActivity extends ExpandableListActivity {
 				entry[12] = c.getString(13);
 				entry[13] = c.getString(14);
 				allJourneys.add(entry);
+
+				Journey.classesStringToArrayList(c.getString(13));
 			} while (c.moveToNext());
 		}
 		db_journeys.close();

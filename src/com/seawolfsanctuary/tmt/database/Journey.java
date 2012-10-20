@@ -334,4 +334,19 @@ public class Journey {
 			return false;
 		}
 	}
+
+	public static ArrayList<String> classesStringToArrayList(String rawClasses) {
+		ArrayList<String> classes = new ArrayList<String>();
+		String[] splitClasses = rawClasses.split("[/|+&,]");
+		for (String c : splitClasses) {
+			c = c.trim();
+			if (c.length() > 0) {
+				System.out.println("Processing class: \"" + c + "\"");
+				classes.add(c);
+			} else {
+				System.out.println("Ignoring: \"" + c + "\"");
+			}
+		}
+		return classes;
+	}
 }
