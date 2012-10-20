@@ -58,6 +58,10 @@
             android:name=".stats.JourneysByMonth"
             android:label="@string/stats" >
         </activity>
+        <activity
+            android:name=".stats.ClassesUsed"
+            android:label="@string/stats_classes_used" >
+        </activity>
     </application>
 
 </manifest>
