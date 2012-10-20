@@ -337,9 +337,10 @@ public class Journey {
 
 	private static String classFromLocoNo(String locoNumber) {
 		String result = locoNumber.trim();
-		if (result.length() > 3) {
+		if (result.length() > 3 || result.contains("/") || result.contains("-")) {
 			// we need to pick out 2- or 3-char class number
 			System.out.println("Found loco number: \"" + result + "\"");
+
 			String validResult = result.split("\\D")[0];
 			System.out.println("First valid group: \"" + validResult + "\"");
 			result = validResult;
@@ -372,7 +373,7 @@ public class Journey {
 
 	public static ArrayList<String> classesStringToArrayList(String rawClasses) {
 		ArrayList<String> classes = new ArrayList<String>();
-		String[] splitClasses = rawClasses.split("[/|+&,]");
+		String[] splitClasses = rawClasses.split("([|+&,])|( / )|( - )");
 		for (String c : splitClasses) {
 			c = c.trim();
 			if (c.length() > 0) {
