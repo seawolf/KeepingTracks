@@ -334,4 +334,56 @@ public class Journey {
 			return false;
 		}
 	}
+
+	private static String classFromLocoNo(String locoNumber) {
+		String result = locoNumber.trim();
+		if (result.length() > 3 || result.contains("/") || result.contains("-")) {
+			// we need to pick out 2- or 3-char class number
+			System.out.println("Found loco number: \"" + result + "\"");
+
+			String validResult = result.split("\\D")[0];
+			System.out.println("First valid group: \"" + validResult + "\"");
+			result = validResult;
+			System.out.println("Class/Loco No: \"" + result + "\"");
+
+			if (result.length() == 2) {
+				System.out.println("2-digit class found from loco: \"" + result
+						+ "\"");
+			} else if (result.length() == 3) {
+				System.out.println("3-digit class found from loco: \"" + result
+						+ "\"");
+			} else if (result.length() == 5) {
+				System.out.println("Taking 2-digit class from loco: \""
+						+ result + "\"");
+				result = result.substring(0, 2);
+			} else if (result.length() == 6) {
+				System.out.println("Taking 3-digit class from loco: \""
+						+ result + "\"");
+				result = result.substring(0, 3);
+			} else {
+				System.out.println("Taking plain result: \"" + result + "\"");
+			}
+
+			System.out.println("Result: \"" + result + "\"");
+		} else {
+			System.out.println("Class number only: \"" + result + "\"");
+		}
+		return result;
+	}
+
+	public static ArrayList<String> classesStringToArrayList(String rawClasses) {
+		ArrayList<String> classes = new ArrayList<String>();
+		String[] splitClasses = rawClasses.split("([|+&,])|( / )|( - )");
+		for (String c : splitClasses) {
+			c = c.trim();
+			if (c.length() > 0) {
+				System.out.println("Processing class: \"" + c + "\"");
+				c = classFromLocoNo(c);
+				classes.add(c);
+			} else {
+				System.out.println("Ignoring: \"" + c + "\"");
+			}
+		}
+		return classes;
+	}
 }

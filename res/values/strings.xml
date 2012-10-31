@@ -24,6 +24,8 @@
     <string name="stats">Statistics</string>
     <string name="stats_jouneys_month">Journeys by Month</string>
     <string name="stats_favourite_stations">Most Visited Stations</string>
+    <string name="stats_classes_used">Classes Used</string>
+    <string name="stats_classes_used_prompt">List of classes inclusive os subclasses.</string>
     <string name="save">Save</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
