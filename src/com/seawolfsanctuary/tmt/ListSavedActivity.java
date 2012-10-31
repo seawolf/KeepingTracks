@@ -100,30 +100,30 @@ public class ListSavedActivity extends ExpandableListActivity {
 		ExpandableListView lv = getExpandableListView();
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					final int id, long position) {
+			public boolean onItemLongClick(AdapterView<?> parentView,
+					View childView, final int positionInParentList,
+					final long positionWithinChildList) {
 
-				boolean isParentSelected = (position >= 0);
+				boolean isParentSelected = (positionWithinChildList >= 0);
 				if (isParentSelected) {
 					// by some fluke we have a parent
-					new AlertDialog.Builder(view.getContext())
+					new AlertDialog.Builder(parentView.getContext())
 							.setTitle("Modify Entry")
 							.setMessage(
 									"Do you want to edit or delete this entry?")
 							.setPositiveButton("Edit", new OnClickListener() {
 								public void onClick(DialogInterface arg0,
 										int arg1) {
-
-									editEntry(id);
-									// save will move create new
-									// ListSavedActivity
+									editEntry(ExpandableListView
+											.getPackedPositionGroup(positionWithinChildList));
+									// save will create ListSavedActivity
 								}
 							})
 							.setNegativeButton("Delete", new OnClickListener() {
 								public void onClick(DialogInterface arg0,
 										int arg1) {
-
-									deleteEntry(id);
+									deleteEntry(ExpandableListView
+											.getPackedPositionGroup(positionWithinChildList));
 
 									Intent intent = getIntent();
 									finish();
