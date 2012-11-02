@@ -1,15 +1,22 @@
 package com.seawolfsanctuary.tmt.stats;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.seawolfsanctuary.tmt.Helpers;
 import com.seawolfsanctuary.tmt.R;
 import com.seawolfsanctuary.tmt.database.Journey;
 
@@ -46,6 +53,31 @@ public class ClassesUsed extends ListActivity {
 
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.stats_classes_used_list, listContents));
+
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View childView,
+					int position, long id) {
+				Object itemView = adapterView.getItemAtPosition(position);
+				String itemContent = itemView.toString();
+				String classNo = itemContent.substring(0,
+						itemContent.indexOf("(") - 1);
+				File f = new File(Helpers.dataDirectoryPath + "/class_photos/",
+						classNo);
+				if (f.exists()) {
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setDataAndType(
+							Uri.parse(Helpers.dataDirectoryURI
+									+ "/class_photos/" + classNo), "image/*");
+					startActivity(i);
+				} else {
+					Toast.makeText(
+							getBaseContext(),
+							"No photo found. Either this class is not in the Class Reference, or it hasn't a photo in the bundle.",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 	}
 
 	private ArrayList<String> loadSavedEntries(boolean showToast) {

@@ -249,7 +249,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	}
 
-	class ClassInfoAdapter extends BaseExpandableListAdapter {
+	private class ClassInfoAdapter extends BaseExpandableListAdapter {
 
 		public ArrayList<String> entries = loadClassInfo(true);
 		public ArrayList<String[]> data = parseEntries(entries);
