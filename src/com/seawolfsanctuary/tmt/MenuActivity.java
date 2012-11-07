@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.seawolfsanctuary.tmt.foursquare.CheckinActivity;
+import com.seawolfsanctuary.tmt.foursquare.SetupActivity;
 import com.seawolfsanctuary.tmt.stats.StatsActivity;
 
 public class MenuActivity extends Activity {
@@ -73,12 +75,12 @@ public class MenuActivity extends Activity {
 	}
 
 	private void startFoursquareSetupActivity(View v) {
-		Intent intent = new Intent(this, FoursquareSetupActivity.class);
+		Intent intent = new Intent(this, SetupActivity.class);
 		startActivity(intent);
 	}
 
 	private void startFoursquareCheckinActivity(View v) {
-		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
+		Intent intent = new Intent(this, CheckinActivity.class);
 		startActivity(intent);
 	}
 

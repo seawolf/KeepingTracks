@@ -32,6 +32,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.tmt.database.Journey;
+import com.seawolfsanctuary.tmt.foursquare.CheckinActivity;
 
 public class AddActivity extends TabActivity {
 
@@ -435,7 +436,7 @@ public class AddActivity extends TabActivity {
 	}
 
 	private void foursquareCheckin(Bundle journey) {
-		Intent intent = new Intent(this, FoursquareCheckinActivity.class);
+		Intent intent = new Intent(this, CheckinActivity.class);
 		intent.putExtras(journey);
 		startActivity(intent);
 		AddActivity.this.finish();

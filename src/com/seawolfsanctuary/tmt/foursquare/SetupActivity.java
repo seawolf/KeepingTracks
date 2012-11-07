@@ -1,8 +1,14 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.tmt.foursquare;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+
+import com.seawolfsanctuary.tmt.Helpers;
+import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.R.id;
+import com.seawolfsanctuary.tmt.R.layout;
+import com.seawolfsanctuary.tmt.R.menu;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,7 +23,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-public class FoursquareSetupActivity extends Activity {
+public class SetupActivity extends Activity {
 
 	private static final String CLIENT_ID = fetchClientID();
 	private static final String CLIENT_SECRET = fetchClientSecret();
@@ -35,7 +41,7 @@ public class FoursquareSetupActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.foursquare_deauthenticate:
 			if (Helpers.removeAccessToken() == true) {
-				FoursquareSetupActivity.this.finish();
+				SetupActivity.this.finish();
 				Toast.makeText(
 						getApplicationContext(),
 						"You must now re-authenticate with Foursquare to check-in.",
@@ -89,7 +95,7 @@ public class FoursquareSetupActivity extends Activity {
 						Helpers.writeAccessToken(accessToken);
 						reloadActivity();
 					} else {
-						Toast.makeText(FoursquareSetupActivity.this,
+						Toast.makeText(SetupActivity.this,
 								"Saved Token: " + Helpers.readAccessToken(),
 								Toast.LENGTH_SHORT).show();
 					}
@@ -192,8 +198,8 @@ public class FoursquareSetupActivity extends Activity {
 	}
 
 	private void reloadActivity() {
-		Intent intent = new Intent(this, FoursquareSetupActivity.class);
-		FoursquareSetupActivity.this.finish();
+		Intent intent = new Intent(this, SetupActivity.class);
+		SetupActivity.this.finish();
 		startActivity(intent);
 	}
 }

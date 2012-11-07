@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.tmt.foursquare;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +17,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.seawolfsanctuary.tmt.Helpers;
+import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.R.id;
+import com.seawolfsanctuary.tmt.R.layout;
+import com.seawolfsanctuary.tmt.R.menu;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -37,7 +43,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class FoursquareCheckinActivity extends ListActivity {
+public class CheckinActivity extends ListActivity {
 
 	private Bundle checkin_details = new Bundle();
 
@@ -51,7 +57,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	private static void setLastLookup(long lastLookup) {
-		FoursquareCheckinActivity.lastLookup = lastLookup;
+		CheckinActivity.lastLookup = lastLookup;
 	}
 
 	private static ArrayList<String> venues = new ArrayList<String>();
@@ -61,7 +67,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	private static void setVenues(ArrayList<String> venues) {
-		FoursquareCheckinActivity.venues = venues;
+		CheckinActivity.venues = venues;
 	}
 
 	private static ArrayList<String> venueIDs = new ArrayList<String>();
@@ -71,7 +77,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	private static void setVenueIDs(ArrayList<String> venueIDs) {
-		FoursquareCheckinActivity.venueIDs = venueIDs;
+		CheckinActivity.venueIDs = venueIDs;
 	}
 
 	private static boolean updatingLocation = false;
@@ -81,7 +87,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	public static void amUpdatingLocation(boolean updatingLocation) {
-		FoursquareCheckinActivity.updatingLocation = updatingLocation;
+		CheckinActivity.updatingLocation = updatingLocation;
 	}
 
 	private static LocationManager locationManager = null;
@@ -91,7 +97,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	private static void setLocationManager(LocationManager locationManager) {
-		FoursquareCheckinActivity.locationManager = locationManager;
+		CheckinActivity.locationManager = locationManager;
 	}
 
 	private static Location location = null;
@@ -101,7 +107,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 	}
 
 	private static void setLocation(Location location) {
-		FoursquareCheckinActivity.location = location;
+		CheckinActivity.location = location;
 	}
 
 	// Define a listener that responds to location updates
@@ -217,7 +223,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 		switch (item.getItemId()) {
 		case R.id.foursquare_deauthenticate:
 			if (Helpers.removeAccessToken() == true) {
-				FoursquareCheckinActivity.this.finish();
+				CheckinActivity.this.finish();
 				Toast.makeText(
 						getApplicationContext(),
 						"You must now re-authenticate with Foursquare to check-in.",
@@ -288,35 +294,36 @@ public class FoursquareCheckinActivity extends ListActivity {
 									+ checkin_details.getString("to_stn");
 
 						}
+						checkinMessage += ".";
 
-						if (checkin_details.getString("detail_class").length() > 0
-								|| checkin_details.getString("detail_headcode")
+						if (checkin_details.getString("detail_headcode")
+								.length() > 0
+								|| checkin_details.getString("detail_class")
 										.length() > 0) {
 
-							checkinMessage += " by riding ";
-
-							if (checkin_details.getString("detail_class")
-									.length() > 0) {
-								checkinMessage += "a "
-										+ checkin_details
-												.getString("detail_class");
-							}
-
-							if (checkin_details.getString("detail_class")
-									.length() > 0
-									&& checkin_details.getString(
-											"detail_headcode").length() > 0) {
-								checkinMessage += " as ";
-							}
+							checkinMessage += " (";
 
 							if (checkin_details.getString("detail_headcode")
 									.length() > 0) {
 								checkinMessage += checkin_details
 										.getString("detail_headcode");
 							}
-						}
 
-						checkinMessage += ".";
+							if (checkin_details.getString("detail_headcode")
+									.length() > 0
+									&& checkin_details
+											.getString("detail_class").length() > 0) {
+								checkinMessage += " - ";
+							}
+
+							if (checkin_details.getString("detail_class")
+									.length() > 0) {
+								checkinMessage += checkin_details
+										.getString("detail_class");
+							}
+
+							checkinMessage += ")";
+						}
 
 					} else {
 						// Delete this else block to check-in with no shout
@@ -504,7 +511,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 						+ "Venues Updated!");
 
 				setListAdapter(new ArrayAdapter<String>(
-						FoursquareCheckinActivity.this,
+						CheckinActivity.this,
 						R.layout.foursquare_checkin_venue, getVenues()));
 
 				Toast.makeText(
@@ -606,7 +613,7 @@ public class FoursquareCheckinActivity extends ListActivity {
 			if (checkinSuccessful) {
 				Toast.makeText(getApplicationContext(), "Checked in!",
 						Toast.LENGTH_SHORT).show();
-				FoursquareCheckinActivity.this.finish();
+				CheckinActivity.this.finish();
 			} else {
 				Toast.makeText(getApplicationContext(), "Could not check in.",
 						Toast.LENGTH_SHORT).show();

@@ -39,11 +39,11 @@
             android:label="@string/class_info" >
         </activity>
         <activity
-            android:name=".FoursquareSetupActivity"
+            android:name=".foursquare.SetupActivity"
             android:label="@string/foursquare_setup" >
         </activity>
         <activity
-            android:name=".FoursquareCheckinActivity"
+            android:name=".foursquare.CheckinActivity"
             android:label="foursquare_venue_select" >
         </activity>
         <activity
