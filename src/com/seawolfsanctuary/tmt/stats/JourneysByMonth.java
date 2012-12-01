@@ -22,6 +22,8 @@ import com.seawolfsanctuary.tmt.database.Journey;
 
 public class JourneysByMonth extends Activity {
 	private XYPlot mySimpleXYPlot;
+	private String[] months = new String[] { "J", "F", "M", "A", "M", "J", "J",
+			"A", "S", "O", "N", "D" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,8 @@ public class JourneysByMonth extends Activity {
 		setContentView(R.layout.stats_journeys_month);
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_JourneysMonth);
 
-		Integer[] series1Integers = new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0 };
+		Integer[] series1Integers = new Integer[] { null, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0 };
 		ArrayList<Number> series1Numbers = new ArrayList<Number>();
 		int i = 0;
 		Journey db_journeys = new Journey(this);
@@ -44,10 +46,9 @@ public class JourneysByMonth extends Activity {
 		}
 		db_journeys.close();
 
-		for (int j = 0; j < 13; j++) {
+		for (int j = 1; j <= 12; j++) {
 			series1Numbers.add(series1Integers[j]);
 		}
-		series1Numbers.remove(0);
 
 		XYSeries series1 = new SimpleXYSeries(series1Numbers,
 				SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "");
@@ -65,18 +66,16 @@ public class JourneysByMonth extends Activity {
 		mySimpleXYPlot.getLegendWidget().setVisible(false);
 		mySimpleXYPlot.disableAllMarkup();
 
-		mySimpleXYPlot.setRangeLabel("Count");
+		mySimpleXYPlot.setRangeLabel("");
 		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 2);
 		mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("#"));
 
-		mySimpleXYPlot.setDomainLabel("Month");
+		mySimpleXYPlot.setDomainLabel("");
 		mySimpleXYPlot.setDomainStep(XYStepMode.SUBDIVIDE, 12);
 		mySimpleXYPlot.setDomainValueFormat(new Format() {
 			@Override
 			public StringBuffer format(Object object, StringBuffer buffer,
 					FieldPosition field) {
-				String[] months = new String[] { "J", "F", "M", "A", "M", "J",
-						"J", "A", "S", "O", "N", "D" };
 				int pos = (int) Math.round((Double) object);
 				StringBuffer result = new StringBuffer(months[pos]);
 				return result;
@@ -86,7 +85,9 @@ public class JourneysByMonth extends Activity {
 			public Object parseObject(String string, ParsePosition position) {
 				return null;
 			}
-
 		});
+
+		mySimpleXYPlot.setTitle(getApplicationContext().getString(
+				R.string.stats_jouneys_month));
 	}
 }

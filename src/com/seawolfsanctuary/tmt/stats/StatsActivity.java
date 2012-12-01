@@ -1,5 +1,7 @@
 package com.seawolfsanctuary.tmt.stats;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,15 +15,25 @@ import android.widget.Toast;
 import com.seawolfsanctuary.tmt.R;
 
 public class StatsActivity extends ListActivity {
-
-	private String[] names = { "Journeys by Month", "Favourite Stations", "Classes Used" };
-	private String[] activities = { "stats.JourneysByMonth",
-			"stats.FavouriteStations", "stats.ClassesUsed" };
+	private ArrayList<String> names = new ArrayList<String>();
+	private ArrayList<String> activities = new ArrayList<String>();
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		names.add(getApplicationContext().getString(
+				R.string.stats_jouneys_month));
+		names.add(getApplicationContext().getString(
+				R.string.stats_favourite_stations));
+		names.add(getApplicationContext()
+				.getString(R.string.stats_classes_used));
+
+		activities.add("stats.JourneysByMonth");
+		activities.add("stats.FavouriteStations");
+		activities.add("stats.ClassesUsed");
+
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.stats_activity_list, names));
 
@@ -31,7 +43,7 @@ public class StatsActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				String className = "com.seawolfsanctuary.tmt."
-						+ activities[position];
+						+ activities.get(position);
 				try {
 					Intent intent;
 					intent = new Intent(view.getContext(), Class
