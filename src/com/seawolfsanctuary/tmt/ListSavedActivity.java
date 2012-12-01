@@ -264,7 +264,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneys();
+		Cursor c = db_journeys.getAllJourneysReverse();
 		if (c.moveToFirst()) {
 			do {
 				String[] entry = new String[14];
@@ -308,7 +308,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			db_journeys.open();
 
 			// Fetch all journeys so we can find out the id to delete
-			Cursor c = db_journeys.getAllJourneys();
+			Cursor c = db_journeys.getAllJourneysReverse();
 			if (c.moveToFirst()) {
 				c.moveToPosition(position);
 				id = c.getInt(0);
@@ -369,7 +369,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			db_journeys.open();
 
 			// Fetch all journeys so we can find out the id to delete
-			Cursor c = db_journeys.getAllJourneys();
+			Cursor c = db_journeys.getAllJourneysReverse();
 			if (c.moveToFirst()) {
 				c.moveToPosition(position);
 				id = c.getInt(0);

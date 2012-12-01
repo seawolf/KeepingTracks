@@ -138,7 +138,22 @@ public class Journey {
 
 				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, ""
 				+ KEY_FROM_YEAR + "," + KEY_FROM_MONTH + "," + KEY_FROM_DAY
-				+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE);
+				+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
+	}
+
+	public Cursor getAllJourneysReverse() {
+		System.out.println("Fetching all entries, in reverse order...");
+		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID,
+				KEY_FROM_STATION, KEY_FROM_DAY, KEY_FROM_MONTH, KEY_FROM_YEAR,
+				KEY_FROM_HOUR, KEY_FROM_MINUTE,
+
+				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
+				KEY_TO_HOUR, KEY_TO_MINUTE,
+
+				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, ""
+				+ KEY_FROM_YEAR + " DESC," + KEY_FROM_MONTH + " DESC,"
+				+ KEY_FROM_DAY + " DESC," + KEY_FROM_HOUR + " DESC,"
+				+ KEY_FROM_MINUTE + " DESC");
 	}
 
 	public Cursor getJourney(long rowId) throws SQLException {
