@@ -491,12 +491,10 @@ public class AddActivity extends TabActivity {
 	private class DownloadJourneysTask extends
 			AsyncTask<String[], Void, ArrayList<String>> {
 
-		/**
-		 * The system calls this to perform work in a worker thread and delivers
-		 * it the parameters given to AsyncTask.execute()
-		 */
 		protected ArrayList<String> doInBackground(String[]... journeysDetails) {
 			ArrayList<String> formattedJourneys = new ArrayList<String>();
+			formattedJourneys.add("Sorry, but something went wrong.");
+			String dataError = "Unable to parse data. Check the 'From' station is correct.";
 
 			String[] journeyDetails = journeysDetails[0];
 			String fromStation = journeyDetails[0];
@@ -518,7 +516,7 @@ public class AddActivity extends TabActivity {
 			try {
 				URL url = new URL("http://trains.im/departures/" + fromStation
 						+ "/" + year + "/" + month + "/" + day + "/" + section);
-				System.out.println("URL: " + url.toString());
+				System.out.println("Fetching journeys from: " + url.toString());
 
 				StringBuilder builder = new StringBuilder();
 				BufferedReader reader = new BufferedReader(
@@ -530,106 +528,121 @@ public class AddActivity extends TabActivity {
 
 				String tableStart = "<table class=\"table table-striped\">";
 				String tableEnd = "</table>";
-				String tablePart = builder.substring(builder
-						.indexOf(tableStart) + tableStart.length());
-				System.out.println(tablePart);
-				String table = tablePart.substring(0,
-						tablePart.indexOf(tableEnd));
+				if (builder.indexOf(tableStart) < 0) {
+					formattedJourneys.set(0, dataError);
+				} else {
+					String tablePart = builder.substring(builder
+							.indexOf(tableStart) + tableStart.length());
+					System.out.println(tablePart);
+					String table = tablePart.substring(0,
+							tablePart.indexOf(tableEnd));
 
-				String bodyStart = "<tbody>";
-				String bodyEnd = "</tbody>";
-				String bodyPart = table.substring(table.indexOf(bodyStart)
-						+ bodyStart.length());
-				String body = bodyPart.substring(0, bodyPart.indexOf(bodyEnd));
+					String bodyStart = "<tbody>";
+					String bodyEnd = "</tbody>";
+					if (table.indexOf(bodyStart) < 0) {
+						formattedJourneys.set(0, dataError);
+					} else {
+						String bodyPart = table.substring(table
+								.indexOf(bodyStart) + bodyStart.length());
+						String body = bodyPart.substring(0,
+								bodyPart.indexOf(bodyEnd));
 
-				String rowStart = "<tr";
-				String rowEnd = "</tr>";
-				ArrayList<String> rows = new ArrayList<String>();
+						String rowStart = "<tr";
+						String rowEnd = "</tr>";
+						ArrayList<String> rows = new ArrayList<String>();
 
-				String[] rawRows = body.split(Pattern.quote(rowStart));
-				for (int r = 1; r < rawRows.length; r++) {
-					String row = rawRows[r];
-					rows.add(row);
-					// System.out.println("Added row " + r + ": " + row);
-				}
+						String[] rawRows = body.split(Pattern.quote(rowStart));
+						for (int r = 1; r < rawRows.length; r++) {
+							String row = rawRows[r];
+							rows.add(row);
+							// System.out.println("Added row " + r + ": " +
+							// row);
+						}
 
-				ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
+						ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
 
-				for (int r = 0; r < rows.size(); r++) {
-					String row = rows.get(r);
+						for (int r = 0; r < rows.size(); r++) {
+							String row = rows.get(r);
 
-					// Split into array of cells
-					String cellStart = "<td";
-					String cellEnd = "</";
+							// Split into array of cells
+							String cellStart = "<td";
+							String cellEnd = "</";
 
-					ArrayList<String> cells = new ArrayList<String>();
-					String[] rawCells = row.split(Pattern.quote(cellStart));
-					for (int i = 0; i < rawCells.length; i++) {
-						cells.add(rawCells[i]);
+							ArrayList<String> cells = new ArrayList<String>();
+							String[] rawCells = row.split(Pattern
+									.quote(cellStart));
+							for (int i = 0; i < rawCells.length; i++) {
+								cells.add(rawCells[i]);
+							}
+							cells.remove(0);
+
+							ArrayList<String> journey = new ArrayList<String>();
+
+							// Get cell contents and remove any more HTML tags
+							// from inside
+							for (int c = 0; c < cells.size(); c++) {
+								String cellPart = cells.get(c);
+								String cell = cellPart.substring(
+										cellPart.indexOf(">") + 1,
+										cellPart.indexOf(cellEnd));
+								cells.set(c, android.text.Html.fromHtml(cell)
+										.toString());
+							}
+
+							// Pick out elements
+							// System.out.println("Headcode: " + cells.get(0));
+							// System.out.println("Departure: " + cells.get(1));
+							// System.out.println("Destination: " +
+							// cells.get(2));
+							// System.out.println("Platform: " + cells.get(3));
+							// System.out.println("Operator: " + cells.get(4));
+
+							String line = cells.get(0);
+							line += ": " + cells.get(1);
+							line += " to " + cells.get(2);
+
+							if (cells.get(3).length() > 0) {
+								line += " (platform " + cells.get(3) + ")";
+							}
+
+							for (int i = 0; i < cells.size(); i++) {
+								journey.add(cells.get(i));
+							}
+
+							journeys.add(journey);
+							formattedJourneys.add(line);
+							formattedJourneys.set(0, "SUCCESS");
+						}
 					}
-					cells.remove(0);
-
-					ArrayList<String> journey = new ArrayList<String>();
-
-					// Get cell contents and remove any more HTML tags from
-					// inside
-					for (int c = 0; c < cells.size(); c++) {
-						String cellPart = cells.get(c);
-						String cell = cellPart.substring(
-								cellPart.indexOf(">") + 1,
-								cellPart.indexOf(cellEnd));
-						cells.set(c, android.text.Html.fromHtml(cell)
-								.toString());
-					}
-
-					// Pick out elements
-					// System.out.println("Headcode: " + cells.get(0));
-					// System.out.println("Departure: " + cells.get(1));
-					// System.out.println("Destination: " + cells.get(2));
-					// System.out.println("Platform: " + cells.get(3));
-					// System.out.println("Operator: " + cells.get(4));
-
-					String line = cells.get(0);
-					line += ": " + cells.get(1);
-					line += " to " + cells.get(2);
-
-					if (cells.get(3).length() > 0) {
-						line += " (platform " + cells.get(3) + ")";
-					}
-
-					for (int i = 0; i < cells.size(); i++) {
-						journey.add(cells.get(i));
-					}
-
-					journeys.add(journey);
-					formattedJourneys.add(line);
 				}
 
 				try {
 					reader.close();
-				} catch (IOException logOrIgnore) {
-					// TODO ignore
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					System.err.println(e.getStackTrace());
 				}
 
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+				System.err.println(e.getStackTrace());
+				formattedJourneys.set(0,
+						"Recieved data was not in the expected format.");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+				System.err.println(e.getStackTrace());
+				formattedJourneys.set(0,
+						"Network error. Check your Internet connection.");
 			}
 
 			return formattedJourneys;
 		}
 
-		/**
-		 * The system calls this to perform work in the UI thread and delivers
-		 * the result from doInBackground()
-		 */
 		protected void onPostExecute(ArrayList<String> resultList) {
 			dialog.dismiss();
 
-			if (resultList.size() > 0) {
+			if (resultList.get(0) == "SUCCESS") {
+				resultList.remove(0);
 				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 
 				String[] tempResults = new String[resultList.size()];
@@ -654,8 +667,7 @@ public class AddActivity extends TabActivity {
 				AlertDialog alert = builder.create();
 				alert.show();
 			} else {
-				Toast.makeText(getBaseContext(),
-						"Download failed. Check your Internet connection.",
+				Toast.makeText(getBaseContext(), resultList.get(0),
 						Toast.LENGTH_LONG).show();
 			}
 		}
