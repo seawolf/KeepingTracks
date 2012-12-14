@@ -31,9 +31,13 @@ public class Helpers {
 	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
 
 	public static void hideKeyboard(View view) {
-		InputMethodManager imm = (InputMethodManager) view.getContext()
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		try {
+			InputMethodManager imm = (InputMethodManager) view.getContext()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		} catch (Exception e) {
+			// couldn't close keyboards
+		}
 	}
 
 	public static String trimCSVSpeech(String input) {
