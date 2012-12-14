@@ -156,8 +156,9 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = data.get(i);
 				names.add(Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
-						+ Helpers.leftPad(entry[3], 4) + ":\n" + entry[0]
-						+ "\n" + entry[6]);
+						+ Helpers.leftPad(entry[3], 4) + ":\n"
+						+ Helpers.trimCodeFromStation(entry[0]) + "\n"
+						+ Helpers.trimCodeFromStation(entry[6]));
 			}
 			return names;
 		}
@@ -169,14 +170,14 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				split.add("From: " + entry[0] + "\nOn: "
-						+ Helpers.leftPad(entry[1], 2) + "/"
+				split.add("From: " + Helpers.trimCodeFromStation(entry[0])
+						+ "\nOn: " + Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
 						+ Helpers.leftPad(entry[3], 2) + "\nAt: "
 						+ Helpers.leftPad(entry[4], 2) + ":"
 						+ Helpers.leftPad(entry[5], 2));
-				split.add("To: " + entry[6] + "\nOn "
-						+ Helpers.leftPad(entry[7], 2) + "/"
+				split.add("To: " + Helpers.trimCodeFromStation(entry[6])
+						+ "\nOn " + Helpers.leftPad(entry[7], 2) + "/"
 						+ Helpers.leftPad(entry[8], 2) + "/"
 						+ Helpers.leftPad(entry[9], 2) + "\nAt: "
 						+ Helpers.leftPad(entry[10], 2) + ":"
