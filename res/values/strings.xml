@@ -7,9 +7,12 @@
     <string name="tr_headcode">Headcode</string>
     <string name="add_new">Add Journey</string>
     <string name="edit_saved">Edit Journey</string>
+    <string name="copy_saved">Copy Journey</string>
     <string name="list_saved">Saved Journeys</string>
-    <string name="list_saved_prompt">Tap a journey entry to see details. Tap and hold to delete.</string>
-    <string name="headcode_selection">Select Journey</string>
+    <string name="list_saved_prompt">Tap a journey to see details. Tap and hold to edit, copy or delete.</string>
+    <string name="list_saved_question_title">Journey Selected</string>
+    <string name="list_saved_question_text">Do you want to edit, copy or delete this journey?</string>
+    <string name="headcode_selection">Select Departure</string>
     <string name="class_info">Class Reference</string>
     <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
@@ -20,7 +23,7 @@
     <string name="foursquare_venue_select_prompt">Select then correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
     <string name="foursquare_venue_select_visibility_private">Your check-in will be private</string>
     <string name="foursquare_venue_select_visibility_public">Your check-in will be public</string>
-    <string name="foursquare_venue_select_shout">Include journey details as shout</string>
+    <string name="foursquare_venue_select_shout">Include journey details with check-in</string>
     <string name="foursquare_deauthenticate">Log Out</string>
     <string name="stats">Statistics</string>
     <string name="stats_jouneys_month">Journeys by Month</string>
