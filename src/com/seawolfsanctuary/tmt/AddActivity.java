@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ListAdapter;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -86,12 +87,6 @@ public class AddActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Link array of completions
-		String[] completions = read_csv("stations.lst");
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_dropdown_item_1line, completions);
-
 		setContentView(R.layout.add_activity);
 
 		mTabHost = getTabHost();
@@ -213,6 +208,13 @@ public class AddActivity extends TabActivity {
 
 		mTabHost.setCurrentTab(0);
 
+		// Link array of completions
+		String[] completions = read_csv("stations.lst");
+		ArrayAdapter<String> fromSearchAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_dropdown_item_1line, completions);
+		ArrayAdapter<String> toSearchAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_dropdown_item_1line, completions);
+
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		OnItemClickListener cl_FromToClickListener = new AdapterView.OnItemClickListener() {
@@ -224,11 +226,11 @@ public class AddActivity extends TabActivity {
 			}
 		};
 
-		actv_FromSearch.setAdapter(adapter);
+		actv_FromSearch.setAdapter(fromSearchAdapter);
 		actv_FromSearch.setThreshold(2);
 		actv_FromSearch.setOnItemClickListener(cl_FromToClickListener);
 
-		actv_ToSearch.setAdapter(adapter);
+		actv_ToSearch.setAdapter(toSearchAdapter);
 		actv_ToSearch.setThreshold(2);
 		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
 
@@ -683,6 +685,18 @@ public class AddActivity extends TabActivity {
 								// System.out.println("Setting #" + i + ": " +
 								// selection);
 								txt_DetailHeadcode.setText(selection.get(0));
+								String destination = selection.get(2);
+
+								// pick 1st equal from all completions :-(
+								actv_ToSearch.performCompletion();
+								String suggestion = autoComplete(destination,
+										actv_ToSearch.getAdapter());
+								if (suggestion.length() > 0) {
+									actv_ToSearch.setText(suggestion);
+								} else {
+									actv_ToSearch.setText(destination);
+								}
+
 								dialog.dismiss();
 							}
 						});
@@ -692,6 +706,20 @@ public class AddActivity extends TabActivity {
 				Toast.makeText(getBaseContext(), resultList.get(0).get(1),
 						Toast.LENGTH_LONG).show();
 			}
+		}
+
+		private String autoComplete(String criteria, ListAdapter completions) {
+			// System.out.println("AutoCompleting...");
+			for (int j = 0; j < completions.getCount(); j++) {
+				String suggestion = (String) completions.getItem(j);
+				String stationName = Helpers.trimCodeFromStation(suggestion);
+				// System.out.println(suggestion + "==" + criteria);
+				if (criteria.equals(stationName)) {
+					// System.out.println("MATCH");
+					return suggestion;
+				}
+			}
+			return "";
 		}
 	}
 }
