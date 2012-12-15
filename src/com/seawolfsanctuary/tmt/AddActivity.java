@@ -489,12 +489,16 @@ public class AddActivity extends TabActivity {
 	}
 
 	private class DownloadJourneysTask extends
-			AsyncTask<String[], Void, ArrayList<String>> {
+			AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
 
-		protected ArrayList<String> doInBackground(String[]... journeysDetails) {
-			ArrayList<String> formattedJourneys = new ArrayList<String>();
-			formattedJourneys.add("Sorry, but something went wrong.");
+		protected ArrayList<ArrayList<String>> doInBackground(
+				String[]... journeysDetails) {
+			ArrayList<ArrayList<String>> formattedJourneys = new ArrayList<ArrayList<String>>();
+
+			ArrayList<String> result = new ArrayList<String>();
 			String dataError = "Unable to parse data. Check the 'From' station is correct.";
+
+			formattedJourneys.add(result);
 
 			String[] journeyDetails = journeysDetails[0];
 			String fromStation = journeyDetails[0];
@@ -529,18 +533,22 @@ public class AddActivity extends TabActivity {
 				String tableStart = "<table class=\"table table-striped\">";
 				String tableEnd = "</table>";
 				if (builder.indexOf(tableStart) < 0) {
-					formattedJourneys.set(0, dataError);
+					result.add("ERROR");
+					result.add(dataError);
+					formattedJourneys.set(0, result);
 				} else {
 					String tablePart = builder.substring(builder
 							.indexOf(tableStart) + tableStart.length());
-					System.out.println(tablePart);
+					// System.out.println(tablePart);
 					String table = tablePart.substring(0,
 							tablePart.indexOf(tableEnd));
 
 					String bodyStart = "<tbody>";
 					String bodyEnd = "</tbody>";
 					if (table.indexOf(bodyStart) < 0) {
-						formattedJourneys.set(0, dataError);
+						result.add("ERROR");
+						result.add(dataError);
+						formattedJourneys.set(0, result);
 					} else {
 						String bodyPart = table.substring(table
 								.indexOf(bodyStart) + bodyStart.length());
@@ -559,7 +567,7 @@ public class AddActivity extends TabActivity {
 							// row);
 						}
 
-						ArrayList<ArrayList> journeys = new ArrayList<ArrayList>();
+						ArrayList<ArrayList<String>> journeys = new ArrayList<ArrayList<String>>();
 
 						for (int r = 0; r < rows.size(); r++) {
 							String row = rows.get(r);
@@ -609,9 +617,12 @@ public class AddActivity extends TabActivity {
 								journey.add(cells.get(i));
 							}
 
-							journeys.add(journey);
-							formattedJourneys.add(line);
-							formattedJourneys.set(0, "SUCCESS");
+							result.clear();
+							result.add("SUCCESS");
+							result.add("" + journeys.size());
+							formattedJourneys.set(0, result);
+
+							formattedJourneys.add(journey);
 						}
 					}
 				}
@@ -626,48 +637,59 @@ public class AddActivity extends TabActivity {
 			} catch (UnsupportedEncodingException e) {
 				System.err.println(e.getMessage());
 				System.err.println(e.getStackTrace());
-				formattedJourneys.set(0,
-						"Recieved data was not in the expected format.");
+				result.add("ERROR");
+				result.add("Recieved data was not in the expected format.");
+				formattedJourneys.set(0, result);
 			} catch (IOException e) {
-				System.err.println(e.getMessage());
-				System.err.println(e.getStackTrace());
-				formattedJourneys.set(0,
-						"Network error. Check your Internet connection.");
+				result.add("ERROR");
+				result.add("Network error. Check your Internet connection.");
+				formattedJourneys.set(0, result);
 			}
 
 			return formattedJourneys;
 		}
 
-		protected void onPostExecute(ArrayList<String> resultList) {
+		protected void onPostExecute(
+				final ArrayList<ArrayList<String>> resultList) {
 			dialog.dismiss();
 
-			if (resultList.get(0) == "SUCCESS") {
+			if (resultList.get(0).get(0) == "SUCCESS") {
 				resultList.remove(0);
 				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
-				String[] tempResults = new String[resultList.size()];
+				String[] presentedResults = new String[resultList.size()];
+
 				for (int i = 0; i < resultList.size(); i++) {
-					tempResults[i] = resultList.get(i);
-				}
+					ArrayList<String> result = resultList.get(i);
+					// System.out.println("Result #" + i + ": " + result);
 
-				final String[] results = tempResults;
+					String platformInfo = result.get(3);
+					if (platformInfo.length() > 0) {
+						platformInfo = " (platform " + platformInfo + ")";
+					}
+
+					presentedResults[i] = result.get(0) + ": " + result.get(1)
+							+ " to " + result.get(2) + platformInfo;
+				}
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						AddActivity.this);
 				builder.setTitle("Select Journey");
-				builder.setSingleChoiceItems(results, -1,
+				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int item) {
-								txt_DetailHeadcode.setText(results[item]
-										.substring(0,
-												results[item].indexOf(":")));
+							public void onClick(DialogInterface dialog, int i) {
+								ArrayList<String> selection = resultList.get(i);
+								// System.out.println("Setting #" + i + ": " +
+								// selection);
+								txt_DetailHeadcode.setText(selection.get(0));
 								dialog.dismiss();
 							}
 						});
 				AlertDialog alert = builder.create();
 				alert.show();
-			} else {
-				Toast.makeText(getBaseContext(), resultList.get(0),
+			} else { // resultList.get(0).get(0) == "ERROR"
+				Toast.makeText(getBaseContext(), resultList.get(0).get(1),
 						Toast.LENGTH_LONG).show();
 			}
 		}
