@@ -6,6 +6,7 @@
     <string name="tr_class">Class</string>
     <string name="tr_headcode">Headcode</string>
     <string name="add_new">Add Journey</string>
+    <string name="edit_saved">Edit Journey</string>
     <string name="list_saved">Saved Journeys</string>
     <string name="list_saved_prompt">Tap a journey entry to see details. Tap and hold to delete.</string>
     <string name="headcode_selection">Select Journey</string>

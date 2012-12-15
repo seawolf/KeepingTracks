@@ -38,6 +38,8 @@ public class AddActivity extends TabActivity {
 
 	Bundle template;
 
+	TextView txt_Title;
+
 	TabHost mTabHost;
 
 	TextView txt_FromSearch;
@@ -89,6 +91,8 @@ public class AddActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_activity);
+
+		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
 		mTabHost = getTabHost();
 
@@ -237,6 +241,14 @@ public class AddActivity extends TabActivity {
 
 		template = getIntent().getExtras();
 		Helpers.loadCurrentJourney(template, AddActivity.this);
+
+		try {
+			if (template.containsKey("editing")) {
+				txt_Title.setText(R.string.edit_saved);
+			}
+		} catch (NullPointerException e) {
+			// meh
+		}
 	}
 
 	private String[] read_csv(String filename) {
