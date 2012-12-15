@@ -246,6 +246,9 @@ public class AddActivity extends TabActivity {
 			if (template.containsKey("editing")) {
 				txt_Title.setText(R.string.edit_saved);
 			}
+			if (template.containsKey("copying")) {
+				txt_Title.setText(R.string.copy_saved);
+			}
 		} catch (NullPointerException e) {
 			// meh
 		}
@@ -380,7 +383,7 @@ public class AddActivity extends TabActivity {
 						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-			// Adding a new journey
+			// Adding a journey, either new or copied
 			Journey db_journeys = new Journey(this);
 			db_journeys.open();
 			long id;

@@ -108,13 +108,20 @@ public class ListSavedActivity extends ExpandableListActivity {
 				if (isParentSelected) {
 					// by some fluke we have a parent
 					new AlertDialog.Builder(parentView.getContext())
-							.setTitle("Modify Entry")
-							.setMessage(
-									"Do you want to edit or delete this entry?")
+							.setTitle(R.string.list_saved_question_title)
+							.setMessage(R.string.list_saved_question_text)
 							.setPositiveButton("Edit", new OnClickListener() {
 								public void onClick(DialogInterface arg0,
 										int arg1) {
 									editEntry(ExpandableListView
+											.getPackedPositionGroup(positionWithinChildList));
+									// save will create ListSavedActivity
+								}
+							})
+							.setNeutralButton("Copy", new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									copyEntry(ExpandableListView
 											.getPackedPositionGroup(positionWithinChildList));
 									// save will create ListSavedActivity
 								}
@@ -308,7 +315,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			Journey db_journeys = new Journey(this);
 			db_journeys.open();
 
-			// Fetch all journeys so we can find out the id to delete
+			// Fetch all journeys so we can find out the id to edit
 			Cursor c = db_journeys.getAllJourneysReverse();
 			if (c.moveToFirst()) {
 				c.moveToPosition(position);
@@ -348,6 +355,68 @@ public class ListSavedActivity extends ExpandableListActivity {
 			success = true;
 
 			System.out.println("Editing entry: " + entry.getInt("id"));
+			Intent intent = new Intent(this, AddActivity.class);
+			ListSavedActivity.this.finish();
+			intent.putExtras(entry);
+			startActivity(intent);
+
+		} catch (Exception e) {
+			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+
+		return success;
+	}
+
+	public boolean copyEntry(int position) {
+		boolean success = false;
+		int id = -1;
+		Bundle entry = new Bundle();
+
+		try {
+			Journey db_journeys = new Journey(this);
+			db_journeys.open();
+
+			// Fetch all journeys so we can find out the id to delete
+			Cursor c = db_journeys.getAllJourneysReverse();
+			if (c.moveToFirst()) {
+				c.moveToPosition(position);
+				id = c.getInt(0);
+				System.out.println("Fetching row #" + id + "...");
+				Cursor journey = db_journeys.getJourney(id);
+
+				entry.putBoolean("copying", true);
+				// entry.putInt("id", journey.getInt(0));
+
+				entry.putString("from_stn", journey.getString(1));
+				entry.putInt("from_date_day", journey.getInt(2));
+				entry.putInt("from_date_month", journey.getInt(3));
+				entry.putInt("from_date_year", journey.getInt(4));
+				entry.putInt("from_time_hour", journey.getInt(5));
+				entry.putInt("from_time_minute", journey.getInt(6));
+
+				entry.putString("to_stn", journey.getString(7));
+				entry.putInt("to_date_day", journey.getInt(8));
+				entry.putInt("to_date_month", journey.getInt(9));
+				entry.putInt("to_date_year", journey.getInt(10));
+				entry.putInt("to_time_hour", journey.getInt(11));
+				entry.putInt("to_time_minute", journey.getInt(12));
+
+				if (journey.getString(13).length() < 1) {
+					entry.putBoolean("detail_class_checked", false);
+				}
+				if (journey.getString(14).length() < 1) {
+					entry.putBoolean("detail_headcode_checked", false);
+				}
+
+				entry.putString("detail_class", journey.getString(13));
+				entry.putString("detail_headcode", journey.getString(14));
+
+			}
+			db_journeys.close();
+			success = true;
+
+			System.out.println("Cloning entry: " + entry.getInt("id"));
 			Intent intent = new Intent(this, AddActivity.class);
 			ListSavedActivity.this.finish();
 			intent.putExtras(entry);
