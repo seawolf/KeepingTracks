@@ -26,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.ListAdapter;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -42,6 +41,7 @@ public class AddActivity extends TabActivity {
 	TabHost mTabHost;
 
 	TextView txt_FromSearch;
+	ArrayAdapter<String> ada_fromSearchAdapter;
 	DatePicker dp_FromDate;
 	TimePicker tp_FromTime;
 	AutoCompleteTextView actv_FromSearch;
@@ -52,6 +52,7 @@ public class AddActivity extends TabActivity {
 	TextView txt_DetailHeadcode;
 
 	TextView txt_ToSearch;
+	ArrayAdapter<String> ada_toSearchAdapter;
 	DatePicker dp_ToDate;
 	TimePicker tp_ToTime;
 	AutoCompleteTextView actv_ToSearch;
@@ -210,9 +211,9 @@ public class AddActivity extends TabActivity {
 
 		// Link array of completions
 		String[] completions = read_csv("stations.lst");
-		ArrayAdapter<String> fromSearchAdapter = new ArrayAdapter<String>(this,
+		ada_fromSearchAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
-		ArrayAdapter<String> toSearchAdapter = new ArrayAdapter<String>(this,
+		ada_toSearchAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
 
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
@@ -226,11 +227,11 @@ public class AddActivity extends TabActivity {
 			}
 		};
 
-		actv_FromSearch.setAdapter(fromSearchAdapter);
+		actv_FromSearch.setAdapter(ada_fromSearchAdapter);
 		actv_FromSearch.setThreshold(2);
 		actv_FromSearch.setOnItemClickListener(cl_FromToClickListener);
 
-		actv_ToSearch.setAdapter(toSearchAdapter);
+		actv_ToSearch.setAdapter(ada_toSearchAdapter);
 		actv_ToSearch.setThreshold(2);
 		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
 
@@ -690,7 +691,7 @@ public class AddActivity extends TabActivity {
 								// pick 1st equal from all completions :-(
 								actv_ToSearch.performCompletion();
 								String suggestion = autoComplete(destination,
-										actv_ToSearch.getAdapter());
+										ada_toSearchAdapter);
 								if (suggestion.length() > 0) {
 									actv_ToSearch.setText(suggestion);
 								} else {
@@ -708,7 +709,8 @@ public class AddActivity extends TabActivity {
 			}
 		}
 
-		private String autoComplete(String criteria, ListAdapter completions) {
+		private String autoComplete(String criteria,
+				ArrayAdapter<String> completions) {
 			// System.out.println("AutoCompleting...");
 			for (int j = 0; j < completions.getCount(); j++) {
 				String suggestion = (String) completions.getItem(j);
