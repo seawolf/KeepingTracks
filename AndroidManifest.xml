@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 
     <application
+        android:name="@string/app_name"
         android:allowClearUserData="true"
         android:enabled="true"
         android:icon="@drawable/ic_launcher"
@@ -25,6 +26,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="org.acra.CrashReportDialog"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
         <activity
             android:name=".AddActivity"
@@ -66,6 +74,18 @@
             android:name=".stats.ClassesUsed"
             android:label="@string/stats_classes_used" >
         </activity>
+        <activity
+            android:name="de.quist.app.errorreporter.ExceptionReportActivity"
+            android:process=":exceptionReporter"
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <service
+            android:name="de.quist.app.errorreporter.ExceptionReportService"
+            android:process=":exceptionReporter" />
+
+        <meta-data
+            android:name="de.quist.app.errorreporter.targetUrl"
+            android:value="http://bufferstop.herokuapp.com" />
     </application>
 
 </manifest>
