@@ -18,12 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.seawolfsanctuary.tmt.Helpers;
-import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.R.id;
-import com.seawolfsanctuary.tmt.R.layout;
-import com.seawolfsanctuary.tmt.R.menu;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.location.Location;
@@ -42,6 +36,9 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.Helpers;
+import com.seawolfsanctuary.tmt.R;
 
 public class CheckinActivity extends ListActivity {
 
@@ -510,8 +507,7 @@ public class CheckinActivity extends ListActivity {
 				System.out.println(location.getProvider() + " > "
 						+ "Venues Updated!");
 
-				setListAdapter(new ArrayAdapter<String>(
-						CheckinActivity.this,
+				setListAdapter(new ArrayAdapter<String>(CheckinActivity.this,
 						R.layout.foursquare_checkin_venue, getVenues()));
 
 				Toast.makeText(
