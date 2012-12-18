@@ -173,6 +173,31 @@
                     android:padding="5dp"
                     android:text="@string/dotdotdot" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="10dp" >
+
+                <ImageButton
+                    android:id="@+id/btn_CrashTest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/menu_checkin"
+                    android:contentDescription="@string/crash_dialog_title"
+                    android:onClick="crashTest" />
+
+                <TextView
+                    android:id="@+id/txt_CrashTest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp"
+                    android:text="Crash Test" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

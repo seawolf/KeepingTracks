@@ -89,4 +89,8 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
+	public void crashTest(View v) throws Exception {
+		throw new Exception("Crash Test");
+	}
+
 }
