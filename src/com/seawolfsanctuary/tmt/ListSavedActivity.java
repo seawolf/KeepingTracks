@@ -179,15 +179,18 @@ public class ListSavedActivity extends ExpandableListActivity {
 				ArrayList<String> split = new ArrayList<String>();
 
 				split.add("From: " + Helpers.trimCodeFromStation(entry[0])
-						+ "\nOn: " + Helpers.leftPad(entry[1], 2) + "/"
+						+ " (" + entry[0].substring(0, 3) + ")" + "\n"
+						+ Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
-						+ Helpers.leftPad(entry[3], 2) + "\nAt: "
+						+ Helpers.leftPad(entry[3], 2) + " - "
 						+ Helpers.leftPad(entry[4], 2) + ":"
 						+ Helpers.leftPad(entry[5], 2));
-				split.add("To: " + Helpers.trimCodeFromStation(entry[6])
-						+ "\nOn " + Helpers.leftPad(entry[7], 2) + "/"
+
+				split.add("To: " + Helpers.trimCodeFromStation(entry[6]) + " ("
+						+ entry[6].substring(0, 3) + ")" + "\n"
+						+ Helpers.leftPad(entry[7], 2) + "/"
 						+ Helpers.leftPad(entry[8], 2) + "/"
-						+ Helpers.leftPad(entry[9], 2) + "\nAt: "
+						+ Helpers.leftPad(entry[9], 2) + " - "
 						+ Helpers.leftPad(entry[10], 2) + ":"
 						+ Helpers.leftPad(entry[11], 2));
 
@@ -196,7 +199,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 				}
 
 				if (entry[13].length() > 0) {
-					split.add("As: " + entry[13]);
+					split.add("Journey: " + entry[13]);
 				}
 
 				data.add(split);
