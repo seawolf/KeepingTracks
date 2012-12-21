@@ -154,7 +154,7 @@ public class Helpers {
 
 	public static String nameAndCodeFromStation(String station) {
 		if (station.length() > 4) {
-			if (station.matches("([A-Z]){3} ")) {
+			if (station.substring(0, 4).matches("([A-Z]){3} ")) {
 				station = trimCodeFromStation(station) + " ("
 						+ trimNameFromStation(station) + ")";
 			}
