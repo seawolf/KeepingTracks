@@ -303,7 +303,7 @@ public class AddActivity extends TabActivity {
 
 		txt_Summary.setText("From:\t"
 				+ Helpers.trimCodeFromStation(actv_FromSearch.getText()
-						.toString())
+						.toString(), getBaseContext())
 				+ "\nOn:\t\t"
 				+ Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2)
 				+ "/"
@@ -318,7 +318,7 @@ public class AddActivity extends TabActivity {
 
 				"\n\nTo:\t\t"
 				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
-						.toString()) + "\nOn:\t\t"
+						.toString(), getBaseContext()) + "\nOn:\t\t"
 				+ Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2) + "/"
 				+ Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2) + "/"
 				+ Helpers.leftPad("" + dp_ToDate.getYear(), 4) + "\nAt:\t\t"
@@ -415,10 +415,10 @@ public class AddActivity extends TabActivity {
 				Bundle details = new Bundle();
 				details.putString("from_stn", Helpers
 						.trimCodeFromStation(actv_FromSearch.getText()
-								.toString()));
+								.toString(), getBaseContext()));
 				details.putString("to_stn",
 						Helpers.trimCodeFromStation(actv_ToSearch.getText()
-								.toString()));
+								.toString(), getBaseContext()));
 				details.putString("detail_class", txt_DetailClass.getText()
 						.toString());
 				details.putString("detail_headcode", txt_DetailHeadcode
@@ -729,7 +729,7 @@ public class AddActivity extends TabActivity {
 			// System.out.println("AutoCompleting...");
 			for (int j = 0; j < completions.getCount(); j++) {
 				String suggestion = (String) completions.getItem(j);
-				String stationName = Helpers.trimCodeFromStation(suggestion);
+				String stationName = Helpers.trimCodeFromStation(suggestion, getBaseContext());
 				// System.out.println(suggestion + "==" + criteria);
 				if (criteria.equals(stationName)) {
 					// System.out.println("MATCH");

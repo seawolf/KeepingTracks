@@ -33,6 +33,7 @@
     <string name="save">Save</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
+    <string name="none">(none)</string>
     <string name="dotdotdot">…</string>
     <string name="exit">Exit</string>
     <string name="crash_notif_title">Application Crash Detected</string>

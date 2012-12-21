@@ -165,8 +165,8 @@ public class ListSavedActivity extends ExpandableListActivity {
 				names.add(Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
 						+ Helpers.leftPad(entry[3], 4) + ":\n"
-						+ Helpers.trimCodeFromStation(entry[0]) + "\n"
-						+ Helpers.trimCodeFromStation(entry[6]));
+						+ Helpers.trimCodeFromStation(entry[0], getBaseContext()) + "\n"
+						+ Helpers.trimCodeFromStation(entry[6], getBaseContext()));
 			}
 			return names;
 		}
@@ -178,14 +178,14 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				split.add("From: " + Helpers.nameAndCodeFromStation(entry[0])
+				split.add("From: " + Helpers.nameAndCodeFromStation(entry[0], getBaseContext())
 						+ "\n" + Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
 						+ Helpers.leftPad(entry[3], 2) + " - "
 						+ Helpers.leftPad(entry[4], 2) + ":"
 						+ Helpers.leftPad(entry[5], 2));
 
-				split.add("To: " + Helpers.nameAndCodeFromStation(entry[6])
+				split.add("To: " + Helpers.nameAndCodeFromStation(entry[6], getBaseContext())
 						+ "\n" + Helpers.leftPad(entry[7], 2) + "/"
 						+ Helpers.leftPad(entry[8], 2) + "/"
 						+ Helpers.leftPad(entry[9], 2) + " - "

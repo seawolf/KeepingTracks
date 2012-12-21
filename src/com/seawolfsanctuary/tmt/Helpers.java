@@ -87,7 +87,7 @@ public class Helpers {
 			}
 			reader.close();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("Error reading access token: " + e.getMessage());
 		}
 
 		return accessToken;
@@ -115,7 +115,7 @@ public class Helpers {
 			success = true;
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("Error writing access token: " + e.getMessage());
 		}
 
 		return success;
@@ -128,36 +128,42 @@ public class Helpers {
 			File f = new File(dataDirectoryPath + "/access_token.txt");
 			success = f.delete();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("Error removing access token: " + e.getMessage());
 		}
 
 		return success;
 	}
 
-	public static String trimCodeFromStation(String station) {
+	public static String trimCodeFromStation(String station, Context c) {
 		if (station.length() > 4) {
 			if (station.substring(0, 4).matches("([A-Z]){3} ")) {
 				station = station.substring(4);
 			}
+		} else if (station.length() == 0) {
+			station = c.getString(R.string.none);
 		}
 		return station;
 	}
 
-	public static String trimNameFromStation(String station) {
+	public static String trimNameFromStation(String station, Context c) {
 		if (station.length() > 3) {
 			if (station.substring(0, 3).matches("([A-Z]){3}")) {
 				station = station.substring(0, 3);
 			}
+		} else if (station.length() == 0) {
+			station = c.getString(R.string.none);
 		}
 		return station;
 	}
 
-	public static String nameAndCodeFromStation(String station) {
+	public static String nameAndCodeFromStation(String station, Context c) {
 		if (station.length() > 4) {
 			if (station.substring(0, 4).matches("([A-Z]){3} ")) {
-				station = trimCodeFromStation(station) + " ("
-						+ trimNameFromStation(station) + ")";
+				station = trimCodeFromStation(station, c) + " ("
+						+ trimNameFromStation(station, c) + ")";
 			}
+		} else if (station.length() == 0) {
+			station = c.getString(R.string.none);
 		}
 		return station;
 	}
