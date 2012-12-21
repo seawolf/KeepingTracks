@@ -178,17 +178,15 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				split.add("From: " + Helpers.trimCodeFromStation(entry[0])
-						+ " (" + entry[0].substring(0, 3) + ")" + "\n"
-						+ Helpers.leftPad(entry[1], 2) + "/"
+				split.add("From: " + Helpers.nameAndCodeFromStation(entry[0])
+						+ "\n" + Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
 						+ Helpers.leftPad(entry[3], 2) + " - "
 						+ Helpers.leftPad(entry[4], 2) + ":"
 						+ Helpers.leftPad(entry[5], 2));
 
-				split.add("To: " + Helpers.trimCodeFromStation(entry[6]) + " ("
-						+ entry[6].substring(0, 3) + ")" + "\n"
-						+ Helpers.leftPad(entry[7], 2) + "/"
+				split.add("To: " + Helpers.nameAndCodeFromStation(entry[6])
+						+ "\n" + Helpers.leftPad(entry[7], 2) + "/"
 						+ Helpers.leftPad(entry[8], 2) + "/"
 						+ Helpers.leftPad(entry[9], 2) + " - "
 						+ Helpers.leftPad(entry[10], 2) + ":"

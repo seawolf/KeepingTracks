@@ -136,14 +136,28 @@ public class Helpers {
 
 	public static String trimCodeFromStation(String station) {
 		if (station.length() > 4) {
-			station = station.substring(4);
+			if (station.substring(0, 4).matches("([A-Z]){3} ")) {
+				station = station.substring(4);
+			}
 		}
 		return station;
 	}
 
 	public static String trimNameFromStation(String station) {
 		if (station.length() > 3) {
-			station = station.substring(0, 3);
+			if (station.substring(0, 3).matches("([A-Z]){3}")) {
+				station = station.substring(0, 3);
+			}
+		}
+		return station;
+	}
+
+	public static String nameAndCodeFromStation(String station) {
+		if (station.length() > 4) {
+			if (station.matches("([A-Z]){3} ")) {
+				station = trimCodeFromStation(station) + " ("
+						+ trimNameFromStation(station) + ")";
+			}
 		}
 		return station;
 	}
