@@ -201,9 +201,9 @@ public class Journey {
 				KEY_ROWID + "=" + rowId, null) > 0;
 	}
 
-	public ArrayList<Boolean> importFromCSV() {
+	public ArrayList<Boolean> importFromCSV(String dataFile) {
 		ArrayList<Boolean> statuses = new ArrayList<Boolean>();
-		ArrayList<String> saved_entries = loadSavedEntries();
+		ArrayList<String> saved_entries = loadSavedEntries(dataFile);
 		ArrayList<String[]> parsed_entries = parseEntries(saved_entries);
 
 		Journey db_journeys = new Journey(this.context);
@@ -228,14 +228,13 @@ public class Journey {
 		}
 
 		db_journeys.close();
-		File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
-		f.renameTo(new File(Helpers.exportDirectoryPath
-				+ "/routes.csv.imported"));
+		File f = new File(dataFile);
+		f.renameTo(new File(dataFile + ".imported"));
 
 		return statuses;
 	}
 
-	public ArrayList<String> loadSavedEntries() {
+	public ArrayList<String> loadSavedEntries(String dataFile) {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state)
 				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
@@ -244,7 +243,7 @@ public class Journey {
 				String line = null;
 				ArrayList<String> array = new ArrayList<String>();
 
-				File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
+				File f = new File(dataFile);
 				BufferedReader reader = new BufferedReader(new FileReader(f));
 
 				while ((line = reader.readLine()) != null) {

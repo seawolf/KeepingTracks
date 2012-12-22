@@ -68,7 +68,9 @@ public class ListSavedActivity extends ExpandableListActivity {
 											+ Helpers.exportDirectoryPath
 											+ "/routes.csv' ...");
 							progressDialog.setCancelable(false);
-							new ImportTask(progressDialog).execute();
+							new ImportTask(progressDialog)
+									.execute(Helpers.exportDirectoryPath
+											+ "/routes.csv");
 						}
 					}).setNegativeButton("Cancel", new OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg1) {
@@ -428,7 +430,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 	private void checkForLegacy(final View view) {
 		// do we have a CSV file on the SD card?
-		if (new File(Helpers.exportDirectoryPath + "/routes.csv").exists()) {
+		if (new File(Helpers.dataDirectoryPath + "/routes.csv").exists()) {
 			new AlertDialog.Builder(view.getContext())
 					.setTitle("Old Data Found")
 					.setMessage(
@@ -445,7 +447,9 @@ public class ListSavedActivity extends ExpandableListActivity {
 							progressDialog
 									.setMessage("Importing routes from CSV file...");
 							progressDialog.setCancelable(false);
-							new ImportTask(progressDialog).execute();
+							new ImportTask(progressDialog)
+									.execute(Helpers.dataDirectoryPath
+											+ "/routes.csv");
 						}
 					}).setNegativeButton("No", new OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg1) {
@@ -455,7 +459,8 @@ public class ListSavedActivity extends ExpandableListActivity {
 		}
 	}
 
-	private class ImportTask extends AsyncTask<Void, Void, ArrayList<Boolean>> {
+	private class ImportTask extends
+			AsyncTask<String, Void, ArrayList<Boolean>> {
 		private ProgressDialog progressDialog;
 
 		public ImportTask(ProgressDialog dialogFromActivity) {
@@ -466,8 +471,9 @@ public class ListSavedActivity extends ExpandableListActivity {
 			progressDialog.show();
 		}
 
-		protected ArrayList<Boolean> doInBackground(Void... args) {
-			return new Journey(progressDialog.getContext()).importFromCSV();
+		protected ArrayList<Boolean> doInBackground(String... args) {
+			return new Journey(progressDialog.getContext())
+					.importFromCSV(args[0]);
 		}
 
 		protected void onPostExecute(ArrayList<Boolean> statuses) {
