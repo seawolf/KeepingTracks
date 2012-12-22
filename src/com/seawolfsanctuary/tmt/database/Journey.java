@@ -227,6 +227,7 @@ public class Journey {
 			}
 		}
 
+		db_journeys.close();
 		File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
 		f.renameTo(new File(Helpers.exportDirectoryPath
 				+ "/routes.csv.imported"));
