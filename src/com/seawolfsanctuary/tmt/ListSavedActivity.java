@@ -428,7 +428,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 	private void checkForImport(final View view) {
 		// do we have a CSV file on the SD card?
-		if (new File(Helpers.dataDirectoryPath + "/routes.csv").exists()) {
+		if (new File(Helpers.exportDirectoryPath + "/routes.csv").exists()) {
 			new AlertDialog.Builder(view.getContext())
 					.setTitle("Old Data Found")
 					.setMessage(
@@ -488,7 +488,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			startActivity(intent);
 
 			Toast.makeText(
-					getApplicationContext(),
+					getBaseContext(),
 					"Imported " + successes + " routes, " + failures
 							+ " failed.", Toast.LENGTH_LONG).show();
 		}
@@ -519,8 +519,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 				msg = "Failed to export journeys. Check the SD card is available and writable.";
 			}
 
-			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 		}
 	}
 }

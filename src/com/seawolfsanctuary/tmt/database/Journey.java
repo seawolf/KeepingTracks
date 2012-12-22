@@ -227,8 +227,9 @@ public class Journey {
 			}
 		}
 
-		File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
-		f.renameTo(new File(Helpers.dataDirectoryPath + "/routes.csv.old"));
+		File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
+		f.renameTo(new File(Helpers.exportDirectoryPath
+				+ "/routes.csv.imported"));
 
 		return statuses;
 	}
@@ -242,7 +243,7 @@ public class Journey {
 				String line = null;
 				ArrayList<String> array = new ArrayList<String>();
 
-				File f = new File(Helpers.dataDirectoryPath + "/routes.csv");
+				File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
 				BufferedReader reader = new BufferedReader(new FileReader(f));
 
 				while ((line = reader.readLine()) != null) {
@@ -253,10 +254,8 @@ public class Journey {
 				return array;
 
 			} catch (Exception e) {
-				Toast.makeText(this.context,
-						"Error reading old routes: " + e.getMessage(),
-						Toast.LENGTH_LONG).show();
-
+				System.out.println("Error reading old routes: "
+						+ e.getMessage());
 				return new ArrayList<String>();
 			}
 
