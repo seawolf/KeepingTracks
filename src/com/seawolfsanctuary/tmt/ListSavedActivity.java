@@ -145,7 +145,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 			}
 		});
 
-		checkForImport(this.getExpandableListView());
+		checkForLegacy(this.getExpandableListView());
 	}
 
 	private class ListSavedAdapter extends BaseExpandableListAdapter {
@@ -426,7 +426,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 		return success;
 	}
 
-	private void checkForImport(final View view) {
+	private void checkForLegacy(final View view) {
 		// do we have a CSV file on the SD card?
 		if (new File(Helpers.exportDirectoryPath + "/routes.csv").exists()) {
 			new AlertDialog.Builder(view.getContext())
