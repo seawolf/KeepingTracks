@@ -68,7 +68,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 											+ Helpers.exportDirectoryPath
 											+ "/routes.csv' ...");
 							progressDialog.setCancelable(false);
-							new ExportTask(progressDialog).execute();
+							new ImportTask(progressDialog).execute();
 						}
 					}).setNegativeButton("Cancel", new OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg1) {
