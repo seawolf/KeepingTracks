@@ -135,8 +135,10 @@ public class ListSavedActivity extends ExpandableListActivity {
 									deleteEntry(ExpandableListView
 											.getPackedPositionGroup(positionWithinChildList));
 
-									Intent intent = getIntent();
-									finish();
+									Intent intent = new Intent(
+											getApplicationContext(),
+											ListSavedActivity.class);
+									ListSavedActivity.this.finish();
 									startActivity(intent);
 								}
 							}).show();
