@@ -703,14 +703,17 @@ public class AddActivity extends TabActivity {
 								txt_DetailHeadcode.setText(selection.get(0));
 								String destination = selection.get(2);
 
-								// pick 1st equal from all completions :-(
-								actv_ToSearch.performCompletion();
-								String suggestion = autoComplete(destination,
-										ada_toSearchAdapter);
-								if (suggestion.length() > 0) {
-									actv_ToSearch.setText(suggestion);
-								} else {
-									actv_ToSearch.setText(destination);
+								// Complete destination if not already present
+								if (actv_ToSearch.getText().length() < 1) {
+									// pick 1st equal from all completions :-(
+									actv_ToSearch.performCompletion();
+									String suggestion = autoComplete(
+											destination, ada_toSearchAdapter);
+									if (suggestion.length() > 0) {
+										actv_ToSearch.setText(suggestion);
+									} else {
+										actv_ToSearch.setText(destination);
+									}
 								}
 
 								dialog.dismiss();
