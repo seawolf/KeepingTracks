@@ -212,11 +212,11 @@ public class Journey {
 		for (String[] entry : parsed_entries) {
 			try {
 				System.out.println("Importing...");
-				db_journeys.insertJourney(entry[0], Integer.parseInt(entry[3]),
-						Integer.parseInt(entry[2]), Integer.parseInt(entry[1]),
+				db_journeys.insertJourney(entry[0], Integer.parseInt(entry[1]),
+						Integer.parseInt(entry[2]), Integer.parseInt(entry[3]),
 						Integer.parseInt(entry[4]), Integer.parseInt(entry[5]),
-						entry[6], Integer.parseInt(entry[9]),
-						Integer.parseInt(entry[8]), Integer.parseInt(entry[7]),
+						entry[6], Integer.parseInt(entry[7]),
+						Integer.parseInt(entry[8]), Integer.parseInt(entry[9]),
 						Integer.parseInt(entry[10]),
 						Integer.parseInt(entry[11]), entry[12], entry[13]);
 				System.out.println("Success!");
