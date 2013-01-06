@@ -323,10 +323,10 @@ public class Journey {
 					do {
 						String line = "";
 						line = "\"" + c.getString(1) + msep + c.getInt(4)
-								+ msep + (c.getInt(3) + 1) + msep + c.getInt(2)
+								+ msep + c.getInt(3) + msep + c.getInt(2)
 								+ msep + c.getInt(5) + msep + c.getInt(6)
 								+ msep + c.getString(7) + msep + c.getInt(10)
-								+ msep + (c.getInt(9) + 1) + msep + c.getInt(8)
+								+ msep + c.getInt(9) + msep + c.getInt(8)
 								+ msep + c.getInt(11) + msep + c.getInt(12)
 								+ msep + c.getString(13) + msep
 								+ c.getString(14) + "\"";
