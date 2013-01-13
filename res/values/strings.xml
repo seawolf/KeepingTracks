@@ -45,5 +45,6 @@
     <string name="crash_dialog_text">An unexpected error occurred forcing the application to close. Please help us fix this by sending us error data. No personal information is collected, only basic device details.</string>
     <string name="crash_dialog_comment_prompt">Please provide any useful information that may help fix the issue:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
+    <string name="crash_clear">Clear Previous Reports</string>
 
 </resources>

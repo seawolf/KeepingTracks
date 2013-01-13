@@ -34,6 +34,13 @@
             android:onClick="crashTest"
             android:text="@string/crash_test" />
 
+        <Button
+            android:id="@+id/btn_ClearCrashes"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clearCrashReports"
+            android:text="@string/crash_clear" />
+
     </LinearLayout>
 
 </LinearLayout>
