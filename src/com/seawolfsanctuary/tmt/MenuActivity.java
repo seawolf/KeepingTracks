@@ -89,4 +89,9 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
+	public void startUserPrefsActivity(View v) {
+		Intent intent = new Intent(this, UserPrefsActivity.class);
+		startActivity(intent);
+	}
+
 }
