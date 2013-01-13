@@ -282,7 +282,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 		if (c.moveToFirst()) {
 			do {
 				String[] entry = new String[14];
-				System.out.println("Reading row #" + c.getInt(0) + "...");
+				// System.out.println("Reading row #" + c.getInt(0) + "...");
 				entry[0] = c.getString(1);
 				entry[1] = "" + c.getInt(2);
 				entry[2] = "" + c.getInt(3);
