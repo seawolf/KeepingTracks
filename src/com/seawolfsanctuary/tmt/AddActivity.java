@@ -536,8 +536,9 @@ public class AddActivity extends TabActivity {
 			}
 
 			try {
-				URL url = new URL("http://trains.im/departures/" + fromStation
-						+ "/" + year + "/" + month + "/" + day + "/" + section);
+				URL url = new URL("http://trains.im/locationdepartures/"
+						+ fromStation + "/" + year + "/" + month + "/" + day
+						+ "/" + section);
 				System.out.println("Fetching journeys from: " + url.toString());
 
 				StringBuilder builder = new StringBuilder();
