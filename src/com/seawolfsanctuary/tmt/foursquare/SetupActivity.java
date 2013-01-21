@@ -4,12 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import com.seawolfsanctuary.tmt.Helpers;
-import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.R.id;
-import com.seawolfsanctuary.tmt.R.layout;
-import com.seawolfsanctuary.tmt.R.menu;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -22,6 +16,9 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.Helpers;
+import com.seawolfsanctuary.tmt.R;
 
 public class SetupActivity extends Activity {
 
@@ -112,8 +109,7 @@ public class SetupActivity extends Activity {
 
 		try {
 			// Create a URL for the desired page
-			URL client_id_url = new URL(
-					"http://dl.dropbox.com/u/6413248/client_id.txt");
+			URL client_id_url = new URL(Helpers.foursquareClientID);
 
 			// Read all the text returned by the server
 			BufferedReader client_id_in = new BufferedReader(
@@ -135,8 +131,7 @@ public class SetupActivity extends Activity {
 
 		try {
 			// Create a URL for the desired page
-			URL client_secret_url = new URL(
-					"http://dl.dropbox.com/u/6413248/client_secret.txt");
+			URL client_secret_url = new URL(Helpers.foursquareClientSecret);
 
 			// Read all the text returned by the server
 			BufferedReader client_secret_in = new BufferedReader(
@@ -158,8 +153,7 @@ public class SetupActivity extends Activity {
 
 		try {
 			// Create a URL for the desired page
-			URL redirect_uri_url = new URL(
-					"http://dl.dropbox.com/u/6413248/redirect_uri.txt");
+			URL redirect_uri_url = new URL(Helpers.foursquareRedirectURI);
 
 			// Read all the text returned by the server
 			BufferedReader redirect_uri_in = new BufferedReader(
