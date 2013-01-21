@@ -123,8 +123,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			boolean downloadedPhotos = false;
 
 			try {
-				URL bundleDownloadURL = new URL(
-						"http://dl.dropbox.com/u/6413248/class_photos/thumbs/");
+				URL bundleDownloadURL = new URL(Helpers.classInfoThumbsURI);
 
 				File targetDir = new File(Helpers.dataDirectoryPath
 						+ "/class_photos/thumbs");
@@ -170,8 +169,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				downloadedThumbs = true;
 
-				bundleDownloadURL = new URL(
-						"http://dl.dropbox.com/u/6413248/class_photos/");
+				bundleDownloadURL = new URL(Helpers.classInfoPhotosURI);
 
 				targetDir = new File(Helpers.dataDirectoryPath
 						+ "/class_photos");

@@ -30,6 +30,13 @@ public class Helpers {
 
 	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
 
+	public static final String classInfoPhotosURI = "http://dl.dropbox.com/u/6413248/TMT/class_photos/";
+	public static final String classInfoThumbsURI = "http://dl.dropbox.com/u/6413248/TMT/class_photos/thumbs/";
+
+	public static final String foursquareClientID = "http://dl.dropbox.com/u/6413248/TMT/client_id.txt";
+	public static final String foursquareClientSecret = "http://dl.dropbox.com/u/6413248/TMT/client_secret.txt";
+	public static final String foursquareRedirectURI = "http://dl.dropbox.com/u/6413248/TMT/redirect_uri.txt";
+
 	public static void hideKeyboard(View view) {
 		try {
 			InputMethodManager imm = (InputMethodManager) view.getContext()
