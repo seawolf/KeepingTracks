@@ -63,9 +63,6 @@ public class AddActivity extends TabActivity {
 	TextView txt_Summary;
 	CheckBox chk_Checkin;
 
-	boolean bln_CompleteFromStation;
-	boolean bln_CompleteToStation;
-
 	private ProgressDialog dialog;
 
 	@Override
@@ -94,14 +91,6 @@ public class AddActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_activity);
-
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		System.out.println("Loaded " + settings.getAll().size()
-				+ " saved preferences.");
-
-		bln_CompleteFromStation = settings.getBoolean("CompleteFromStation",
-				true);
-		bln_CompleteToStation = settings.getBoolean("CompleteToStation", true);
 
 		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
@@ -707,15 +696,14 @@ public class AddActivity extends TabActivity {
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int i) {
-								SharedPreferences settings = getPreferences(MODE_PRIVATE);
-								System.out.println("Loaded "
-										+ settings.getAll().size()
-										+ " saved preferences.");
+								SharedPreferences settings = getSharedPreferences(
+										UserPrefsActivity.APP_PREFS,
+										MODE_PRIVATE);
 
-								bln_CompleteFromStation = settings.getBoolean(
-										"CompleteFromStation", true);
-								bln_CompleteToStation = settings.getBoolean(
-										"CompleteToStation", true);
+								boolean bln_CompleteFromStation = settings
+										.getBoolean("CompleteFromStation", true);
+								boolean bln_CompleteToStation = settings
+										.getBoolean("CompleteToStation", true);
 
 								ArrayList<String> selection = resultList.get(i);
 								// System.out.println("Setting #" + i + ": " +
@@ -723,8 +711,20 @@ public class AddActivity extends TabActivity {
 								txt_DetailHeadcode.setText(selection.get(0));
 								String destination = selection.get(2);
 
+								// Correct departure time
+								if (bln_CompleteFromStation == true) {
+									System.out.println("Using: "
+											+ selection.get(1));
+									int hours = Integer.parseInt(selection.get(
+											1).substring(0, 2));
+									int minutes = Integer.parseInt(selection
+											.get(1).substring(2, 4));
+									tp_FromTime.setCurrentHour(hours);
+									tp_FromTime.setCurrentMinute(minutes);
+								}
+
 								// Complete destination if not already present
-								if (bln_CompleteFromStation
+								if (bln_CompleteToStation == true
 										&& actv_ToSearch.getText().length() < 1) {
 									// pick 1st equal from all completions :-(
 									actv_ToSearch.performCompletion();
@@ -735,18 +735,6 @@ public class AddActivity extends TabActivity {
 									} else {
 										actv_ToSearch.setText(destination);
 									}
-								}
-
-								// Correct departure time
-								if (bln_CompleteFromStation) {
-									System.out.println("Using: "
-											+ selection.get(1));
-									int hours = Integer.parseInt(selection.get(
-											1).substring(0, 2));
-									int minutes = Integer.parseInt(selection
-											.get(1).substring(2, 4));
-									tp_FromTime.setCurrentHour(hours);
-									tp_FromTime.setCurrentMinute(minutes);
 								}
 
 								updateText();

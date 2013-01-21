@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 public class UserPrefsActivity extends Activity {
 
+	public static final String APP_PREFS = "Global";
+
 	CheckBox chk_CompleteFromStn;
 	CheckBox chk_CompleteToStn;
 
@@ -19,10 +21,8 @@ public class UserPrefsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_prefs_activity);
-
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		System.out.println("Loaded " + settings.getAll().size()
-				+ " saved preferences.");
+		SharedPreferences settings = getSharedPreferences(APP_PREFS,
+				MODE_PRIVATE);
 
 		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
 		chk_CompleteFromStn.setChecked(settings.getBoolean(
@@ -62,7 +62,8 @@ public class UserPrefsActivity extends Activity {
 	}
 
 	public void chk_CompleteFromStation(View v) {
-		Editor editor = fetchPreferences();
+		Editor editor = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE).edit();
 		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
 		editor.putBoolean("CompleteFromStation",
 				chk_CompleteFromStn.isChecked());
@@ -70,15 +71,10 @@ public class UserPrefsActivity extends Activity {
 	}
 
 	public void chk_CompleteToStation(View v) {
-		Editor editor = fetchPreferences();
+		Editor editor = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE).edit();
 		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
 		editor.putBoolean("CompleteToStation", chk_CompleteToStn.isChecked());
 		editor.commit();
-	}
-
-	private SharedPreferences.Editor fetchPreferences() {
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		return editor;
 	}
 }
