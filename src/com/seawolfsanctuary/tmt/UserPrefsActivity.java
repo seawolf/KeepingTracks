@@ -9,24 +9,23 @@ import android.view.View;
 import android.widget.Toast;
 
 public class UserPrefsActivity extends Activity {
-	public static final String PREFS_APP = "ApplicationPrefs";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_prefs_activity);
 
-		SharedPreferences settings = getSharedPreferences(PREFS_APP, 0);
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		System.out.println("Loaded " + settings.getAll().size()
+				+ " saved preferences.");
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 
-		SharedPreferences settings = getSharedPreferences(PREFS_APP, 0);
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
-		// boolean preferenceValue = ... ;
-		// editor.putBoolean("preferenceName", preferenceValue);
 
 		editor.commit();
 	}

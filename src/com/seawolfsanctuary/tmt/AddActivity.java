@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -91,6 +92,10 @@ public class AddActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_activity);
+
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		System.out.println("Loaded " + settings.getAll().size()
+				+ " saved preferences.");
 
 		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
