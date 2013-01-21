@@ -41,6 +41,27 @@
             android:onClick="clearCrashReports"
             android:text="@string/crash_clear" />
 
+        <TextView
+            android:id="@+id/txt_AddActivity"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/user_prefs_add"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/chk_CompleteFromStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_prefs_add_complete_from" />
+
+        <CheckBox
+            android:id="@+id/chk_CompleteToStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_prefs_add_complete_to" />
+
     </LinearLayout>
 
 </LinearLayout>

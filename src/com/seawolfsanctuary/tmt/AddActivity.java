@@ -61,8 +61,10 @@ public class AddActivity extends TabActivity {
 	AutoCompleteTextView actv_ToSearch;
 
 	TextView txt_Summary;
-
 	CheckBox chk_Checkin;
+
+	boolean bln_CompleteFromStation;
+	boolean bln_CompleteToStation;
 
 	private ProgressDialog dialog;
 
@@ -97,10 +99,13 @@ public class AddActivity extends TabActivity {
 		System.out.println("Loaded " + settings.getAll().size()
 				+ " saved preferences.");
 
+		bln_CompleteFromStation = settings.getBoolean("CompleteFromStation",
+				true);
+		bln_CompleteToStation = settings.getBoolean("CompleteToStation", true);
+
 		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
 		mTabHost = getTabHost();
-
 		mTabHost.addTab(mTabHost.newTabSpec("tc_From").setIndicator("From")
 				.setContent(R.id.tc_From));
 		mTabHost.addTab(mTabHost.newTabSpec("tc_Detail").setIndicator("Detail")
@@ -681,6 +686,7 @@ public class AddActivity extends TabActivity {
 				resultList.remove(0);
 				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+				tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 				String[] presentedResults = new String[resultList.size()];
 
@@ -710,7 +716,8 @@ public class AddActivity extends TabActivity {
 								String destination = selection.get(2);
 
 								// Complete destination if not already present
-								if (actv_ToSearch.getText().length() < 1) {
+								if (bln_CompleteFromStation
+										&& actv_ToSearch.getText().length() < 1) {
 									// pick 1st equal from all completions :-(
 									actv_ToSearch.performCompletion();
 									String suggestion = autoComplete(
@@ -722,6 +729,19 @@ public class AddActivity extends TabActivity {
 									}
 								}
 
+								// Correct departure time
+								if (bln_CompleteFromStation) {
+									System.out.println("Using: "
+											+ selection.get(1));
+									int hours = Integer.parseInt(selection.get(
+											1).substring(0, 2));
+									int minutes = Integer.parseInt(selection
+											.get(1).substring(2, 4));
+									tp_FromTime.setCurrentHour(hours);
+									tp_FromTime.setCurrentMinute(minutes);
+								}
+
+								updateText();
 								dialog.dismiss();
 							}
 						});

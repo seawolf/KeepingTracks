@@ -38,6 +38,9 @@
     <string name="exit">Exit</string>
     <string name="user_prefs">Preferences</string>
     <string name="user_prefs_crash">Error (Crash) Handling</string>
+    <string name="user_prefs_add">Adding / Editing Journeys</string>
+    <string name="user_prefs_add_complete_from">Complete "From" station time from journey (headcode) selected</string>
+    <string name="user_prefs_add_complete_to">Complete "To" station name from journey (headcode) selected</string>
     <string name="crash_test">Test Catcher</string>
     <string name="crash_notif_title">Application Crash Detected</string>
     <string name="crash_notif_text">TMT crashed. Please help to fix the issue.</string>

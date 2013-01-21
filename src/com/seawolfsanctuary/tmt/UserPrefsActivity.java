@@ -6,9 +6,13 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 public class UserPrefsActivity extends Activity {
+
+	CheckBox chk_CompleteFromStn;
+	CheckBox chk_CompleteToStn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +22,14 @@ public class UserPrefsActivity extends Activity {
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 		System.out.println("Loaded " + settings.getAll().size()
 				+ " saved preferences.");
+
+		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
+		chk_CompleteFromStn.setChecked(settings.getBoolean(
+				"CompleteFromStation", true));
+
+		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
+		chk_CompleteToStn.setChecked(settings.getBoolean("CompleteToStation",
+				true));
 	}
 
 	@Override
@@ -26,6 +38,13 @@ public class UserPrefsActivity extends Activity {
 
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
+
+		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
+		editor.putBoolean("CompleteFromStation",
+				chk_CompleteFromStn.isChecked());
+
+		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
+		editor.putBoolean("CompleteToStation", chk_CompleteToStn.isChecked());
 
 		editor.commit();
 	}
