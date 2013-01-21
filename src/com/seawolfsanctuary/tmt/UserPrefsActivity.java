@@ -61,6 +61,10 @@ public class UserPrefsActivity extends Activity {
 		}
 	}
 
+	public void crashTest() throws Exception {
+		throw new Exception("Success!");
+	}
+
 	public void chk_CompleteFromStation(View v) {
 		Editor editor = getSharedPreferences(UserPrefsActivity.APP_PREFS,
 				MODE_PRIVATE).edit();
