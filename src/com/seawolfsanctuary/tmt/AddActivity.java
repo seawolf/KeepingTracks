@@ -423,12 +423,10 @@ public class AddActivity extends TabActivity {
 			chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 			if (chk_Checkin.isChecked()) {
 				Bundle details = new Bundle();
-				details.putString("from_stn", Helpers
-						.trimCodeFromStation(actv_FromSearch.getText()
-								.toString(), getBaseContext()));
-				details.putString("to_stn",
-						Helpers.trimCodeFromStation(actv_ToSearch.getText()
-								.toString(), getBaseContext()));
+				details.putString("from_stn", Helpers.trimCodeFromStation(
+						actv_FromSearch.getText().toString(), getBaseContext()));
+				details.putString("to_stn", Helpers.trimCodeFromStation(
+						actv_ToSearch.getText().toString(), getBaseContext()));
 				details.putString("detail_class", txt_DetailClass.getText()
 						.toString());
 				details.putString("detail_headcode", txt_DetailHeadcode
@@ -709,6 +707,16 @@ public class AddActivity extends TabActivity {
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int i) {
+								SharedPreferences settings = getPreferences(MODE_PRIVATE);
+								System.out.println("Loaded "
+										+ settings.getAll().size()
+										+ " saved preferences.");
+
+								bln_CompleteFromStation = settings.getBoolean(
+										"CompleteFromStation", true);
+								bln_CompleteToStation = settings.getBoolean(
+										"CompleteToStation", true);
+
 								ArrayList<String> selection = resultList.get(i);
 								// System.out.println("Setting #" + i + ": " +
 								// selection);
@@ -758,7 +766,8 @@ public class AddActivity extends TabActivity {
 			// System.out.println("AutoCompleting...");
 			for (int j = 0; j < completions.getCount(); j++) {
 				String suggestion = (String) completions.getItem(j);
-				String stationName = Helpers.trimCodeFromStation(suggestion, getBaseContext());
+				String stationName = Helpers.trimCodeFromStation(suggestion,
+						getBaseContext());
 				// System.out.println(suggestion + "==" + criteria);
 				if (criteria.equals(stationName)) {
 					// System.out.println("MATCH");

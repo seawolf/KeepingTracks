@@ -54,12 +54,14 @@
             android:id="@+id/chk_CompleteFromStation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="chk_CompleteFromStation"
             android:text="@string/user_prefs_add_complete_from" />
 
         <CheckBox
             android:id="@+id/chk_CompleteToStation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="chk_CompleteToStation"
             android:text="@string/user_prefs_add_complete_to" />
 
     </LinearLayout>

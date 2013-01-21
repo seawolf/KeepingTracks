@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -32,23 +33,6 @@ public class UserPrefsActivity extends Activity {
 				true));
 	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		SharedPreferences settings = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-
-		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
-		editor.putBoolean("CompleteFromStation",
-				chk_CompleteFromStn.isChecked());
-
-		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
-		editor.putBoolean("CompleteToStation", chk_CompleteToStn.isChecked());
-
-		editor.commit();
-	}
-
 	public void clearCrashReports(View v) {
 		File appFiles = getFilesDir(); // actually directory
 		File[] listOfFiles = appFiles.listFiles();
@@ -75,5 +59,26 @@ public class UserPrefsActivity extends Activity {
 					"" + filesRemoved + " previous reports removed.",
 					Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	public void chk_CompleteFromStation(View v) {
+		Editor editor = fetchPreferences();
+		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
+		editor.putBoolean("CompleteFromStation",
+				chk_CompleteFromStn.isChecked());
+		editor.commit();
+	}
+
+	public void chk_CompleteToStation(View v) {
+		Editor editor = fetchPreferences();
+		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
+		editor.putBoolean("CompleteToStation", chk_CompleteToStn.isChecked());
+		editor.commit();
+	}
+
+	private SharedPreferences.Editor fetchPreferences() {
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		return editor;
 	}
 }
