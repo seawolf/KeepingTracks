@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,26 +14,35 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.UserPrefsActivity;
 
 public class StatsActivity extends ListActivity {
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> activities = new ArrayList<String>();
+
+	SharedPreferences settings;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE);
+
 		names.add(getApplicationContext().getString(
 				R.string.stats_jouneys_month));
 		names.add(getApplicationContext().getString(
 				R.string.stats_favourite_stations));
-		names.add(getApplicationContext()
-				.getString(R.string.stats_classes_used));
 
 		activities.add("stats.JourneysByMonth");
 		activities.add("stats.FavouriteStations");
-		activities.add("stats.ClassesUsed");
+
+		if (settings.getBoolean("AdvancedJourneys", false) == true) {
+			names.add(getApplicationContext().getString(
+					R.string.stats_classes_used));
+			activities.add("stats.ClassesUsed");
+		}
 
 		setListAdapter(new ArrayAdapter<String>(this,
 				R.layout.stats_activity_list, names));

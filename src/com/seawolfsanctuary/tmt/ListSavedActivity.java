@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import android.widget.Toast;
 import com.seawolfsanctuary.tmt.database.Journey;
 
 public class ListSavedActivity extends ExpandableListActivity {
+
+	SharedPreferences settings;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,6 +100,8 @@ public class ListSavedActivity extends ExpandableListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_saved_activity);
+		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE);
 		setListAdapter(new ListSavedAdapter());
 		registerForContextMenu(getExpandableListView());
 
@@ -166,11 +171,17 @@ public class ListSavedActivity extends ExpandableListActivity {
 			ArrayList<String> names = new ArrayList<String>();
 			for (int i = 0; i < data.size(); i++) {
 				String[] entry = data.get(i);
-				names.add(Helpers.leftPad(entry[1], 2) + "/"
-						+ Helpers.leftPad(entry[2], 2) + "/"
-						+ Helpers.leftPad(entry[3], 4) + ":\n"
-						+ Helpers.trimCodeFromStation(entry[0], getBaseContext()) + "\n"
-						+ Helpers.trimCodeFromStation(entry[6], getBaseContext()));
+				names.add(Helpers.leftPad(entry[1], 2)
+						+ "/"
+						+ Helpers.leftPad(entry[2], 2)
+						+ "/"
+						+ Helpers.leftPad(entry[3], 4)
+						+ ":\n"
+						+ Helpers.trimCodeFromStation(entry[0],
+								getBaseContext())
+						+ "\n"
+						+ Helpers.trimCodeFromStation(entry[6],
+								getBaseContext()));
 			}
 			return names;
 		}
@@ -182,26 +193,32 @@ public class ListSavedActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				split.add("From: " + Helpers.nameAndCodeFromStation(entry[0], getBaseContext())
-						+ "\n" + Helpers.leftPad(entry[1], 2) + "/"
+				split.add("From: "
+						+ Helpers.nameAndCodeFromStation(entry[0],
+								getBaseContext()) + "\n"
+						+ Helpers.leftPad(entry[1], 2) + "/"
 						+ Helpers.leftPad(entry[2], 2) + "/"
 						+ Helpers.leftPad(entry[3], 2) + " - "
 						+ Helpers.leftPad(entry[4], 2) + ":"
 						+ Helpers.leftPad(entry[5], 2));
 
-				split.add("To: " + Helpers.nameAndCodeFromStation(entry[6], getBaseContext())
-						+ "\n" + Helpers.leftPad(entry[7], 2) + "/"
+				split.add("To: "
+						+ Helpers.nameAndCodeFromStation(entry[6],
+								getBaseContext()) + "\n"
+						+ Helpers.leftPad(entry[7], 2) + "/"
 						+ Helpers.leftPad(entry[8], 2) + "/"
 						+ Helpers.leftPad(entry[9], 2) + " - "
 						+ Helpers.leftPad(entry[10], 2) + ":"
 						+ Helpers.leftPad(entry[11], 2));
 
-				if (entry[12].length() > 0) {
-					split.add("With: " + entry[12]);
-				}
+				if (settings.getBoolean("AdvancedJourneys", false) == true) {
+					if (entry[12].length() > 0) {
+						split.add("With: " + entry[12]);
+					}
 
-				if (entry[13].length() > 0) {
-					split.add("Journey: " + entry[13]);
+					if (entry[13].length() > 0) {
+						split.add("Journey: " + entry[13]);
+					}
 				}
 
 				data.add(split);

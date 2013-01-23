@@ -14,15 +14,21 @@ public class UserPrefsActivity extends Activity {
 
 	public static final String APP_PREFS = "Global";
 
+	SharedPreferences settings;
+
 	CheckBox chk_CompleteFromStn;
 	CheckBox chk_CompleteToStn;
+	CheckBox chk_AdvancedJourneys;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_prefs_activity);
-		SharedPreferences settings = getSharedPreferences(APP_PREFS,
-				MODE_PRIVATE);
+		settings = getSharedPreferences(APP_PREFS, MODE_PRIVATE);
+
+		chk_AdvancedJourneys = (CheckBox) findViewById(R.id.chk_AdvancedJourneys);
+		chk_AdvancedJourneys.setChecked(settings.getBoolean("AdvancedJourneys",
+				false));
 
 		chk_CompleteFromStn = (CheckBox) findViewById(R.id.chk_CompleteFromStation);
 		chk_CompleteFromStn.setChecked(settings.getBoolean(
@@ -79,6 +85,14 @@ public class UserPrefsActivity extends Activity {
 				MODE_PRIVATE).edit();
 		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
 		editor.putBoolean("CompleteToStation", chk_CompleteToStn.isChecked());
+		editor.commit();
+	}
+
+	public void chk_AdvancedJourneys(View v) {
+		Editor editor = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE).edit();
+		chk_AdvancedJourneys = (CheckBox) findViewById(R.id.chk_AdvancedJourneys);
+		editor.putBoolean("AdvancedJourneys", chk_AdvancedJourneys.isChecked());
 		editor.commit();
 	}
 }

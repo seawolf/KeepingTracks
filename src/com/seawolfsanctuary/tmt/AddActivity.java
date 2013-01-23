@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -49,10 +50,11 @@ public class AddActivity extends TabActivity {
 	TimePicker tp_FromTime;
 	AutoCompleteTextView actv_FromSearch;
 
-	CheckBox chk_DetailClass;
+	ScrollView scrl_Detail;
 	TextView txt_DetailClass;
-	CheckBox chk_DetailHeadcode;
+	CheckBox chk_DetailClass;
 	TextView txt_DetailHeadcode;
+	CheckBox chk_DetailHeadcode;
 
 	TextView txt_ToSearch;
 	ArrayAdapter<String> ada_toSearchAdapter;
@@ -62,6 +64,8 @@ public class AddActivity extends TabActivity {
 
 	TextView txt_Summary;
 	CheckBox chk_Checkin;
+
+	SharedPreferences settings;
 
 	private ProgressDialog dialog;
 
@@ -91,6 +95,8 @@ public class AddActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_activity);
+		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE);
 
 		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
@@ -103,6 +109,10 @@ public class AddActivity extends TabActivity {
 				.setContent(R.id.tc_To));
 		mTabHost.addTab(mTabHost.newTabSpec("tc_Summary")
 				.setIndicator("Summary").setContent(R.id.tc_Summary));
+
+		if (settings.getBoolean("AdvancedJourneys", false) == false) {
+			mTabHost.getTabWidget().getChildAt(1).setVisibility(View.GONE);
+		}
 
 		mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
@@ -135,33 +145,33 @@ public class AddActivity extends TabActivity {
 								.getInt("from_time_minute"));
 					}
 				}
+
 				if (tabID == "tc_Detail") {
+					chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
+					txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+					chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
+					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+
 					if (template.containsKey("detail_class_checked")) {
-						chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
 						chk_DetailClass.setChecked(template
 								.getBoolean("detail_class_checked"));
-						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 						txt_DetailClass.setEnabled(template
 								.getBoolean("detail_class_checked"));
 					}
 
 					if (template.containsKey("detail_class")) {
-						txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 						txt_DetailClass.setText(template
 								.getCharSequence("detail_class"));
 					}
 
 					if (template.containsKey("detail_headcode_checked")) {
-						chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 						chk_DetailHeadcode.setChecked(template
 								.getBoolean("detail_headcode_checked"));
-						txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 						txt_DetailHeadcode.setEnabled(template
 								.getBoolean("detail_headcode_checked"));
 					}
 
 					if (template.containsKey("detail_headcode")) {
-						txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 						txt_DetailHeadcode.setText(template
 								.getCharSequence("detail_headcode"));
 					}
@@ -300,31 +310,37 @@ public class AddActivity extends TabActivity {
 
 		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
 
-		txt_Summary.setText("From:\t"
+		String text = "From:\t"
 				+ Helpers.trimCodeFromStation(actv_FromSearch.getText()
 						.toString(), getBaseContext())
+
 				+ "\nOn:\t\t"
 				+ Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2)
 				+ "/"
 				+ Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2)
 				+ "/"
 				+ Helpers.leftPad("" + dp_FromDate.getYear(), 4)
+
 				+ "\nAt:\t\t"
 				+ Helpers.leftPad("" + tp_FromTime.getCurrentHour(), 2)
 				+ ":"
 				+ Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2)
-				+
 
-				"\n\nTo:\t\t"
+				+ "\n\nTo:\t\t"
 				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
 						.toString(), getBaseContext()) + "\nOn:\t\t"
 				+ Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2) + "/"
 				+ Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2) + "/"
 				+ Helpers.leftPad("" + dp_ToDate.getYear(), 4) + "\nAt:\t\t"
 				+ Helpers.leftPad("" + tp_ToTime.getCurrentHour(), 2) + ":"
-				+ Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2)
-				+ "\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
-				+ txt_DetailHeadcode.getText());
+				+ Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2);
+
+		if (settings.getBoolean("AdvancedJourneys", false) == true) {
+			text += "\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
+					+ txt_DetailHeadcode.getText();
+		}
+
+		txt_Summary.setText(text);
 	}
 
 	public void onClassCheckboxClicked(View view) {

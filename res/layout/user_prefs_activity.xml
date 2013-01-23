@@ -45,10 +45,17 @@
             android:id="@+id/txt_AddActivity"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
+            android:paddingTop="20dp"
             android:paddingBottom="10dp"
             android:text="@string/user_prefs_add"
             android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/chk_AdvancedJourneys"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="chk_AdvancedJourneys"
+            android:text="@string/user_prefs_add_advanced" />
 
         <CheckBox
             android:id="@+id/chk_CompleteFromStation"
