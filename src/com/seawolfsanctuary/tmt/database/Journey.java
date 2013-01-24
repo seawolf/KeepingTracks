@@ -47,17 +47,19 @@ public class Journey {
 	public static final String KEY_CLASS = "class";
 	public static final String KEY_HEADCODE = "headcode";
 
-	private static final String DATABASE_CREATE = "create table journeys ("
-			+ "_id integer primary key autoincrement, "
-			+ "from_station text not null, " + "from_day int not null, "
-			+ "from_month int not null, " + "from_year int not null, "
-			+ "from_hour int not null, " + "from_minute int not null, "
+	private static final String DATABASE_CREATE = "create table "
+			+ DATABASE_TABLE + " (" + KEY_ROWID
+			+ " integer primary key autoincrement, " + KEY_FROM_STATION
+			+ " text not null, " + KEY_FROM_DAY + " int not null, "
+			+ KEY_FROM_MONTH + " int not null, " + KEY_FROM_YEAR
+			+ " int not null, " + KEY_FROM_HOUR + " int not null, "
+			+ KEY_FROM_MINUTE + " int not null, "
 
-			+ "to_station text not null, " + "to_day int not null, "
-			+ "to_month int not null, " + "to_year int not null, "
-			+ "to_hour int not null, " + "to_minute int not null, "
-
-			+ "class text not null, " + "headcode text not null" + ");";
+			+ KEY_TO_STATION + " text not null, " + KEY_TO_DAY
+			+ " int not null, " + KEY_TO_MONTH + " int not null, "
+			+ KEY_TO_YEAR + " int not null, " + KEY_TO_HOUR + " int not null, "
+			+ KEY_TO_MINUTE + " int not null, " + KEY_CLASS
+			+ " text not null, " + KEY_HEADCODE + " text not null " + ");";
 
 	public Journey(Context c) {
 		this.context = c;
@@ -76,12 +78,15 @@ public class Journey {
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			System.out.println("Upgrading database from version " + oldVersion
-					+ " to " + newVersion
-					+ ", which will destroy all old data!");
-			db.execSQL("DROP TABLE IF EXISTS journeys");
-			onCreate(db);
+		public void onUpgrade(SQLiteDatabase db, int currentVersion,
+				int newestVersion) {
+			System.out.println("Upgrading " + DATABASE_TABLE
+					+ " table from version " + currentVersion + " to "
+					+ newestVersion + "...");
+
+			System.out.println(DATABASE_TABLE + " is now at version "
+					+ newestVersion + "(schema version: " + DATABASE_VERSION
+					+ ")");
 		}
 	}
 
