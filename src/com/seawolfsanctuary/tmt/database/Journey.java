@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import android.content.ContentValues;
@@ -171,6 +173,55 @@ public class Journey {
 			mCursor.moveToFirst();
 		}
 		return mCursor;
+	}
+
+	public Cursor getAllPastYearJourneys() {
+		Calendar cal = GregorianCalendar.getInstance();
+
+		int year = cal.get(GregorianCalendar.YEAR);
+		int month = 1 + cal.get(GregorianCalendar.MONTH);
+		int day = cal.get(GregorianCalendar.DAY_OF_MONTH);
+
+		System.out.println("It is now: " + year + "-" + month + "-" + day);
+
+		int startYear = year - 1;
+		int startMonth = month;
+		int startDay = day;
+
+		System.out.println("It was then : " + startYear + "-" + startMonth
+				+ "-" + startDay);
+
+		System.out.println("Fetching all entries from "
+				+ String.valueOf(startYear) + "-" + String.valueOf(startMonth)
+				+ "-" + String.valueOf(startDay) + " to "
+				+ String.valueOf(year) + "-" + String.valueOf(month) + "-"
+				+ String.valueOf(day) + "...");
+
+		return db.query(DATABASE_TABLE, new String[] {
+				KEY_ROWID,
+				KEY_FROM_STATION,
+				KEY_FROM_DAY,
+				KEY_FROM_MONTH,
+				KEY_FROM_YEAR,
+				KEY_FROM_HOUR,
+				KEY_FROM_MINUTE,
+
+				KEY_TO_STATION,
+				KEY_TO_DAY,
+				KEY_TO_MONTH,
+				KEY_TO_YEAR,
+				KEY_TO_HOUR,
+				KEY_TO_MINUTE,
+
+				KEY_CLASS,
+				KEY_HEADCODE,
+
+				KEY_FROM_YEAR + " || " + KEY_FROM_MONTH + " || " + KEY_FROM_DAY
+						+ " AS startDate" }, "startDate > ?", new String[] { ""
+				+ String.valueOf(startYear) + String.valueOf(startMonth)
+				+ String.valueOf(startDay) }, null, null, "" + KEY_FROM_YEAR
+				+ "," + KEY_FROM_MONTH + "," + KEY_FROM_DAY + ","
+				+ KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
 	}
 
 	public boolean updateJourney(long rowId, String from_station,
