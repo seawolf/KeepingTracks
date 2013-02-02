@@ -85,7 +85,7 @@ public class ClassesUsed extends ListActivity {
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneys();
+		Cursor c = db_journeys.getAllStatsJourneys();
 		if (c.moveToFirst()) {
 			do {
 				System.out.println("Reading row #" + c.getInt(0) + "...");

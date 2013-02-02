@@ -39,7 +39,7 @@ public class FavouriteStations extends Activity {
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneys();
+		Cursor c = db_journeys.getAllStatsJourneys();
 		// Collect count of departure stations
 		if (c.moveToFirst()) {
 			do {

@@ -37,7 +37,7 @@ public class JourneysByMonth extends Activity {
 		int i = 0;
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneys();
+		Cursor c = db_journeys.getAllStatsJourneys();
 		if (c.moveToFirst()) {
 			do {
 				i = i + 1;
