@@ -14,70 +14,74 @@
         android:text="@string/user_prefs"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
+        android:layout_height="fill_parent" >
 
-        <TextView
-            android:id="@+id/txt_Crash"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:text="@string/user_prefs_crash"
-            android:textStyle="bold" />
+            android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/btn_CrashTest"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:onClick="crashTest"
-            android:text="@string/crash_test" />
+            <TextView
+                android:id="@+id/txt_Crash"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="@string/user_prefs_crash"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_ClearCrashes"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:onClick="clearCrashReports"
-            android:text="@string/crash_clear" />
+            <Button
+                android:id="@+id/btn_CrashTest"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="crashTest"
+                android:text="@string/crash_test" />
 
-        <TextView
-            android:id="@+id/txt_AddActivity"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingBottom="10dp"
-            android:text="@string/user_prefs_add"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_ClearCrashes"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="clearCrashReports"
+                android:text="@string/crash_clear" />
 
-        <CheckBox
-            android:id="@+id/chk_AdvancedJourneys"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="chk_AdvancedJourneys"
-            android:text="@string/user_prefs_add_advanced" />
+            <TextView
+                android:id="@+id/txt_AddActivity"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="20dp"
+                android:text="@string/user_prefs_add"
+                android:textStyle="bold" />
 
-        <CheckBox
-            android:id="@+id/chk_CompleteFromStation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="chk_CompleteFromStation"
-            android:text="@string/user_prefs_add_complete_from" />
+            <CheckBox
+                android:id="@+id/chk_AdvancedJourneys"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="chk_AdvancedJourneys"
+                android:text="@string/user_prefs_add_advanced" />
 
-        <CheckBox
-            android:id="@+id/chk_CompleteToStation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="chk_CompleteToStation"
-            android:text="@string/user_prefs_add_complete_to" />
+            <CheckBox
+                android:id="@+id/chk_CompleteFromStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="chk_CompleteFromStation"
+                android:text="@string/user_prefs_add_complete_from" />
 
-        <CheckBox
-            android:id="@+id/chk_AlwaysUseStats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="chk_AlwaysUseStats"
-            android:text="@string/user_prefs_add_always_use_stats" />
+            <CheckBox
+                android:id="@+id/chk_CompleteToStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="chk_CompleteToStation"
+                android:text="@string/user_prefs_add_complete_to" />
 
-    </LinearLayout>
+            <CheckBox
+                android:id="@+id/chk_AlwaysUseStats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="chk_AlwaysUseStats"
+                android:text="@string/user_prefs_add_always_use_stats" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
