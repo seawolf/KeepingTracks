@@ -6,6 +6,7 @@
     <string name="tr_class">Class</string>
     <string name="tr_headcode">Headcode</string>
     <string name="add_new">Add Journey</string>
+    <string name="add_use_for_stats">Use for Statistics</string>
     <string name="edit_saved">Edit Journey</string>
     <string name="copy_saved">Copy Journey</string>
     <string name="list_saved">Saved Journeys</string>
