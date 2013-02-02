@@ -247,7 +247,7 @@ public class Journey {
 				System.out.println("Importing...");
 
 				boolean useForStats = false;
-				if (entry[14] == "1") {
+				if (Integer.parseInt(entry[14]) == 1) {
 					useForStats = true;
 				}
 
