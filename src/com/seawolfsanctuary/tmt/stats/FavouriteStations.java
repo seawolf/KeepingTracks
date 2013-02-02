@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
 import com.seawolfsanctuary.tmt.Helpers;
 import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.UserPrefsActivity;
 import com.seawolfsanctuary.tmt.database.Journey;
 
 public class FavouriteStations extends Activity {
@@ -32,6 +34,9 @@ public class FavouriteStations extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stats_favourite_stations);
+		SharedPreferences settings = getSharedPreferences(
+				UserPrefsActivity.APP_PREFS, MODE_PRIVATE);
+
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_FavouriteStations);
 
 		Hashtable<String, Integer> departures = new Hashtable<String, Integer>();
@@ -39,7 +44,14 @@ public class FavouriteStations extends Activity {
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllStatsJourneys();
+
+		Cursor c;
+		if (settings.getBoolean("AlwaysUseStats", false) == true) {
+			c = db_journeys.getAllJourneys();
+		} else {
+			c = db_journeys.getAllStatsJourneys();
+		}
+
 		// Collect count of departure stations
 		if (c.moveToFirst()) {
 			do {

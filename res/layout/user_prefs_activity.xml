@@ -71,6 +71,13 @@
             android:onClick="chk_CompleteToStation"
             android:text="@string/user_prefs_add_complete_to" />
 
+        <CheckBox
+            android:id="@+id/chk_AlwaysUseStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="chk_AlwaysUseStats"
+            android:text="@string/user_prefs_add_always_use_stats" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.seawolfsanctuary.tmt.Helpers;
 import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.UserPrefsActivity;
 import com.seawolfsanctuary.tmt.database.Journey;
 
 public class ClassesUsed extends ListActivity {
@@ -82,10 +84,19 @@ public class ClassesUsed extends ListActivity {
 
 	private ArrayList<String> loadSavedEntries(boolean showToast) {
 		ArrayList<String> allClasses = new ArrayList<String>();
+		SharedPreferences settings = getSharedPreferences(
+				UserPrefsActivity.APP_PREFS, MODE_PRIVATE);
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllStatsJourneys();
+
+		Cursor c;
+		if (settings.getBoolean("AlwaysUseStats", false) == true) {
+			c = db_journeys.getAllJourneys();
+		} else {
+			c = db_journeys.getAllStatsJourneys();
+		}
+
 		if (c.moveToFirst()) {
 			do {
 				System.out.println("Reading row #" + c.getInt(0) + "...");
