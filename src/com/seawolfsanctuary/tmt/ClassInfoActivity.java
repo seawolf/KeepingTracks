@@ -9,13 +9,17 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,10 +31,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.database.UnitClass;
 
 public class ClassInfoActivity extends ExpandableListActivity {
 
@@ -79,22 +86,76 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		ExpandableListView lv = getExpandableListView();
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					final int id, long position) {
-				ArrayList<String[]> data = adaptor.data;
-				String classNo = data.get(id)[0].toString();
+			public boolean onItemLongClick(AdapterView<?> parent,
+					final View view, final int id, long position) {
 
-				if (template == null) {
-					template = new Bundle();
-				} else {
-					template.remove("detail_class");
-				}
+				final ArrayList<String[]> data = adaptor.data;
+				final String classNo = data.get(id)[0].toString();
+				final EditText input = new EditText(view.getContext());
 
-				template.putCharSequence("detail_class", classNo);
-				Intent intent = new Intent(view.getContext(), AddActivity.class);
-				intent.putExtras(template);
-				startActivity(intent);
-				ClassInfoActivity.this.finish();
+				DialogInterface.OnClickListener newJourneyListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						if (template == null) {
+							template = new Bundle();
+						} else {
+							template.remove("detail_class");
+						}
+
+						template.putCharSequence("detail_class", classNo);
+						Intent intent = new Intent(view.getContext(),
+								AddActivity.class);
+						intent.putExtras(template);
+						startActivity(intent);
+						ClassInfoActivity.this.finish();
+					}
+				};
+
+				final DialogInterface.OnClickListener saveNotesListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						Editable value = input.getText();
+						updateNotes(classNo, value.toString());
+					}
+
+					private void updateNotes(String classNo, String value) {
+						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						db_unitClass.open();
+						if (value.length() > 0) {
+							db_unitClass
+									.insertOrUpdateUnitNotes(classNo, value);
+						} else {
+							db_unitClass.deleteUnitNotes(classNo);
+						}
+						db_unitClass.close();
+					}
+				};
+
+				DialogInterface.OnClickListener editNotesListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						String notes = "";
+						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						db_unitClass.open();
+						Cursor c = db_unitClass.getUnitNotes(classNo);
+						if (c.moveToFirst()) {
+							notes = c.getString(c
+									.getColumnIndex(UnitClass.KEY_NOTES));
+						}
+						db_unitClass.close();
+						input.setText(notes);
+
+						new AlertDialog.Builder(view.getContext())
+								.setTitle("Update Notes").setView(input)
+								.setPositiveButton("Save", saveNotesListener)
+								.show();
+					}
+				};
+
+				new AlertDialog.Builder(parent.getContext())
+						.setTitle(R.string.list_saved_question_title)
+						.setMessage(R.string.list_saved_question_text)
+						.setPositiveButton("New Journey", newJourneyListener)
+						.setNeutralButton("Edit Notes", editNotesListener)
+						.show();
+
 				return true;
 			}
 		});
@@ -315,6 +376,13 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				operators = operators.substring(0, operators.length() - 2);
 				split.add("Operators: " + operators);
 				data.add(split);
+
+				String notes = getUnitClassNotes(entry[0]);
+				System.out.println("Fetched notes for " + entry[0] + " => "
+						+ notes);
+				if (notes.length() > 0) {
+					split.add("Notes: " + notes);
+				}
 			}
 
 			return data;
@@ -365,12 +433,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				final String classNo = data.get(groupPosition)[0];
 				ImageView imageView = getGenericImageView();
 				imageView.setImageDrawable(load_photo(classNo));
-				imageView.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
+				OnClickListener showImage = new OnClickListener() {
+					public void onClick(View view) {
 						show_photo(classNo);
 					}
-				});
+				};
+				imageView.setOnClickListener(showImage);
 
 				return imageView;
 			} else {
@@ -515,6 +583,20 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				operators.add("(none)");
 			}
 			return operators;
+		}
+
+		private String getUnitClassNotes(String classNo) {
+			String notes = "";
+
+			UnitClass db_unitClass = new UnitClass(getBaseContext());
+			db_unitClass.open();
+			Cursor c = db_unitClass.getUnitNotes(classNo);
+			if (c.moveToFirst()) {
+				notes = c.getString(c.getColumnIndex(UnitClass.KEY_NOTES));
+			}
+
+			db_unitClass.close();
+			return notes;
 		}
 	}
 
