@@ -119,13 +119,21 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					private void updateNotes(String classNo, String value) {
 						UnitClass db_unitClass = new UnitClass(getBaseContext());
 						db_unitClass.open();
+						boolean success = false;
 						if (value.length() > 0) {
-							db_unitClass
-									.insertOrUpdateUnitNotes(classNo, value);
+							success = db_unitClass.insertOrUpdateUnitNotes(
+									classNo, value);
 						} else {
-							db_unitClass.deleteUnitNotes(classNo);
+							success = db_unitClass.deleteUnitNotes(classNo);
 						}
 						db_unitClass.close();
+
+						if (success == true) {
+							Intent intent = new Intent(view.getContext(),
+									ClassInfoActivity.class);
+							startActivity(intent);
+							ClassInfoActivity.this.finish();
+						}
 					}
 				};
 
