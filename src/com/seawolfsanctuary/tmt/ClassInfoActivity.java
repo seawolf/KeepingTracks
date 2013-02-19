@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import android.app.AlertDialog;
@@ -342,6 +343,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
 			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+			Hashtable<String, String> unitNotes = getUnitClassNotes();
+			System.out.println(unitNotes);
 
 			for (int i = 0; i < entries.size(); i++) {
 				String[] entry = entries.get(i);
@@ -383,14 +386,15 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				}
 				operators = operators.substring(0, operators.length() - 2);
 				split.add("Operators: " + operators);
-				data.add(split);
 
-				String notes = getUnitClassNotes(entry[0]);
-				System.out.println("Fetched notes for " + entry[0] + " => "
-						+ notes);
-				if (notes.length() > 0) {
-					split.add("Notes: " + notes);
+				if (unitNotes.containsKey(entry[0])) {
+					String notes = unitNotes.get(entry[0]);
+					if (notes.length() > 0) {
+						split.add("Notes: " + notes);
+					}
 				}
+
+				data.add(split);
 			}
 
 			return data;
@@ -593,16 +597,10 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			return operators;
 		}
 
-		private String getUnitClassNotes(String classNo) {
-			String notes = "";
-
+		private Hashtable<String, String> getUnitClassNotes() {
 			UnitClass db_unitClass = new UnitClass(getBaseContext());
 			db_unitClass.open();
-			Cursor c = db_unitClass.getUnitNotes(classNo);
-			if (c.moveToFirst()) {
-				notes = c.getString(c.getColumnIndex(UnitClass.KEY_NOTES));
-			}
-
+			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
 			db_unitClass.close();
 			return notes;
 		}

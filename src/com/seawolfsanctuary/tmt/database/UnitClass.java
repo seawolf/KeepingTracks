@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import android.content.ContentValues;
@@ -78,6 +79,24 @@ public class UnitClass {
 		System.out.println("Fetching all entries...");
 		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID, KEY_CLASS_NO,
 				KEY_NOTES }, null, null, null, null, KEY_CLASS_NO);
+	}
+
+	public Hashtable<String, String> getAllUnitNotes() {
+		System.out.println("Fetching all notes...");
+		Hashtable<String, String> notes = new Hashtable<String, String>();
+		Cursor c = db
+				.query(DATABASE_TABLE, new String[] { KEY_ROWID, KEY_CLASS_NO,
+						KEY_NOTES }, null, null, null, null, KEY_CLASS_NO);
+		if (c.moveToFirst()) {
+			do {
+				String classNo = c.getString(c.getColumnIndex(KEY_CLASS_NO));
+				String note = c.getString(c.getColumnIndex(KEY_NOTES));
+				if (note != null) {
+					notes.put(classNo, note);
+				}
+			} while (c.moveToNext());
+		}
+		return notes;
 	}
 
 	public long insertUnitNotes(String classNo, String notes) {
