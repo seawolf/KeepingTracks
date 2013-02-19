@@ -104,13 +104,18 @@ public class UnitClass {
 		return mCursor;
 	}
 
-	public boolean updateUnitNotes(String unitNo, String notes) {
+	public boolean insertOrUpdateUnitNotes(String unitNo, String notes) {
 		System.out.println("Updating notes for class " + unitNo + "...");
 		ContentValues updatedValues = new ContentValues();
+		updatedValues.put(KEY_CLASS_NO, unitNo);
 		updatedValues.put(KEY_NOTES, notes);
-
-		return db.update(DATABASE_TABLE, updatedValues, KEY_CLASS_NO + "="
-				+ unitNo, null) > 0;
+		int rowId = 0;
+		rowId = db.update(DATABASE_TABLE, updatedValues, KEY_CLASS_NO + "="
+				+ unitNo, null);
+		if (rowId == 0) {
+			rowId = (int) this.insertUnitNotes(unitNo, notes);
+		}
+		return rowId > 0;
 	}
 
 	public ArrayList<Boolean> importFromCSV(String dataFile) {
