@@ -364,15 +364,21 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			if (childPosition == IMAGE_POSITION) {
 				final String classNo = data.get(groupPosition)[0];
 				ImageView imageView = getGenericImageView();
-				imageView.setImageDrawable(load_photo(classNo));
-				imageView.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						show_photo(classNo);
-					}
-				});
 
-				return imageView;
+				if (checkForPhoto(classNo) == true) {
+					imageView.setImageDrawable(load_photo(classNo));
+					imageView.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							show_photo(classNo);
+						}
+					});
+					return imageView;
+				} else {
+					TextView textView = getGenericTextView();
+					textView.setText(R.string.class_info_download_thumb);
+					return textView;
+				}
 			} else {
 				TextView textView = getGenericTextView();
 				textView.setText(getChild(groupPosition, childPosition)
@@ -423,8 +429,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				startActivity(i);
 			} else {
 				Toast.makeText(getBaseContext(),
-						"Please download the bundle to view this photo.",
-						Toast.LENGTH_SHORT).show();
+						R.string.class_info_download_photo, Toast.LENGTH_SHORT)
+						.show();
 			}
 		}
 
@@ -433,15 +439,23 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			try {
 				File f = new File(Helpers.dataDirectoryPath
 						+ "/class_photos/thumbs/", classNo);
-				if (f.exists()) {
-					Drawable p = Drawable.createFromPath(f.getPath());
-					d = p;
-				}
+				Drawable p = Drawable.createFromPath(f.getPath());
+				d = p;
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 
 			return d;
+		}
+
+		private boolean checkForPhoto(String classNo) {
+			try {
+				File f = new File(Helpers.dataDirectoryPath
+						+ "/class_photos/thumbs/", classNo);
+				return f.exists();
+			} catch (Exception e) {
+				return false;
+			}
 		}
 
 		private String[] read_csv(String filename) {
