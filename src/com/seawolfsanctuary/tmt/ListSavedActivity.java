@@ -298,8 +298,12 @@ public class ListSavedActivity extends ExpandableListActivity {
 		Cursor c = db_journeys.getAllJourneysReverse();
 		if (c.moveToFirst()) {
 			do {
-				String[] entry = new String[14];
+				String[] entry = new String[15];
 				// System.out.println("Reading row #" + c.getInt(0) + "...");
+				boolean useForStats = true;
+				if (c.getString(15) == "0") {
+					useForStats = false;
+				}
 				entry[0] = c.getString(1);
 				entry[1] = "" + c.getInt(2);
 				entry[2] = "" + c.getInt(3);
@@ -314,6 +318,7 @@ public class ListSavedActivity extends ExpandableListActivity {
 				entry[11] = "" + c.getInt(12);
 				entry[12] = c.getString(13);
 				entry[13] = c.getString(14);
+				entry[14] = "" + useForStats;
 				allJourneys.add(entry);
 			} while (c.moveToNext());
 		}
@@ -410,8 +415,13 @@ public class ListSavedActivity extends ExpandableListActivity {
 				entry.putBoolean("detail_headcode_checked", false);
 			}
 
+			boolean useForStats = true;
+			if (journey.getInt(15) == 0) {
+				useForStats = false;
+			}
 			entry.putString("detail_class", journey.getString(13));
 			entry.putString("detail_headcode", journey.getString(14));
+			entry.putBoolean("detail_use_for_stats", useForStats);
 		}
 		db_journeys.close();
 

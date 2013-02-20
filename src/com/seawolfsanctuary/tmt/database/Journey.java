@@ -28,7 +28,7 @@ public class Journey {
 
 	private static final String DATABASE_NAME = "tmt";
 	private static final String DATABASE_TABLE = "journeys";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	public static final String KEY_ROWID = "_id";
 
@@ -49,17 +49,22 @@ public class Journey {
 	public static final String KEY_CLASS = "class";
 	public static final String KEY_HEADCODE = "headcode";
 
-	private static final String DATABASE_CREATE = "create table journeys ("
-			+ "_id integer primary key autoincrement, "
-			+ "from_station text not null, " + "from_day int not null, "
-			+ "from_month int not null, " + "from_year int not null, "
-			+ "from_hour int not null, " + "from_minute int not null, "
+	public static final String KEY_STATS = "use_for_stats";
 
-			+ "to_station text not null, " + "to_day int not null, "
-			+ "to_month int not null, " + "to_year int not null, "
-			+ "to_hour int not null, " + "to_minute int not null, "
+	private static final String DATABASE_CREATE = "create table "
+			+ DATABASE_TABLE + " (" + KEY_ROWID
+			+ " integer primary key autoincrement, " + KEY_FROM_STATION
+			+ " text not null, " + KEY_FROM_DAY + " int not null, "
+			+ KEY_FROM_MONTH + " int not null, " + KEY_FROM_YEAR
+			+ " int not null, " + KEY_FROM_HOUR + " int not null, "
+			+ KEY_FROM_MINUTE + " int not null, "
 
-			+ "class text not null, " + "headcode text not null" + ");";
+			+ KEY_TO_STATION + " text not null, " + KEY_TO_DAY
+			+ " int not null, " + KEY_TO_MONTH + " int not null, "
+			+ KEY_TO_YEAR + " int not null, " + KEY_TO_HOUR + " int not null, "
+			+ KEY_TO_MINUTE + " int not null, " + KEY_CLASS
+			+ " text not null, " + KEY_HEADCODE + " text not null, "
+			+ KEY_STATS + " int not null default '1' " + ");";
 
 	public Journey(Context c) {
 		this.context = c;
@@ -78,12 +83,21 @@ public class Journey {
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			System.out.println("Upgrading database from version " + oldVersion
-					+ " to " + newVersion
-					+ ", which will destroy all old data!");
-			db.execSQL("DROP TABLE IF EXISTS journeys");
-			onCreate(db);
+		public void onUpgrade(SQLiteDatabase db, int currentVersion,
+				int newestVersion) {
+			System.out.println("Upgrading " + DATABASE_TABLE
+					+ " table from version " + currentVersion + " to "
+					+ newestVersion + "...");
+
+			if (currentVersion < 2) {
+				System.out.println("Adding column: " + KEY_STATS + "...");
+				db.execSQL("ALTER TABLE " + DATABASE_TABLE + " ADD COLUMN "
+						+ KEY_STATS + " int not null default '1' " + ";");
+			}
+
+			System.out.println(DATABASE_TABLE + " is now at version "
+					+ newestVersion + "(schema version: " + DATABASE_VERSION
+					+ ")");
 		}
 	}
 
@@ -101,7 +115,8 @@ public class Journey {
 	public long insertJourney(String from_station, int from_year,
 			int from_month, int from_day, int from_hour, int from_minute,
 			String to_station, int to_year, int to_month, int to_day,
-			int to_hour, int to_minute, String classNo, String headcode) {
+			int to_hour, int to_minute, String classNo, String headcode,
+			boolean useForStats) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_FROM_STATION, from_station);
 		initialValues.put(KEY_FROM_YEAR, from_year);
@@ -119,6 +134,8 @@ public class Journey {
 
 		initialValues.put(KEY_CLASS, classNo);
 		initialValues.put(KEY_HEADCODE, headcode);
+
+		initialValues.put(KEY_STATS, useForStats);
 
 		System.out.println("Writing entry...");
 		return db.insert(DATABASE_TABLE, null, initialValues);
@@ -138,9 +155,9 @@ public class Journey {
 				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
 				KEY_TO_HOUR, KEY_TO_MINUTE,
 
-				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, ""
-				+ KEY_FROM_YEAR + "," + KEY_FROM_MONTH + "," + KEY_FROM_DAY
-				+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
+				KEY_CLASS, KEY_HEADCODE, KEY_STATS }, null, null, null, null,
+				"" + KEY_FROM_YEAR + "," + KEY_FROM_MONTH + "," + KEY_FROM_DAY
+						+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
 	}
 
 	public Cursor getAllJourneysReverse() {
@@ -152,10 +169,81 @@ public class Journey {
 				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
 				KEY_TO_HOUR, KEY_TO_MINUTE,
 
-				KEY_CLASS, KEY_HEADCODE }, null, null, null, null, ""
-				+ KEY_FROM_YEAR + " DESC," + KEY_FROM_MONTH + " DESC,"
-				+ KEY_FROM_DAY + " DESC," + KEY_FROM_HOUR + " DESC,"
-				+ KEY_FROM_MINUTE + " DESC");
+				KEY_CLASS, KEY_HEADCODE, KEY_STATS }, null, null, null, null,
+				"" + KEY_FROM_YEAR + " DESC," + KEY_FROM_MONTH + " DESC,"
+						+ KEY_FROM_DAY + " DESC," + KEY_FROM_HOUR + " DESC,"
+						+ KEY_FROM_MINUTE + " DESC");
+	}
+
+	public Cursor getAllStatsJourneys() {
+		System.out.println("Fetching all entries enabled for stats...");
+		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID,
+				KEY_FROM_STATION, KEY_FROM_DAY, KEY_FROM_MONTH, KEY_FROM_YEAR,
+				KEY_FROM_HOUR, KEY_FROM_MINUTE,
+
+				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
+				KEY_TO_HOUR, KEY_TO_MINUTE,
+
+				KEY_CLASS, KEY_HEADCODE, KEY_STATS }, KEY_STATS + " = 1", null,
+				null, null, "" + KEY_FROM_YEAR + "," + KEY_FROM_MONTH + ","
+						+ KEY_FROM_DAY + "," + KEY_FROM_HOUR + ","
+						+ KEY_FROM_MINUTE + "");
+	}
+
+	public Cursor getAllPastYearStatsJourneys() {
+		Calendar cal = GregorianCalendar.getInstance();
+
+		int year = cal.get(GregorianCalendar.YEAR);
+		int month = 1 + cal.get(GregorianCalendar.MONTH);
+		int day = cal.get(GregorianCalendar.DAY_OF_MONTH);
+
+		System.out.println("It is now: " + year + "-" + month + "-" + day);
+
+		int startYear = year - 1;
+		int startMonth = month;
+		int startDay = day;
+
+		System.out.println("It was then : " + startYear + "-" + startMonth
+				+ "-" + startDay);
+
+		System.out.println("Fetching all entries enabled for stats from "
+				+ String.valueOf(startYear) + "-" + String.valueOf(startMonth)
+				+ "-" + String.valueOf(startDay) + " to "
+				+ String.valueOf(year) + "-" + String.valueOf(month) + "-"
+				+ String.valueOf(day) + "...");
+
+		return db
+				.query(DATABASE_TABLE,
+						new String[] {
+								KEY_ROWID,
+								KEY_FROM_STATION,
+								KEY_FROM_DAY,
+								KEY_FROM_MONTH,
+								KEY_FROM_YEAR,
+								KEY_FROM_HOUR,
+								KEY_FROM_MINUTE,
+
+								KEY_TO_STATION,
+								KEY_TO_DAY,
+								KEY_TO_MONTH,
+								KEY_TO_YEAR,
+								KEY_TO_HOUR,
+								KEY_TO_MINUTE,
+
+								KEY_CLASS,
+								KEY_HEADCODE,
+
+								KEY_FROM_YEAR + " || " + KEY_FROM_MONTH
+										+ " || " + KEY_FROM_DAY
+										+ " AS startDate" },
+						KEY_STATS + " = 1 AND startDate > ?",
+						new String[] { "" + String.valueOf(startYear)
+								+ String.valueOf(startMonth)
+								+ String.valueOf(startDay) }, null, null, ""
+								+ KEY_FROM_YEAR + "," + KEY_FROM_MONTH + ","
+								+ KEY_FROM_DAY + "," + KEY_FROM_HOUR + ","
+								+ KEY_FROM_MINUTE + "");
+
 	}
 
 	public Cursor getJourney(long rowId) throws SQLException {
@@ -167,8 +255,8 @@ public class Journey {
 				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
 				KEY_TO_HOUR, KEY_TO_MINUTE,
 
-				KEY_CLASS, KEY_HEADCODE }, KEY_ROWID + "=" + rowId, null, null,
-				null, null, null);
+				KEY_CLASS, KEY_HEADCODE, KEY_STATS }, KEY_ROWID + "=" + rowId,
+				null, null, null, null, null);
 		if (mCursor != null) {
 			mCursor.moveToFirst();
 		}
@@ -228,7 +316,7 @@ public class Journey {
 			int from_year, int from_month, int from_day, int from_hour,
 			int from_minute, String to_station, int to_year, int to_month,
 			int to_day, int to_hour, int to_minute, String classNo,
-			String headcode) {
+			String headcode, boolean useForStats) {
 		System.out.println("Updating entry " + rowId + "...");
 		ContentValues updatedValues = new ContentValues();
 		updatedValues.put(KEY_FROM_STATION, from_station);
@@ -247,6 +335,7 @@ public class Journey {
 
 		updatedValues.put(KEY_CLASS, classNo);
 		updatedValues.put(KEY_HEADCODE, headcode);
+		updatedValues.put(KEY_STATS, useForStats);
 
 		return db.update(DATABASE_TABLE, updatedValues,
 				KEY_ROWID + "=" + rowId, null) > 0;
@@ -263,13 +352,20 @@ public class Journey {
 		for (String[] entry : parsed_entries) {
 			try {
 				System.out.println("Importing...");
+
+				boolean useForStats = false;
+				if (Integer.parseInt(entry[14]) == 1) {
+					useForStats = true;
+				}
+
 				db_journeys.insertJourney(entry[0], Integer.parseInt(entry[1]),
 						Integer.parseInt(entry[2]), Integer.parseInt(entry[3]),
 						Integer.parseInt(entry[4]), Integer.parseInt(entry[5]),
 						entry[6], Integer.parseInt(entry[7]),
 						Integer.parseInt(entry[8]), Integer.parseInt(entry[9]),
 						Integer.parseInt(entry[10]),
-						Integer.parseInt(entry[11]), entry[12], entry[13]);
+						Integer.parseInt(entry[11]), entry[12], entry[13],
+						useForStats);
 				System.out.println("Success!");
 				statuses.add(true);
 			} catch (Exception e) {
@@ -372,6 +468,11 @@ public class Journey {
 				Cursor c = db_journeys.getAllJourneys();
 				if (c.moveToFirst()) {
 					do {
+						String useForStats = "0";
+						if (c.getInt(15) == 1) {
+							useForStats = "1";
+						}
+
 						String line = "";
 						line = "\"" + c.getString(1) + msep + c.getInt(4)
 								+ msep + c.getInt(3) + msep + c.getInt(2)
@@ -380,7 +481,7 @@ public class Journey {
 								+ msep + c.getInt(9) + msep + c.getInt(8)
 								+ msep + c.getInt(11) + msep + c.getInt(12)
 								+ msep + c.getString(13) + msep
-								+ c.getString(14) + "\"";
+								+ c.getString(14) + msep + useForStats + "\"";
 
 						writer.write(line);
 						writer.write(System.getProperty("line.separator"));

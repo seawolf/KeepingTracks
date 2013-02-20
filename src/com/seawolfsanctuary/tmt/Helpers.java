@@ -211,12 +211,16 @@ public class Helpers {
 				.findViewById(R.id.chk_DetailHeadcode);
 		TextView txt_DetailHeadcode = (TextView) src
 				.findViewById(R.id.txt_DetailHeadcode);
+		CheckBox chk_DetailUseForStats = (CheckBox) src
+				.findViewById(R.id.chk_DetailUseForStats);
 		journey.putBoolean("detail_class_enabled", chk_DetailClass.isChecked());
 		journey.putString("detail_class", txt_DetailClass.getText().toString());
 		journey.putBoolean("detail_headcode_checked",
 				chk_DetailHeadcode.isChecked());
 		journey.putString("detail_headcode", txt_DetailHeadcode.getText()
 				.toString());
+		journey.putBoolean("detail_use_for_stats",
+				chk_DetailUseForStats.isChecked());
 
 		AutoCompleteTextView actv_ToSearch = (AutoCompleteTextView) src
 				.findViewById(R.id.actv_ToSearch);
@@ -305,6 +309,12 @@ public class Helpers {
 					txt_DetailHeadcode.setText(journey
 							.getString("detail_headcode"));
 				}
+			}
+			if (journey.containsKey("detail_use_for_stats")) {
+				CheckBox chk_DetailHeadcode = (CheckBox) dest
+						.findViewById(R.id.chk_DetailUseForStats);
+				chk_DetailHeadcode.setChecked(journey
+						.getBoolean("detail_use_for_stats"));
 			}
 
 			if (journey.containsKey("to_stn")) {

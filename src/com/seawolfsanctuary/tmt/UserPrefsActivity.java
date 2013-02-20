@@ -19,6 +19,7 @@ public class UserPrefsActivity extends Activity {
 	CheckBox chk_CompleteFromStn;
 	CheckBox chk_CompleteToStn;
 	CheckBox chk_AdvancedJourneys;
+	CheckBox chk_AlwaysUseStats;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,10 @@ public class UserPrefsActivity extends Activity {
 		chk_CompleteToStn = (CheckBox) findViewById(R.id.chk_CompleteToStation);
 		chk_CompleteToStn.setChecked(settings.getBoolean("CompleteToStation",
 				true));
+
+		chk_AlwaysUseStats = (CheckBox) findViewById(R.id.chk_AlwaysUseStats);
+		chk_AlwaysUseStats.setChecked(settings.getBoolean("AlwaysUseStats",
+				false));
 	}
 
 	public void clearCrashReports(View v) {
@@ -93,6 +98,14 @@ public class UserPrefsActivity extends Activity {
 				MODE_PRIVATE).edit();
 		chk_AdvancedJourneys = (CheckBox) findViewById(R.id.chk_AdvancedJourneys);
 		editor.putBoolean("AdvancedJourneys", chk_AdvancedJourneys.isChecked());
+		editor.commit();
+	}
+
+	public void chk_AlwaysUseStats(View v) {
+		Editor editor = getSharedPreferences(UserPrefsActivity.APP_PREFS,
+				MODE_PRIVATE).edit();
+		chk_AlwaysUseStats = (CheckBox) findViewById(R.id.chk_AlwaysUseStats);
+		editor.putBoolean("AlwaysUseStats", chk_AlwaysUseStats.isChecked());
 		editor.commit();
 	}
 }

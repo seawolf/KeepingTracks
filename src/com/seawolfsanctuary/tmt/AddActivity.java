@@ -55,6 +55,7 @@ public class AddActivity extends TabActivity {
 	CheckBox chk_DetailClass;
 	TextView txt_DetailHeadcode;
 	CheckBox chk_DetailHeadcode;
+	CheckBox chk_DetailUseForStats;
 
 	TextView txt_ToSearch;
 	ArrayAdapter<String> ada_toSearchAdapter;
@@ -151,6 +152,7 @@ public class AddActivity extends TabActivity {
 					txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 					chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+					chk_DetailUseForStats = (CheckBox) findViewById(R.id.chk_DetailUseForStats);
 
 					if (template.containsKey("detail_class_checked")) {
 						chk_DetailClass.setChecked(template
@@ -174,6 +176,11 @@ public class AddActivity extends TabActivity {
 					if (template.containsKey("detail_headcode")) {
 						txt_DetailHeadcode.setText(template
 								.getCharSequence("detail_headcode"));
+					}
+
+					if (template.containsKey("detail_use_for_stats")) {
+						chk_DetailUseForStats.setChecked(template
+								.getBoolean("detail_use_for_stats"));
 					}
 				}
 
@@ -368,6 +375,7 @@ public class AddActivity extends TabActivity {
 
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
 		txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+		chk_DetailUseForStats = (CheckBox) findViewById(R.id.chk_DetailUseForStats);
 
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
@@ -386,7 +394,8 @@ public class AddActivity extends TabActivity {
 							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
 					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
 					txt_DetailClass.getText().toString(), txt_DetailHeadcode
-							.getText().toString());
+							.getText().toString(), chk_DetailUseForStats
+							.isChecked());
 			db_journeys.close();
 
 			if (updated == true) {
@@ -411,7 +420,8 @@ public class AddActivity extends TabActivity {
 							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
 					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
 					txt_DetailClass.getText().toString(), txt_DetailHeadcode
-							.getText().toString());
+							.getText().toString(), chk_DetailUseForStats
+							.isChecked());
 			db_journeys.close();
 
 			if (id != -1) {

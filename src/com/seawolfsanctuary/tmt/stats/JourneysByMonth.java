@@ -7,6 +7,7 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
 import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.tmt.UserPrefsActivity;
 import com.seawolfsanctuary.tmt.database.Journey;
 
 public class JourneysByMonth extends Activity {
@@ -29,6 +31,9 @@ public class JourneysByMonth extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stats_journeys_month);
+		SharedPreferences settings = getSharedPreferences(
+				UserPrefsActivity.APP_PREFS, MODE_PRIVATE);
+
 		mySimpleXYPlot = (XYPlot) findViewById(R.id.xy_JourneysMonth);
 
 		Integer[] series1Integers = new Integer[] { null, 0, 0, 0, 0, 0, 0, 0,
@@ -37,7 +42,14 @@ public class JourneysByMonth extends Activity {
 		int i = 0;
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllPastYearJourneys();
+
+		Cursor c;
+		if (settings.getBoolean("AlwaysUseStats", false) == true) {
+			c = db_journeys.getAllPastYearJourneys();
+		} else {
+			c = db_journeys.getAllPastYearStatsJourneys();
+		}
+
 		if (c.moveToFirst()) {
 			do {
 				i = i + 1;

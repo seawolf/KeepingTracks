@@ -6,6 +6,7 @@
     <string name="tr_class">Class</string>
     <string name="tr_headcode">Headcode</string>
     <string name="add_new">Add Journey</string>
+    <string name="add_use_for_stats">Use for Statistics</string>
     <string name="edit_saved">Edit Journey</string>
     <string name="copy_saved">Copy Journey</string>
     <string name="list_saved">Saved Journeys</string>
@@ -40,6 +41,7 @@
     <string name="user_prefs_crash">Error (Crash) Handling</string>
     <string name="user_prefs_add">Adding / Editing Journeys</string>
     <string name="user_prefs_add_advanced">Enable more options in \'Details\' tab</string>
+    <string name="user_prefs_add_always_use_stats">Use all journeys for statistics</string>
     <string name="user_prefs_add_complete_from">Complete "From" station time from journey (headcode) selected</string>
     <string name="user_prefs_add_complete_to">Complete "To" station name from journey (headcode) selected</string>
     <string name="crash_test">Test Catcher</string>
