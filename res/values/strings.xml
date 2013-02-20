@@ -16,6 +16,8 @@
     <string name="headcode_selection">Select Departure</string>
     <string name="class_info">Class Reference</string>
     <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
+    <string name="class_info_download_thumb">(photo unavailable)</string>
+    <string name="class_info_download_photo">Please download the bundle to view this photo.</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_authenticate">Authenticate with Foursquare</string>
     <string name="foursquare_checkin">Station Check-In</string>
