@@ -462,7 +462,6 @@ public class Journey {
 				FileWriter writer = new FileWriter(f, true);
 				String msep = "\",\"";
 
-				ArrayList<String[]> allJourneys = new ArrayList<String[]>();
 				Journey db_journeys = new Journey(context);
 				db_journeys.open();
 				Cursor c = db_journeys.getAllJourneys();

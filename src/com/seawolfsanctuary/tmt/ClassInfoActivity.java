@@ -1,21 +1,27 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,10 +33,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.seawolfsanctuary.tmt.database.UnitClass;
 
 public class ClassInfoActivity extends ExpandableListActivity {
 
@@ -53,7 +62,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			progressDialog.setTitle("Downloading...");
 			progressDialog.setMessage("Preparing to download...");
-			progressDialog.setCancelable(false);
+			progressDialog.setCancelable(true);
 			new DownloadBundleTask(progressDialog).execute();
 		default:
 			return true;
@@ -79,22 +88,84 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		ExpandableListView lv = getExpandableListView();
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					final int id, long position) {
-				ArrayList<String[]> data = adaptor.data;
-				String classNo = data.get(id)[0].toString();
+			public boolean onItemLongClick(AdapterView<?> parent,
+					final View view, final int id, long position) {
 
-				if (template == null) {
-					template = new Bundle();
-				} else {
-					template.remove("detail_class");
-				}
+				final ArrayList<String[]> data = adaptor.data;
+				final String classNo = data.get(id)[0].toString();
+				final EditText input = new EditText(view.getContext());
 
-				template.putCharSequence("detail_class", classNo);
-				Intent intent = new Intent(view.getContext(), AddActivity.class);
-				intent.putExtras(template);
-				startActivity(intent);
-				ClassInfoActivity.this.finish();
+				DialogInterface.OnClickListener newJourneyListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						if (template == null) {
+							template = new Bundle();
+						} else {
+							template.remove("detail_class");
+						}
+
+						template.putCharSequence("detail_class", classNo);
+						Intent intent = new Intent(view.getContext(),
+								AddActivity.class);
+						intent.putExtras(template);
+						startActivity(intent);
+						ClassInfoActivity.this.finish();
+					}
+				};
+
+				final DialogInterface.OnClickListener saveNotesListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						Editable value = input.getText();
+						updateNotes(classNo, value.toString());
+					}
+
+					private void updateNotes(String classNo, String value) {
+						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						db_unitClass.open();
+						boolean success = false;
+						if (value.length() > 0) {
+							success = db_unitClass.insertOrUpdateUnitNotes(
+									classNo, value);
+						} else {
+							success = db_unitClass.deleteUnitNotes(classNo);
+						}
+						db_unitClass.close();
+
+						if (success == true) {
+							Intent intent = new Intent(view.getContext(),
+									ClassInfoActivity.class);
+							startActivity(intent);
+							ClassInfoActivity.this.finish();
+						}
+					}
+				};
+
+				DialogInterface.OnClickListener editNotesListener = new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface di, int btnClicked) {
+						String notes = "";
+						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						db_unitClass.open();
+						Cursor c = db_unitClass.getUnitNotes(classNo);
+						if (c.moveToFirst()) {
+							notes = c.getString(c
+									.getColumnIndex(UnitClass.KEY_NOTES));
+						}
+						db_unitClass.close();
+						input.setText(notes);
+
+						new AlertDialog.Builder(view.getContext())
+								.setTitle("Update Notes").setView(input)
+								.setPositiveButton("Save", saveNotesListener)
+								.show();
+					}
+				};
+
+				new AlertDialog.Builder(parent.getContext())
+						.setTitle(R.string.list_saved_question_title)
+						.setMessage(R.string.list_saved_question_text)
+						.setPositiveButton("New Journey", newJourneyListener)
+						.setNeutralButton("Edit Notes", editNotesListener)
+						.show();
+
 				return true;
 			}
 		});
@@ -155,14 +226,19 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					FileOutputStream f = new FileOutputStream(
 							Helpers.dataDirectoryPath + "/class_photos/thumbs/"
 									+ destination);
-					InputStream in = c.getInputStream();
-					byte[] buffer = new byte[1024];
-					int len1 = 0;
-					while ((len1 = in.read(buffer)) > 0) {
-						f.write(buffer, 0, len1);
+					try {
+						InputStream in = c.getInputStream();
+						byte[] buffer = new byte[1024];
+						int len1 = 0;
+						while ((len1 = in.read(buffer)) > 0) {
+							f.write(buffer, 0, len1);
+						}
+						f.close();
+						c.disconnect();
+					} catch (FileNotFoundException e) {
+						System.err.println("Download of class " + destination
+								+ " thumbnail failed.\n" + e.getMessage());
 					}
-					f.close();
-					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
 				}
@@ -197,17 +273,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						target.delete();
 					}
 
-					FileOutputStream f = new FileOutputStream(
-							Helpers.dataDirectoryPath + "/class_photos/"
-									+ destination);
-					InputStream in = c.getInputStream();
-					byte[] buffer = new byte[1024];
-					int len1 = 0;
-					while ((len1 = in.read(buffer)) > 0) {
-						f.write(buffer, 0, len1);
+					try {
+						FileOutputStream f = new FileOutputStream(
+								Helpers.dataDirectoryPath + "/class_photos/"
+										+ destination);
+						InputStream in = c.getInputStream();
+						byte[] buffer = new byte[1024];
+						int len1 = 0;
+						while ((len1 = in.read(buffer)) > 0) {
+							f.write(buffer, 0, len1);
+						}
+						f.close();
+						c.disconnect();
+					} catch (FileNotFoundException e) {
+						System.err.println("Download of class " + destination
+								+ " photo failed.\n" + e.getMessage());
 					}
-					f.close();
-					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
 				}
@@ -273,6 +354,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
 			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+			Hashtable<String, String> unitNotes = getUnitClassNotes();
+			System.out.println(unitNotes);
 
 			for (int i = 0; i < entries.size(); i++) {
 				String[] entry = entries.get(i);
@@ -314,6 +397,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				}
 				operators = operators.substring(0, operators.length() - 2);
 				split.add("Operators: " + operators);
+
+				if (unitNotes.containsKey(entry[0])) {
+					String notes = unitNotes.get(entry[0]);
+					if (notes.length() > 0) {
+						split.add("Notes: " + notes);
+					}
+				}
+
 				data.add(split);
 			}
 
@@ -365,12 +456,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				final String classNo = data.get(groupPosition)[0];
 				ImageView imageView = getGenericImageView();
 				imageView.setImageDrawable(load_photo(classNo));
-				imageView.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
+				OnClickListener showImage = new OnClickListener() {
+					public void onClick(View view) {
 						show_photo(classNo);
 					}
-				});
+				};
+				imageView.setOnClickListener(showImage);
 
 				return imageView;
 			} else {
@@ -515,6 +606,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				operators.add("(none)");
 			}
 			return operators;
+		}
+
+		private Hashtable<String, String> getUnitClassNotes() {
+			UnitClass db_unitClass = new UnitClass(getBaseContext());
+			db_unitClass.open();
+			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
+			db_unitClass.close();
+			return notes;
 		}
 	}
 
