@@ -1,6 +1,7 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -61,7 +62,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			progressDialog.setTitle("Downloading...");
 			progressDialog.setMessage("Preparing to download...");
-			progressDialog.setCancelable(false);
+			progressDialog.setCancelable(true);
 			new DownloadBundleTask(progressDialog).execute();
 		default:
 			return true;
@@ -225,14 +226,19 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					FileOutputStream f = new FileOutputStream(
 							Helpers.dataDirectoryPath + "/class_photos/thumbs/"
 									+ destination);
-					InputStream in = c.getInputStream();
-					byte[] buffer = new byte[1024];
-					int len1 = 0;
-					while ((len1 = in.read(buffer)) > 0) {
-						f.write(buffer, 0, len1);
+					try {
+						InputStream in = c.getInputStream();
+						byte[] buffer = new byte[1024];
+						int len1 = 0;
+						while ((len1 = in.read(buffer)) > 0) {
+							f.write(buffer, 0, len1);
+						}
+						f.close();
+						c.disconnect();
+					} catch (FileNotFoundException e) {
+						System.err.println("Download of class " + destination
+								+ " thumbnail failed.\n" + e.getMessage());
 					}
-					f.close();
-					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
 				}
@@ -267,17 +273,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						target.delete();
 					}
 
-					FileOutputStream f = new FileOutputStream(
-							Helpers.dataDirectoryPath + "/class_photos/"
-									+ destination);
-					InputStream in = c.getInputStream();
-					byte[] buffer = new byte[1024];
-					int len1 = 0;
-					while ((len1 = in.read(buffer)) > 0) {
-						f.write(buffer, 0, len1);
+					try {
+						FileOutputStream f = new FileOutputStream(
+								Helpers.dataDirectoryPath + "/class_photos/"
+										+ destination);
+						InputStream in = c.getInputStream();
+						byte[] buffer = new byte[1024];
+						int len1 = 0;
+						while ((len1 = in.read(buffer)) > 0) {
+							f.write(buffer, 0, len1);
+						}
+						f.close();
+						c.disconnect();
+					} catch (FileNotFoundException e) {
+						System.err.println("Download of class " + destination
+								+ " photo failed.\n" + e.getMessage());
 					}
-					f.close();
-					c.disconnect();
 
 					progressDialog.incrementProgressBy(1);
 				}
