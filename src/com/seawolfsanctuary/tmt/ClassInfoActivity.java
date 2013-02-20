@@ -1,7 +1,6 @@
 package com.seawolfsanctuary.tmt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -223,10 +222,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						target.delete();
 					}
 
-					FileOutputStream f = new FileOutputStream(
-							Helpers.dataDirectoryPath + "/class_photos/thumbs/"
-									+ destination);
 					try {
+						target.createNewFile();
+						FileOutputStream f = new FileOutputStream(
+								Helpers.dataDirectoryPath
+										+ "/class_photos/thumbs/" + destination);
 						InputStream in = c.getInputStream();
 						byte[] buffer = new byte[1024];
 						int len1 = 0;
@@ -235,9 +235,17 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						}
 						f.close();
 						c.disconnect();
-					} catch (FileNotFoundException e) {
+					} catch (Exception e) {
 						System.err.println("Download of class " + destination
 								+ " thumbnail failed.\n" + e.getMessage());
+						e.printStackTrace();
+						try {
+							File f = new File(Helpers.dataDirectoryPath
+									+ "/class_photos/thumbs/" + destination);
+							f.delete();
+						} catch (Exception x) {
+							// meh
+						}
 					}
 
 					progressDialog.incrementProgressBy(1);
@@ -274,6 +282,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					}
 
 					try {
+						target.createNewFile();
 						FileOutputStream f = new FileOutputStream(
 								Helpers.dataDirectoryPath + "/class_photos/"
 										+ destination);
@@ -285,9 +294,17 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						}
 						f.close();
 						c.disconnect();
-					} catch (FileNotFoundException e) {
+					} catch (Exception e) {
 						System.err.println("Download of class " + destination
 								+ " photo failed.\n" + e.getMessage());
+						e.printStackTrace();
+						try {
+							File f = new File(Helpers.dataDirectoryPath
+									+ "/class_photos/" + destination);
+							f.delete();
+						} catch (Exception x) {
+							// meh
+						}
 					}
 
 					progressDialog.incrementProgressBy(1);
