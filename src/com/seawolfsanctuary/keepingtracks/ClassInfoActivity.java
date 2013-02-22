@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.database.UnitClass;
+import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
 public class ClassInfoActivity extends ExpandableListActivity {
 

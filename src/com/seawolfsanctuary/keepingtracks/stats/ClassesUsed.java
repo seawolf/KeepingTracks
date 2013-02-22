@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt.stats;
+package com.seawolfsanctuary.keepingtracks.stats;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,10 +17,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.Helpers;
-import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.UserPrefsActivity;
-import com.seawolfsanctuary.tmt.database.Journey;
+import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.R;
+import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
+import com.seawolfsanctuary.keepingtracks.database.Journey;
 
 public class ClassesUsed extends ListActivity {
 

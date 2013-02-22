@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;

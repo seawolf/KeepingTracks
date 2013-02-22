@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,9 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.seawolfsanctuary.tmt.foursquare.CheckinActivity;
-import com.seawolfsanctuary.tmt.foursquare.SetupActivity;
-import com.seawolfsanctuary.tmt.stats.StatsActivity;
+import com.seawolfsanctuary.keepingtracks.foursquare.CheckinActivity;
+import com.seawolfsanctuary.keepingtracks.foursquare.SetupActivity;
+import com.seawolfsanctuary.keepingtracks.stats.StatsActivity;
 
 public class MenuActivity extends Activity {
 

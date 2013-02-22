@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt.stats;
+package com.seawolfsanctuary.keepingtracks.stats;
 
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
@@ -18,9 +18,9 @@ import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
-import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.UserPrefsActivity;
-import com.seawolfsanctuary.tmt.database.Journey;
+import com.seawolfsanctuary.keepingtracks.R;
+import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
+import com.seawolfsanctuary.keepingtracks.database.Journey;
 
 public class JourneysByMonth extends Activity {
 	private XYPlot mySimpleXYPlot;

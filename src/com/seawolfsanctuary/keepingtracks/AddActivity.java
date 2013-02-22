@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,8 +33,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.database.Journey;
-import com.seawolfsanctuary.tmt.foursquare.CheckinActivity;
+import com.seawolfsanctuary.keepingtracks.database.Journey;
+import com.seawolfsanctuary.keepingtracks.foursquare.CheckinActivity;
 
 public class AddActivity extends TabActivity {
 

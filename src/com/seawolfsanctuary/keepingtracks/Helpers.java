@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,16 +26,16 @@ public class Helpers {
 
 	public static final String dataDirectoryPath = Environment
 			.getExternalStorageDirectory().toString()
-			+ "/Android/data/com.seawolfsanctuary.tmt";
+			+ "/Android/data/com.seawolfsanctuary.keepingtracks";
 
-	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.tmt";
+	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.keepingtracks";
 
-	public static final String classInfoPhotosURI = "http://dl.dropbox.com/u/6413248/TMT/class_photos/";
-	public static final String classInfoThumbsURI = "http://dl.dropbox.com/u/6413248/TMT/class_photos/thumbs/";
+	public static final String classInfoPhotosURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/";
+	public static final String classInfoThumbsURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/thumbs/";
 
-	public static final String foursquareClientID = "http://dl.dropbox.com/u/6413248/TMT/client_id.txt";
-	public static final String foursquareClientSecret = "http://dl.dropbox.com/u/6413248/TMT/client_secret.txt";
-	public static final String foursquareRedirectURI = "http://dl.dropbox.com/u/6413248/TMT/redirect_uri.txt";
+	public static final String foursquareClientID = "http://dl.dropbox.com/u/6413248/KeepingTracks/client_id.txt";
+	public static final String foursquareClientSecret = "http://dl.dropbox.com/u/6413248/KeepingTracks/client_secret.txt";
+	public static final String foursquareRedirectURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/redirect_uri.txt";
 
 	public static void hideKeyboard(View view) {
 		try {
@@ -135,7 +135,8 @@ public class Helpers {
 			File f = new File(dataDirectoryPath + "/access_token.txt");
 			success = f.delete();
 		} catch (Exception e) {
-			System.out.println("Error removing access token: " + e.getMessage());
+			System.out
+					.println("Error removing access token: " + e.getMessage());
 		}
 
 		return success;

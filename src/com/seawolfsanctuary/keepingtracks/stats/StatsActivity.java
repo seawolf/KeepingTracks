@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt.stats;
+package com.seawolfsanctuary.keepingtracks.stats;
 
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.R;
-import com.seawolfsanctuary.tmt.UserPrefsActivity;
+import com.seawolfsanctuary.keepingtracks.R;
+import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 
 public class StatsActivity extends ListActivity {
 	private ArrayList<String> names = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class StatsActivity extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				String className = "com.seawolfsanctuary.tmt."
+				String className = "com.seawolfsanctuary.keepingtracks."
 						+ activities.get(position);
 				try {
 					Intent intent;

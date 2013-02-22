@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt.foursquare;
+package com.seawolfsanctuary.keepingtracks.foursquare;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,8 +17,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.Helpers;
-import com.seawolfsanctuary.tmt.R;
+import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.R;
 
 public class SetupActivity extends Activity {
 

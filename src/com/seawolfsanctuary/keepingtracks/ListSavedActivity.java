@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt;
+package com.seawolfsanctuary.keepingtracks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.database.Journey;
+import com.seawolfsanctuary.keepingtracks.database.Journey;
 
 public class ListSavedActivity extends ExpandableListActivity {
 

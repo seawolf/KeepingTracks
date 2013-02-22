@@ -1,4 +1,4 @@
-package com.seawolfsanctuary.tmt.database;
+package com.seawolfsanctuary.keepingtracks.database;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.seawolfsanctuary.tmt.Helpers;
+import com.seawolfsanctuary.keepingtracks.Helpers;
 
 public class Journey {
 	private DatabaseHelper DBHelper;
@@ -26,7 +26,7 @@ public class Journey {
 
 	private final Context context;
 
-	private static final String DATABASE_NAME = "tmt";
+	private static final String DATABASE_NAME = "keepingtracks";
 	private static final String DATABASE_TABLE = "journeys";
 	private static final int DATABASE_VERSION = 2;
 
