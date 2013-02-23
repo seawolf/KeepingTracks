@@ -14,11 +14,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks;
+import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks.DatabaseHelper;
 
 public class Journey {
 	private DatabaseHelper DBHelper;
@@ -26,12 +27,8 @@ public class Journey {
 
 	private final Context context;
 
-	private static final String DATABASE_NAME = "keepingtracks";
-	private static final String DATABASE_TABLE = "journeys";
-	private static final int DATABASE_VERSION = 2;
-
+	public static final String DATABASE_TABLE = "journeys";
 	public static final String KEY_ROWID = "_id";
-
 	public static final String KEY_FROM_STATION = "from_station";
 	public static final String KEY_FROM_DAY = "from_day";
 	public static final String KEY_FROM_MONTH = "from_month";
@@ -51,54 +48,9 @@ public class Journey {
 
 	public static final String KEY_STATS = "use_for_stats";
 
-	private static final String DATABASE_CREATE = "create table "
-			+ DATABASE_TABLE + " (" + KEY_ROWID
-			+ " integer primary key autoincrement, " + KEY_FROM_STATION
-			+ " text not null, " + KEY_FROM_DAY + " int not null, "
-			+ KEY_FROM_MONTH + " int not null, " + KEY_FROM_YEAR
-			+ " int not null, " + KEY_FROM_HOUR + " int not null, "
-			+ KEY_FROM_MINUTE + " int not null, "
-
-			+ KEY_TO_STATION + " text not null, " + KEY_TO_DAY
-			+ " int not null, " + KEY_TO_MONTH + " int not null, "
-			+ KEY_TO_YEAR + " int not null, " + KEY_TO_HOUR + " int not null, "
-			+ KEY_TO_MINUTE + " int not null, " + KEY_CLASS
-			+ " text not null, " + KEY_HEADCODE + " text not null, "
-			+ KEY_STATS + " int not null default '1' " + ");";
-
 	public Journey(Context c) {
 		this.context = c;
-		DBHelper = new DatabaseHelper(context);
-	}
-
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-		DatabaseHelper(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			System.out.println("Creating database...");
-			db.execSQL(DATABASE_CREATE);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int currentVersion,
-				int newestVersion) {
-			System.out.println("Upgrading " + DATABASE_TABLE
-					+ " table from version " + currentVersion + " to "
-					+ newestVersion + "...");
-
-			if (currentVersion < 2) {
-				System.out.println("Adding column: " + KEY_STATS + "...");
-				db.execSQL("ALTER TABLE " + DATABASE_TABLE + " ADD COLUMN "
-						+ KEY_STATS + " int not null default '1' " + ";");
-			}
-
-			System.out.println(DATABASE_TABLE + " is now at version "
-					+ newestVersion + "(schema version: " + DATABASE_VERSION
-					+ ")");
-		}
+		DBHelper = new KeepingTracks.DatabaseHelper(context);
 	}
 
 	public Journey open() throws SQLException {

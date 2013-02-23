@@ -13,11 +13,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks;
+import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks.DatabaseHelper;
 
 public class UnitClass {
 	private DatabaseHelper DBHelper;
@@ -25,43 +26,14 @@ public class UnitClass {
 
 	private final Context context;
 
-	private static final String DATABASE_NAME = "keepingtracks";
-	private static final String DATABASE_TABLE = "unit_class";
-	private static final int DATABASE_VERSION = 1;
-
+	public static final String DATABASE_TABLE = "unit_class";
 	public static final String KEY_ROWID = "_id";
-
 	public static final String KEY_CLASS_NO = "class_no";
 	public static final String KEY_NOTES = "notes";
 
-	private static final String DATABASE_CREATE = "create table unit_class ("
-			+ "_id integer primary key autoincrement, " + KEY_CLASS_NO
-			+ " text not null unique, " + KEY_NOTES + " text " + ");";
-
 	public UnitClass(Context c) {
 		this.context = c;
-		DBHelper = new DatabaseHelper(context);
-	}
-
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-		DatabaseHelper(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			System.out.println("Creating " + DATABASE_TABLE + " database...");
-			db.execSQL(DATABASE_CREATE);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			System.out.println("Upgrading " + DATABASE_TABLE
-					+ " database from version " + oldVersion + " to "
-					+ newVersion + ", which will destroy all old data!");
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-			onCreate(db);
-		}
+		DBHelper = new KeepingTracks.DatabaseHelper(context);
 	}
 
 	public UnitClass open() throws SQLException {
