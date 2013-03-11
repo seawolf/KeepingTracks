@@ -24,8 +24,7 @@ import com.seawolfsanctuary.keepingtracks.database.Journey;
 
 public class JourneysByMonth extends Activity {
 	private XYPlot mySimpleXYPlot;
-	private String[] months = new String[] { "J", "F", "M", "A", "M", "J", "J",
-			"A", "S", "O", "N", "D" };
+	private String[] months = new String[] { getString(R.array.stats_journeys_month_months) };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

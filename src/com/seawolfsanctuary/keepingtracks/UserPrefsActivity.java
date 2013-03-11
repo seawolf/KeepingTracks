@@ -51,7 +51,8 @@ public class UserPrefsActivity extends Activity {
 				+ appFiles.getAbsolutePath());
 
 		if (listOfFiles.length == 0) {
-			Toast.makeText(getBaseContext(), "No previous reports found.",
+			Toast.makeText(getBaseContext(),
+					getString(R.string.user_prefs_crash_none),
 					Toast.LENGTH_SHORT).show();
 		} else {
 			String fileInList;
@@ -66,13 +67,14 @@ public class UserPrefsActivity extends Activity {
 					}
 				}
 			}
-			Toast.makeText(getBaseContext(),
-					"" + filesRemoved + " previous reports removed.",
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(
+					getBaseContext(),
+					getString(R.string.user_prefs_crash_count, ""
+							+ filesRemoved), Toast.LENGTH_SHORT).show();
 		}
 	}
 
-	public void crashTest() throws Exception {
+	public void crashTest(View v) throws Exception {
 		throw new Exception("Success!");
 	}
 

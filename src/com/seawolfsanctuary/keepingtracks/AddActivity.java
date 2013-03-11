@@ -283,20 +283,19 @@ public class AddActivity extends TabActivity {
 			input.close();
 			array = new String(buffer).split("\n");
 
-			Toast.makeText(getBaseContext(), "Stations loaded.",
-					Toast.LENGTH_SHORT).show();
+			if (array.length < 1) {
+				Toast.makeText(getBaseContext(),
+						getText(R.string.add_new_empty_stations),
+						Toast.LENGTH_LONG).show();
+			}
 
 		} catch (Exception e) {
-			String error_msg = "Error reading station list!";
-
 			actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
-			actv_FromSearch.setText(error_msg);
-			actv_FromSearch.setError(error_msg);
+			actv_FromSearch.setError(getText(R.string.add_new_empty_stations));
 			actv_FromSearch.setEnabled(false);
 
 			actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
-			actv_ToSearch.setText(error_msg);
-			actv_ToSearch.setError(error_msg);
+			actv_ToSearch.setError(getText(R.string.add_new_empty_stations));
 			actv_ToSearch.setEnabled(false);
 		}
 
@@ -316,38 +315,64 @@ public class AddActivity extends TabActivity {
 		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
 		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
+		String summaryText = constructSummary();
+		txt_Summary.setText(summaryText);
+	}
 
-		String text = "From:\t"
-				+ Helpers.trimCodeFromStation(actv_FromSearch.getText()
-						.toString(), getBaseContext())
+	private String constructSummary() {
+		String summary = "";
 
-				+ "\nOn:\t\t"
-				+ Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2)
-				+ "/"
-				+ Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2)
-				+ "/"
-				+ Helpers.leftPad("" + dp_FromDate.getYear(), 4)
+		summary += getString(R.string.add_summary_from,
+				Helpers.trimCodeFromStation(actv_FromSearch.getText()
+						.toString(), getBaseContext()));
 
-				+ "\nAt:\t\t"
-				+ Helpers.leftPad("" + tp_FromTime.getCurrentHour(), 2)
-				+ ":"
-				+ Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2)
+		summary += "\n";
 
-				+ "\n\nTo:\t\t"
-				+ Helpers.trimCodeFromStation(actv_ToSearch.getText()
-						.toString(), getBaseContext()) + "\nOn:\t\t"
-				+ Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2) + "/"
-				+ Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2) + "/"
-				+ Helpers.leftPad("" + dp_ToDate.getYear(), 4) + "\nAt:\t\t"
-				+ Helpers.leftPad("" + tp_ToTime.getCurrentHour(), 2) + ":"
-				+ Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2);
+		summary += getString(R.string.add_summary_on,
+				Helpers.leftPad("" + dp_FromDate.getYear(), 4),
+				Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2),
+				Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2));
+
+		summary += "\n";
+
+		summary += getString(R.string.add_summary_at,
+				Helpers.leftPad("" + tp_FromTime.getCurrentHour(), 2),
+				Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2));
+
+		summary += "\n";
+		summary += "\n";
+
+		summary += getString(R.string.add_summary_to,
+				Helpers.trimCodeFromStation(actv_ToSearch.getText().toString(),
+						getBaseContext()));
+
+		summary += "\n";
+
+		summary += getString(R.string.add_summary_on,
+				Helpers.leftPad("" + dp_ToDate.getYear(), 4),
+				Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2),
+				Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2));
+
+		summary += "\n";
+
+		summary += getString(R.string.add_summary_at,
+				Helpers.leftPad("" + tp_ToTime.getCurrentHour(), 2),
+				Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2));
 
 		if (settings.getBoolean("AdvancedJourneys", false) == true) {
-			text += "\n\nWith:\t" + txt_DetailClass.getText() + "\nAs:\t\t"
-					+ txt_DetailHeadcode.getText();
+			summary += "\n";
+			summary += "\n";
+
+			summary += getString(R.string.add_summary_with, txt_DetailClass
+					.getText().toString());
+
+			summary += "\n";
+
+			summary += getString(R.string.add_summary_as, txt_DetailHeadcode
+					.getText().toString());
 		}
 
-		txt_Summary.setText(text);
+		return summary;
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -400,10 +425,12 @@ public class AddActivity extends TabActivity {
 
 			if (updated == true) {
 				success = true;
-				Toast.makeText(getBaseContext(), "Entry edited.",
+				Toast.makeText(getBaseContext(),
+						getString(R.string.edit_saved_edited),
 						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(getBaseContext(), "Error editing entry.",
+				Toast.makeText(getBaseContext(),
+						getString(R.string.edit_saved_error),
 						Toast.LENGTH_SHORT).show();
 			}
 		} else {
@@ -426,11 +453,13 @@ public class AddActivity extends TabActivity {
 
 			if (id != -1) {
 				success = true;
-				Toast.makeText(getBaseContext(), "Entry saved.",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getBaseContext(),
+						getString(R.string.add_new_added), Toast.LENGTH_SHORT)
+						.show();
 			} else {
-				Toast.makeText(getBaseContext(), "Error saving entry.",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getBaseContext(),
+						getString(R.string.add_new_error), Toast.LENGTH_SHORT)
+						.show();
 			}
 		}
 
@@ -509,7 +538,7 @@ public class AddActivity extends TabActivity {
 
 		if (from.length() < 3) {
 			Toast.makeText(getBaseContext(),
-					"Enter a 'From' station code to fetch journeys.",
+					getString(R.string.add_new_headcode_error_from_blank),
 					Toast.LENGTH_LONG).show();
 			mTabHost.setCurrentTab(0);
 		} else {
@@ -520,8 +549,8 @@ public class AddActivity extends TabActivity {
 					"" + dp_FromDate.getDayOfMonth() };
 
 			dialog = ProgressDialog.show(AddActivity.this,
-					"Downloading Departures",
-					"Downloading departure board. Please wait...", true);
+					getString(R.string.add_new_headcode_progress_title),
+					getString(R.string.add_new_headcode_progress_text), true);
 			dialog.setCancelable(true);
 
 			new DownloadJourneysTask().execute(journeyDetails);
@@ -537,7 +566,7 @@ public class AddActivity extends TabActivity {
 			ArrayList<ArrayList<String>> formattedJourneys = new ArrayList<ArrayList<String>>();
 
 			ArrayList<String> result = new ArrayList<String>();
-			String dataError = "Unable to parse data. Check the 'From' station is correct.";
+			String dataError = getString(R.string.add_new_headcode_error_default);
 
 			formattedJourneys.add(result);
 
@@ -680,11 +709,11 @@ public class AddActivity extends TabActivity {
 				System.err.println(e.getMessage());
 				System.err.println(e.getStackTrace());
 				result.add("ERROR");
-				result.add("Recieved data was not in the expected format.");
+				result.add(getString(R.string.add_new_headcode_error_invalid));
 				formattedJourneys.set(0, result);
 			} catch (IOException e) {
 				result.add("ERROR");
-				result.add("Network error. Check your Internet connection.");
+				result.add(getString(R.string.add_new_headcode_error_io));
 				formattedJourneys.set(0, result);
 			}
 
@@ -709,16 +738,20 @@ public class AddActivity extends TabActivity {
 
 					String platformInfo = result.get(3);
 					if (platformInfo.length() > 0) {
-						platformInfo = " (platform " + platformInfo + ")";
+						platformInfo = " ("
+								+ getString(R.string.add_new_headcode_results_platform)
+								+ " " + platformInfo + ")";
 					}
 
 					presentedResults[i] = result.get(0) + ": " + result.get(1)
-							+ " to " + result.get(2) + platformInfo;
+							+ " "
+							+ getString(R.string.add_new_headcode_results_to)
+							+ " " + result.get(2) + platformInfo;
 				}
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						AddActivity.this);
-				builder.setTitle("Select Journey");
+				builder.setTitle(getString(R.string.add_new_headcode_results_title));
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int i) {

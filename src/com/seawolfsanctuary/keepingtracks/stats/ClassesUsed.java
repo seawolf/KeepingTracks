@@ -44,12 +44,15 @@ public class ClassesUsed extends ListActivity {
 
 		ArrayList<String> listContents = new ArrayList<String>();
 		for (String classUsed : classesUsed.keySet()) {
-			String time = " time";
 			if (classesUsed.get(classUsed) > 1) {
-				time += "s";
+				listContents.add(getString(
+						R.string.stats_classes_used_line_single, classUsed,
+						classesUsed.get(classUsed)));
+			} else {
+				listContents.add(getString(
+						R.string.stats_classes_used_line_multiple, classUsed,
+						classesUsed.get(classUsed)));
 			}
-			listContents.add(classUsed + " (" + classesUsed.get(classUsed)
-					+ time + ")");
 		}
 		Collections.sort(listContents);
 
@@ -75,7 +78,7 @@ public class ClassesUsed extends ListActivity {
 				} else {
 					Toast.makeText(
 							getBaseContext(),
-							"No photo found. Either this class is not in the Class Reference, or it hasn't a photo in the bundle.",
+							getString(R.string.class_info_download_unavailable),
 							Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -107,11 +110,15 @@ public class ClassesUsed extends ListActivity {
 		db_journeys.close();
 
 		if (showToast) {
-			String msg = "Loaded " + allClasses.size() + " entr"
-					+ (allClasses.size() == 1 ? "y" : "ies")
-					+ " from database.";
-			System.out.println(msg);
-			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+			if (allClasses.size() == 1) {
+				Toast.makeText(getBaseContext(),
+						getString(R.string.list_saved_loaded_single),
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getBaseContext(),
+						getString(R.string.list_saved_loaded_multiple),
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 
 		return allClasses;

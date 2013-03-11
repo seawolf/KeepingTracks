@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/foursquare_deauthenticate"
-          android:title="@string/foursquare_deauthenticate" />
+    <item android:id="@+id/foursquare_logout"
+          android:title="@string/foursquare_logout" />
 </menu>

@@ -162,11 +162,13 @@ public class FavouriteStations extends Activity {
 		mySimpleXYPlot.getLegendWidget().setVisible(false);
 		mySimpleXYPlot.disableAllMarkup();
 
-		mySimpleXYPlot.setRangeLabel("Count");
+		mySimpleXYPlot
+				.setRangeLabel(getString(R.string.stats_favourite_stations_count));
 		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_PIXELS, 15);
 		mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("#"));
 
-		mySimpleXYPlot.setDomainLabel("1st Stn");
+		mySimpleXYPlot
+				.setDomainLabel(getString(R.string.stats_favourite_stations_station));
 		mySimpleXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
 		mySimpleXYPlot.setDomainValueFormat(new Format() {
 			@Override
