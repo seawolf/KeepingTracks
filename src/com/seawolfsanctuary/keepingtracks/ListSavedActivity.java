@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
@@ -31,9 +32,15 @@ import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 
-public class ListSavedActivity extends ExpandableListActivity {
+public class ListSavedActivity extends ExpandableListActivity implements
+		OnScrollListener {
 
 	SharedPreferences settings;
+	ExpandableListView lv;
+	ListSavedAdapter listAdapter;
+
+	boolean currentlyLoading;
+	int totalAvailable = -1;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,14 +105,18 @@ public class ListSavedActivity extends ExpandableListActivity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		currentlyLoading = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_saved_activity);
 		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
 				MODE_PRIVATE);
-		setListAdapter(new ListSavedAdapter());
+
+		listAdapter = new ListSavedAdapter();
+		setListAdapter(listAdapter);
 		registerForContextMenu(getExpandableListView());
 
-		ExpandableListView lv = getExpandableListView();
+		lv = getExpandableListView();
+		lv.setOnScrollListener(this);
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parentView,
@@ -154,12 +165,13 @@ public class ListSavedActivity extends ExpandableListActivity {
 			}
 		});
 
+		currentlyLoading = false;
 		checkForLegacy(this.getExpandableListView());
 	}
 
 	private class ListSavedAdapter extends BaseExpandableListAdapter {
 
-		ArrayList<String[]> data = loadSavedEntries(true);
+		ArrayList<String[]> data = loadSavedEntries(true, 0);
 		ArrayList<String> names = new ArrayList<String>(getNames(data));
 
 		private String[] presentedNames = Helpers
@@ -287,15 +299,27 @@ public class ListSavedActivity extends ExpandableListActivity {
 			return true;
 		}
 
+		public void fetchNextPage() {
+			data.addAll(loadSavedEntries(true, presentedNames.length));
+			names = new ArrayList<String>(getNames(data));
+			presentedNames = Helpers.arrayListToArray(getNames(data));
+			presentedData = Helpers.multiArrayListToArray(getData(data));
+		}
 	}
 
-	public ArrayList<String[]> loadSavedEntries(boolean showToast) {
+	public ArrayList<String[]> loadSavedEntries(boolean showToast, int startFrom) {
 
 		ArrayList<String[]> allJourneys = new ArrayList<String[]>();
 
 		Journey db_journeys = new Journey(this);
 		db_journeys.open();
-		Cursor c = db_journeys.getAllJourneysReverse();
+
+		Cursor c = db_journeys.getAllJourneysCount();
+		if (c.moveToFirst()) {
+			totalAvailable = c.getInt(0);
+		}
+
+		c = db_journeys.getPagedJourneysReverse(startFrom);
 		if (c.moveToFirst()) {
 			do {
 				String[] entry = new String[15];
@@ -556,5 +580,27 @@ public class ListSavedActivity extends ExpandableListActivity {
 
 			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 		}
+	}
+
+	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
+			int totalCount) {
+
+		boolean loadMore = (firstVisible + visibleCount >= totalCount)
+				&& (totalCount < totalAvailable);
+		if (!currentlyLoading && loadMore) {
+			currentlyLoading = true;
+
+			int x = lv.getScrollX();
+			int y = lv.getScrollY();
+
+			listAdapter.fetchNextPage();
+			listAdapter.notifyDataSetChanged();
+
+			lv.scrollTo(x, y);
+			currentlyLoading = false;
+		}
+	}
+
+	public void onScrollStateChanged(AbsListView v, int s) {
 	}
 }
