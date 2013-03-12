@@ -112,6 +112,12 @@ public class Journey {
 						+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
 	}
 
+	public Cursor getAllJourneysCount() {
+		System.out.println("Fetching count of all entries...");
+		return db.query(DATABASE_TABLE, new String[] { "COUNT(*)" }, null,
+				null, null, null, null);
+	}
+
 	public Cursor getAllJourneysReverse() {
 		System.out.println("Fetching all entries, in reverse order...");
 		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID,
