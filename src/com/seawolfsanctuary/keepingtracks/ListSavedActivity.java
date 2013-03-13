@@ -40,6 +40,8 @@ public class ListSavedActivity extends ExpandableListActivity implements
 	ListSavedAdapter listAdapter;
 
 	boolean currentlyLoading;
+	int scrollX;
+	int scrollY;
 	int totalAvailable = -1;
 
 	@Override
@@ -299,11 +301,12 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			return true;
 		}
 
-		public void fetchNextPage() {
-			data.addAll(loadSavedEntries(true, presentedNames.length));
+		public Boolean fetchNextPage() {
+			data.addAll(loadSavedEntries(false, presentedNames.length));
 			names = new ArrayList<String>(getNames(data));
 			presentedNames = Helpers.arrayListToArray(getNames(data));
 			presentedData = Helpers.multiArrayListToArray(getData(data));
+			return true;
 		}
 	}
 
@@ -582,6 +585,31 @@ public class ListSavedActivity extends ExpandableListActivity implements
 		}
 	}
 
+	private class FetchMoreTask extends AsyncTask<Void, Void, Boolean> {
+
+		private ProgressDialog progressDialog;
+
+		public FetchMoreTask(ProgressDialog dialogFromActivity) {
+			progressDialog = dialogFromActivity;
+		}
+
+		public void onPreExecute() {
+			progressDialog.show();
+		}
+
+		protected Boolean doInBackground(Void... args) {
+			return listAdapter.fetchNextPage();
+		}
+
+		protected void onPostExecute(Boolean status) {
+			System.out.println("OPE");
+			listAdapter.notifyDataSetChanged();
+			lv.scrollTo(scrollX, scrollY);
+			progressDialog.dismiss();
+			currentlyLoading = false;
+		}
+	}
+
 	public void onScroll(AbsListView view, int firstVisible, int visibleCount,
 			int totalCount) {
 
@@ -589,15 +617,16 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				&& (totalCount < totalAvailable);
 		if (!currentlyLoading && loadMore) {
 			currentlyLoading = true;
+			scrollX = lv.getScrollX();
+			scrollY = lv.getScrollY();
 
-			int x = lv.getScrollX();
-			int y = lv.getScrollY();
-
-			listAdapter.fetchNextPage();
-			listAdapter.notifyDataSetChanged();
-
-			lv.scrollTo(x, y);
-			currentlyLoading = false;
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setTitle("Loading...");
+			progressDialog.setMessage("Fetching next " + Journey.PAGE_SIZE
+					+ " journeys...");
+			progressDialog.setCancelable(true);
+			new FetchMoreTask(progressDialog).execute();
 		}
 	}
 
