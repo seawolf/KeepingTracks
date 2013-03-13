@@ -193,9 +193,9 @@ public class ListSavedActivity extends ExpandableListActivity {
 						R.string.list_saved_entry_name,
 						Helpers.trimCodeFromStation(entry[0], getBaseContext()),
 						Helpers.trimCodeFromStation(entry[6], getBaseContext()),
-						Helpers.leftPad(entry[3], 2),
+						Helpers.leftPad(entry[1], 2),
 						Helpers.leftPad(entry[2], 2),
-						Helpers.leftPad(entry[1], 4)));
+						Helpers.leftPad(entry[3], 4)));
 			}
 			return names;
 		}
