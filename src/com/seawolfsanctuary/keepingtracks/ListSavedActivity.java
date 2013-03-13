@@ -347,7 +347,8 @@ public class ListSavedActivity extends ExpandableListActivity {
 		if (showToast) {
 			String msg;
 			if (allJourneys.size() == 1) {
-				msg = getString(R.string.list_saved_loaded_single);
+				msg = getString(R.string.list_saved_loaded_single,
+						allJourneys.size());
 			} else {
 				msg = getString(R.string.list_saved_loaded_multiple,
 						allJourneys.size());
