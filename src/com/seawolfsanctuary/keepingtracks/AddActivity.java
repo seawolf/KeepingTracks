@@ -330,8 +330,8 @@ public class AddActivity extends TabActivity {
 
 		summary += getString(R.string.add_summary_on,
 				Helpers.leftPad("" + dp_FromDate.getYear(), 4),
-				Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2),
-				Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2));
+				Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2),
+				Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2));
 
 		summary += "\n";
 
@@ -350,8 +350,8 @@ public class AddActivity extends TabActivity {
 
 		summary += getString(R.string.add_summary_on,
 				Helpers.leftPad("" + dp_ToDate.getYear(), 4),
-				Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2),
-				Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2));
+				Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2),
+				Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2));
 
 		summary += "\n";
 
