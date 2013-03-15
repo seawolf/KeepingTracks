@@ -75,7 +75,7 @@
     <string name="class_info_category">Category: %s</string>
     <string name="class_info_operators">Operators: %s</string>
     <string name="class_info_none">(none)</string>
-    <string name="class_info_notes">Notes</string>
+    <string name="class_info_notes">Notes: %s</string>
     <string name="class_info_download_thumb">(photo unavailable)</string>
     <string name="class_info_download_photo">Please download the bundle to view this photo.</string>
     <string name="class_info_download_title">Downloading…</string>
