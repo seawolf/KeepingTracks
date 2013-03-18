@@ -68,7 +68,7 @@
     <string name="headcode_selection">Select Departure</string>
     <string name="class_info">Class Reference</string>
     <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
-    <string name="class_info_entered_service">Entered Service</string>
+    <string name="class_info_entered_service">Entered Service: %s</string>
     <string name="class_info_retired">Retired: %s</string>
     <string name="class_info_in_service">in service</string>
     <string name="class_info_unknown">(unknown)</string>
