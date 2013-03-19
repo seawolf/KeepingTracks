@@ -99,6 +99,9 @@ public class AddActivity extends TabActivity {
 		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
 				MODE_PRIVATE);
 
+		template = getIntent().getExtras();
+		Helpers.loadCurrentJourney(template, AddActivity.this);
+
 		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
 		mTabHost = getTabHost();
@@ -211,16 +214,13 @@ public class AddActivity extends TabActivity {
 					actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
-					if (Helpers.readAccessToken().length() > 0) {
-						chk_Checkin.setEnabled(true);
-					}
-
+					chk_Checkin
+							.setEnabled(Helpers.readAccessToken().length() > 0);
 					chk_Checkin.setChecked(false);
-					chk_Checkin.setEnabled(false);
+
 					if (actv_FromSearch.getText().toString().length() > 0
 							|| actv_ToSearch.getText().toString().length() > 0) {
-						chk_Checkin.setEnabled(true);
-						chk_Checkin.setChecked(true);
+						chk_Checkin.setChecked(!template.containsKey("editing"));
 					}
 
 				}
@@ -254,9 +254,6 @@ public class AddActivity extends TabActivity {
 		actv_ToSearch.setAdapter(ada_toSearchAdapter);
 		actv_ToSearch.setThreshold(2);
 		actv_ToSearch.setOnItemClickListener(cl_FromToClickListener);
-
-		template = getIntent().getExtras();
-		Helpers.loadCurrentJourney(template, AddActivity.this);
 
 		try {
 			if (template.containsKey("editing")) {
