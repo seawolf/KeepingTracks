@@ -218,17 +218,16 @@ public class CheckinActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
-		case R.id.foursquare_deauthenticate:
+		case R.id.foursquare_logout:
 			if (Helpers.removeAccessToken() == true) {
 				CheckinActivity.this.finish();
-				Toast.makeText(
-						getApplicationContext(),
-						"You must now re-authenticate with Foursquare to check-in.",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_logout_success),
 						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(
-						getApplicationContext(),
-						"Could not revoke access. Remove this application from your account by visiting the Foursquare website.",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_logout_failure),
+
 						Toast.LENGTH_LONG).show();
 			}
 
@@ -275,57 +274,52 @@ public class CheckinActivity extends ListActivity {
 					params.put("position", position);
 					params.put("visibility", visibility);
 
-					String checkinMessage = "";
+					// Delete this to check-in with no shout
+					String checkinMessage = getString(
+							R.string.foursquare_checkin_mesage_blank,
+							params.getString("venueName"));
 
 					// When Checking-In from AddActivity
 					if (checkin_details != null) {
-						checkinMessage = "I'm travelling";
+						boolean fromStn = checkin_details.getString("from_stn")
+								.length() > 0;
+						boolean toStn = checkin_details.getString("to_stn")
+								.length() > 0;
+						boolean unit = checkin_details
+								.getString("detail_class").length() > 0;
+						boolean headcode = checkin_details.getString(
+								"detail_headcode").length() > 0;
 
-						if (checkin_details.getString("from_stn").length() > 0) {
-							checkinMessage += " from "
-									+ checkin_details.getString("from_stn");
+						if (fromStn && toStn && !unit && !headcode) {
+							checkinMessage = getString(
+									R.string.foursquare_checkin_mesage_stations,
+									checkin_details.getString("from_stn"),
+									checkin_details.getString("to_stn"));
 						}
-
-						if (checkin_details.getString("to_stn").length() > 0) {
-							checkinMessage += " to "
-									+ checkin_details.getString("to_stn");
-
+						if (fromStn && toStn && unit && !headcode) {
+							checkinMessage = getString(
+									R.string.foursquare_checkin_mesage_advanced_half,
+									checkin_details.getString("from_stn"),
+									checkin_details.getString("to_stn"),
+									checkin_details.getString("detail_class"));
 						}
-						checkinMessage += ".";
-
-						if (checkin_details.getString("detail_headcode")
-								.length() > 0
-								|| checkin_details.getString("detail_class")
-										.length() > 0) {
-
-							checkinMessage += " (";
-
-							if (checkin_details.getString("detail_headcode")
-									.length() > 0) {
-								checkinMessage += checkin_details
-										.getString("detail_headcode");
-							}
-
-							if (checkin_details.getString("detail_headcode")
-									.length() > 0
-									&& checkin_details
-											.getString("detail_class").length() > 0) {
-								checkinMessage += " - ";
-							}
-
-							if (checkin_details.getString("detail_class")
-									.length() > 0) {
-								checkinMessage += checkin_details
-										.getString("detail_class");
-							}
-
-							checkinMessage += ")";
+						if (fromStn && toStn && !unit && headcode) {
+							checkinMessage = getString(
+									R.string.foursquare_checkin_mesage_advanced_half,
+									checkin_details.getString("from_stn"),
+									checkin_details.getString("to_stn"),
+									checkin_details
+											.getString("detail_headcode"));
 						}
-
-					} else {
-						// Delete this else block to check-in with no shout
-						checkinMessage = "I'm on a train at "
-								+ params.getString("venueName") + ".";
+						if (fromStn && toStn && unit && !headcode) {
+							checkinMessage = getString(
+									R.string.foursquare_checkin_mesage_advanced_full,
+									checkin_details.getString("from_stn"),
+									checkin_details.getString("to_stn"),
+									checkin_details
+											.getString("detail_headcode"),
+									checkin_details.getString("detail_class"));
+						}
 					}
 
 					CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
@@ -512,8 +506,9 @@ public class CheckinActivity extends ListActivity {
 
 				Toast.makeText(
 						getApplicationContext(),
-						"Updated venues based on " + location.getProvider()
-								+ " location.", Toast.LENGTH_SHORT).show();
+						getString(R.string.foursquare_updates_from,
+								location.getProvider()), Toast.LENGTH_SHORT)
+						.show();
 			} else {
 				System.out.println(location.getProvider()
 						+ " > Venues not updated.");
@@ -607,11 +602,13 @@ public class CheckinActivity extends ListActivity {
 					+ "Post-Execute!");
 
 			if (checkinSuccessful) {
-				Toast.makeText(getApplicationContext(), "Checked in!",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_checkin_success),
 						Toast.LENGTH_SHORT).show();
 				CheckinActivity.this.finish();
 			} else {
-				Toast.makeText(getApplicationContext(), "Could not check in.",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_checkin_failure),
 						Toast.LENGTH_SHORT).show();
 			}
 

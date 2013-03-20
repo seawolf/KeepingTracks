@@ -7,33 +7,136 @@
     <string name="tr_class">Class</string>
     <string name="tr_headcode">Headcode</string>
     <string name="add_new">Add Journey</string>
+    <string name="add_new_empty_stations">The list of stations may not have been loaded correctly.</string>
     <string name="add_use_for_stats">Use for Statistics</string>
+    <string name="add_summary_from">From:\t%s</string>
+    <string name="add_summary_to">To:\t\t%s</string>
+    <string name="add_summary_on">On:\t\t%3$s/%2$s/%1$s</string>
+    <string name="add_summary_at">At:\t\t%1$s:%2$s</string>
+    <string name="add_summary_with">Train:\t%s</string>
+    <string name="add_summary_as">Journey:\t%s</string>
+    <string name="add_new_headcode_error_from_blank">Enter a \'From\' station code to fetch journeys.</string>
+    <string name="add_new_headcode_error_default">Unable to parse data. Check the \'From\' station is correct.</string>
+    <string name="add_new_headcode_error_invalid">Received data was not in the expected format.</string>
+    <string name="add_new_headcode_error_io">Network error. Check your Internet connection.</string>
+    <string name="add_new_headcode_progress_title">Downloading Departures</string>
+    <string name="add_new_headcode_progress_text">Downloading departure board. Please wait…</string>
+    <string name="add_new_headcode_results_title">Select Journey</string>
+    <string name="add_new_headcode_results_to">to</string>
+    <string name="add_new_headcode_results_platform">platform</string>
+    <string name="add_new_added">Journey added.</string>
+    <string name="add_new_error">Error adding journey.</string>
     <string name="edit_saved">Edit Journey</string>
+    <string name="edit_saved_edited">Journey edited.</string>
+    <string name="edit_saved_error">Error editing journey.</string>
     <string name="copy_saved">Copy Journey</string>
     <string name="list_saved">Saved Journeys</string>
     <string name="list_saved_prompt">Tap a journey to see details. Tap and hold to edit, copy or delete.</string>
+    <string name="list_saved_loaded_single">Loaded %s journey from database.</string>
+    <string name="list_saved_loaded_multiple">Loaded %s journeys from database.</string>
+    <string name="list_saved_entry_name">%3$s/%4$s/%5$s\n%1$s - %2$s</string>
+    <string name="list_saved_entry_from">From: %1$s\n%4$s/%3$s/%2$s - %5$s:%6$s</string>
+    <string name="list_saved_entry_to">To: %1$s\n%4$s/%3$s/%2$s - %5$s:%6$s</string>
+    <string name="list_saved_entry_with">Train: %s</string>
+    <string name="list_saved_entry_as">Journey: %s</string>
     <string name="list_saved_question_title">Journey Selected</string>
     <string name="list_saved_question_text">Do you want to edit, copy or delete this journey?</string>
+    <string name="list_saved_question_edit">Edit…</string>
+    <string name="list_saved_answer_editing">Editing journey with ID of %s</string>
+    <string name="list_saved_answer_copying">Copying journey from position %s</string>
+    <string name="list_saved_question_copy">Copy…</string>
+    <string name="list_saved_question_delete">Delete…</string>
+    <string name="list_saved_answer_delete">Journey deleted.</string>
+    <string name="list_saved_autoimport_title">Old Data Found</string>
+    <string name="list_saved_autoimport_text">The SD card has a file containing previous journeys.\n\nWould you like to import it into the database?</string>
+    <string name="list_saved_autoimport_positive">Yes</string>
+    <string name="list_saved_autoimport_negative">No</string>
+    <string name="list_saved_autoimport_progress_title">Importing Journeys…</string>
+    <string name="list_saved_autoimport_progress_text">Importing journeys from CSV file…</string>
+    <string name="list_saved_import_title">Import Journeys</string>
+    <string name="list_saved_import_text">Ensure a quoted CSV import file exists at \'%s\' before proceeding.</string>
+    <string name="list_saved_import_positive">OK</string>
+    <string name="list_saved_import_negative">Cancel</string>
+    <string name="list_saved_import_progress_title">Importing Journeys…</string>
+    <string name="list_saved_import_progress_text">Importing journeys from CSV file at \'%s\' …</string>
+    <string name="list_saved_import_status">Imported %1$s routes, %2$s failed.</string>
+    <string name="list_saved_export_title">Export Journeys</string>
+    <string name="list_saved_export_progress_title">Exporting Journeys…</string>
+    <string name="list_saved_export_progress_text">"Exporting journeys to CSV file at \'%s\' …</string>
+    <string name="list_saved_export_success">Journeys exported to %s</string>
+    <string name="list_saved_export_failed">Failed to export journeys. Check the SD card is available and writable.</string>
     <string name="headcode_selection">Select Departure</string>
     <string name="class_info">Class Reference</string>
     <string name="class_info_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
+    <string name="class_info_entered_service">Entered Service: %s</string>
+    <string name="class_info_retired">Retired: %s</string>
+    <string name="class_info_in_service">in service</string>
+    <string name="class_info_unknown">(unknown)</string>
+    <string name="class_info_category">Category: %s</string>
+    <string name="class_info_operators">Operators: %s</string>
+    <string name="class_info_none">(none)</string>
+    <string name="class_info_notes">Notes: %s</string>
     <string name="class_info_download_thumb">(photo unavailable)</string>
     <string name="class_info_download_photo">Please download the bundle to view this photo.</string>
+    <string name="class_info_download_title">Downloading…</string>
+    <string name="class_info_download_progress">%1$s for class %2$s</string>
+    <string name="class_info_download_text">Preparing to download…</string>
+    <string name="class_info_download_complete">Download finished!</string>
+    <string name="class_info_download_error">Download failed.</string>
+    <string name="class_info_download_unavailable">No photo found. Either this class is not in the Class Reference, or it hasn\'t a photo in the bundle.</string>
+    <string name="class_info_options_title">Class Selected</string>
+    <string name="class_info_options_text">Do you want to add/edit notes or create a new journey with this class?</string>
+    <string name="class_info_options_journey">New Journey…</string>
+    <string name="class_info_options_notes">Notes…</string>
+    <string name="class_info_notes_title">Update Notes</string>
+    <string name="class_info_notes_save">Save</string>
+    <string name="class_info_menu_download">Download Photo Bundle...</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
-    <string name="foursquare_authenticate">Authenticate with Foursquare</string>
+    <string name="foursquare_login">Login to Foursquare</string>
+    <string name="foursquare_token_current">Saved Token: %s</string>
     <string name="foursquare_checkin">Station Check-In</string>
     <string name="foursquare_checkin_journey">Check-In</string>
+    <string name="foursquare_checkin_mesage_blank">I\'m on a train at %s.</string>
+    <string name="foursquare_checkin_mesage_stations">I\'m travelling from %1$s to %2$s.</string>
+    <string name="foursquare_checkin_mesage_advanced_half">I\'m travelling from %1$s to %2$s (%3$s).</string>
+    <string name="foursquare_checkin_mesage_advanced_full">I\'m travelling from %1$s to %2$s (%3$s - %4$s).</string>
+    <string name="foursquare_checkin_success">Checked in!</string>
+    <string name="foursquare_checkin_failure">Could not check-in.</string>
     <string name="foursquare_venue_select">Places Near You</string>
     <string name="foursquare_venue_select_prompt">Select then correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
     <string name="foursquare_venue_select_visibility_private">Your check-in will be private</string>
     <string name="foursquare_venue_select_visibility_public">Your check-in will be public</string>
     <string name="foursquare_venue_select_shout">Include journey details with check-in</string>
-    <string name="foursquare_deauthenticate">Log Out</string>
+    <string name="foursquare_updates_from">Updated venues based on %s location.</string>
+    <string name="foursquare_logout">Log Out</string>
+    <string name="foursquare_logout_success">You must now re-authenticate with Foursquare to check-in.</string>
+    <string name="foursquare_logout_failure">Could not revoke access. Remove this application from your account by visiting the Foursquare website.</string>
     <string name="stats">Statistics</string>
+    <string name="stats_activity_error">Could not launch the requested activity: %s</string>
     <string name="stats_jouneys_month">Journeys by Month</string>
+
+    <string-array name="stats_journeys_month_months">
+        <item>J</item>
+        <item>F</item>
+        <item>M</item>
+        <item>A</item>
+        <item>M</item>
+        <item>J</item>
+        <item>J</item>
+        <item>A</item>
+        <item>S</item>
+        <item>O</item>
+        <item>N</item>
+        <item>D</item>
+    </string-array>
+
     <string name="stats_favourite_stations">Most Visited Stations</string>
+    <string name="stats_favourite_stations_count">Count</string>
+    <string name="stats_favourite_stations_station">1st Stn</string>
     <string name="stats_classes_used">Classes Used</string>
     <string name="stats_classes_used_prompt">List of classes inclusive of subclasses.</string>
+    <string name="stats_classes_used_line_single">%1$s (%2$s time)</string>
+    <string name="stats_classes_used_line_multiple">%1$s (%2$s times)</string>
     <string name="save">Save</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
@@ -42,6 +145,8 @@
     <string name="exit">Exit</string>
     <string name="user_prefs">Preferences</string>
     <string name="user_prefs_crash">Error (Crash) Handling</string>
+    <string name="user_prefs_crash_none">No previous reports found.</string>
+    <string name="user_prefs_crash_count">%s previous reports removed.</string>
     <string name="user_prefs_add">Adding / Editing Journeys</string>
     <string name="user_prefs_add_advanced">Enable more options in \'Details\' tab</string>
     <string name="user_prefs_add_always_use_stats">Use all journeys for statistics</string>
@@ -55,5 +160,6 @@
     <string name="crash_dialog_comment_prompt">Please provide any useful information that may help fix the issue:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
     <string name="crash_clear">Clear Previous Reports</string>
-
+    <string name="journey_parsing_error">Error parsing old routes: %s</string>
+    <string name="notes_parsing_error">Error parsing old notes: %s</string>
 </resources>

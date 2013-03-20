@@ -24,8 +24,6 @@ import com.seawolfsanctuary.keepingtracks.database.Journey;
 
 public class JourneysByMonth extends Activity {
 	private XYPlot mySimpleXYPlot;
-	private String[] months = new String[] { "J", "F", "M", "A", "M", "J", "J",
-			"A", "S", "O", "N", "D" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +82,9 @@ public class JourneysByMonth extends Activity {
 
 		mySimpleXYPlot.setDomainLabel("");
 		mySimpleXYPlot.setDomainStep(XYStepMode.SUBDIVIDE, 12);
+
+		final String[] months = getResources().getStringArray(
+				R.array.stats_journeys_month_months);
 		mySimpleXYPlot.setDomainValueFormat(new Format() {
 			@Override
 			public StringBuffer format(Object object, StringBuffer buffer,

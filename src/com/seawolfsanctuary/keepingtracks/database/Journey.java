@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks;
 import com.seawolfsanctuary.keepingtracks.database.config.KeepingTracks.DatabaseHelper;
 
@@ -379,9 +380,10 @@ public class Journey {
 				data.add(entry);
 			}
 		} catch (Exception e) {
-			Toast.makeText(this.context,
-					"Error parsing old routes: " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(
+					this.context,
+					this.context.getString(R.string.journey_parsing_error,
+							e.getMessage()), Toast.LENGTH_LONG).show();
 		}
 
 		return data;

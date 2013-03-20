@@ -36,17 +36,15 @@ public class SetupActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
-		case R.id.foursquare_deauthenticate:
+		case R.id.foursquare_logout:
 			if (Helpers.removeAccessToken() == true) {
 				SetupActivity.this.finish();
-				Toast.makeText(
-						getApplicationContext(),
-						"You must now re-authenticate with Foursquare to check-in.",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_logout_success),
 						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(
-						getApplicationContext(),
-						"Could not revoke access. Remove this application from your account by visiting the Foursquare website.",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.foursquare_logout_failure),
 						Toast.LENGTH_LONG).show();
 			}
 
@@ -84,7 +82,6 @@ public class SetupActivity extends Activity {
 				String fragment = "#access_token=";
 				int start = url.indexOf(fragment);
 				if (start > -1) {
-
 					if (Helpers.readAccessToken() == "") {
 						// Fetch an access token and reload
 						String accessToken = url.substring(
@@ -92,8 +89,10 @@ public class SetupActivity extends Activity {
 						Helpers.writeAccessToken(accessToken);
 						reloadActivity();
 					} else {
-						Toast.makeText(SetupActivity.this,
-								"Saved Token: " + Helpers.readAccessToken(),
+						Toast.makeText(
+								SetupActivity.this,
+								getString(R.string.foursquare_token_current,
+										Helpers.readAccessToken()),
 								Toast.LENGTH_SHORT).show();
 					}
 				}

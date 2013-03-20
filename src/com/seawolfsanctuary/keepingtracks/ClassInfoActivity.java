@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -59,8 +58,10 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		case R.id.download:
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			progressDialog.setTitle("Downloading...");
-			progressDialog.setMessage("Preparing to download...");
+			progressDialog
+					.setTitle(getString(R.string.class_info_download_title));
+			progressDialog
+					.setMessage(getString(R.string.class_info_download_text));
 			progressDialog.setCancelable(true);
 			new DownloadBundleTask(progressDialog).execute();
 		default:
@@ -152,18 +153,24 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						input.setText(notes);
 
 						new AlertDialog.Builder(view.getContext())
-								.setTitle("Update Notes").setView(input)
-								.setPositiveButton("Save", saveNotesListener)
-								.show();
+								.setTitle(
+										getString(R.string.class_info_notes_title))
+								.setView(input)
+								.setPositiveButton(
+										getString(R.string.class_info_notes_save),
+										saveNotesListener).show();
 					}
 				};
 
 				new AlertDialog.Builder(parent.getContext())
-						.setTitle(R.string.list_saved_question_title)
-						.setMessage(R.string.list_saved_question_text)
-						.setPositiveButton("New Journey", newJourneyListener)
-						.setNeutralButton("Edit Notes", editNotesListener)
-						.show();
+						.setTitle(R.string.class_info_options_title)
+						.setMessage(R.string.class_info_options_text)
+						.setPositiveButton(
+								getString(R.string.class_info_options_journey),
+								newJourneyListener)
+						.setNeutralButton(
+								getString(R.string.class_info_options_notes),
+								editNotesListener).show();
 
 				return true;
 			}
@@ -172,7 +179,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
 		private ProgressDialog progressDialog;
-		private String downloadingError = "unknown error :-(";
+		private String downloadingError = getString(R.string.class_info_download_error);
 
 		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
 			progressDialog = dialogFromActivity;
@@ -321,8 +328,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		protected void onProgressUpdate(String... progress) {
-			progressDialog.setMessage(progress[0].substring(0, 1).toUpperCase()
-					+ progress[0].substring(1) + " for class " + progress[1]);
+			String class_no = progress[1];
+			String photo_type = progress[0].substring(0, 1).toUpperCase()
+					+ progress[0].substring(1);
+
+			progressDialog
+					.setMessage(getString(
+							R.string.class_info_download_progress, photo_type,
+							class_no));
 		}
 
 		protected void onPostExecute(Boolean success) {
@@ -334,12 +347,14 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			startActivity(intent);
 
 			if (success) {
-				Toast.makeText(getApplicationContext(), "Download finished!",
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.class_info_download_complete),
 						Toast.LENGTH_LONG).show();
 			} else {
-				Toast.makeText(getApplicationContext(),
-						"Download failed.\n" + downloadingError,
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(
+						getApplicationContext(),
+						getString(R.string.class_info_download_error) + "\n"
+								+ downloadingError, Toast.LENGTH_LONG).show();
 			}
 		}
 
@@ -380,32 +395,30 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				if (entry.length < 7) {
 					String[] new_entry = new String[] { entry[0], entry[1],
-							entry[2], entry[3], entry[4], "", "" };
+							"(unused)", entry[3], entry[4], "", "" };
 					entry = new_entry;
 				}
 
-				try {
-					entry[2] = NumberFormat.getIntegerInstance().format(
-							Integer.parseInt(entry[2]))
-							+ "mm";
-				} catch (Exception e) {
-					// meh
+				if (entry[4] == "0000") {
+					entry[4] = getString(R.string.class_info_unknown);
 				}
 
-				if (entry[4] == "0000") {
-					entry[4] = "(none)";
-					entry[5] = "(none)";
+				if (entry[5] == "0000") {
+					entry[5] = getString(R.string.class_info_unknown);
 				}
 
 				if (entry[5].length() < 1) {
-					entry[5] = "still in service";
+					entry[5] = getString(R.string.class_info_in_service);
 				}
 
 				split.add(null);
-				split.add("Category: " + entry[3] + "\nGuage: "
-						+ Helpers.guageSizeToName(entry[2]));
-				split.add("Entered Service: " + entry[4] + "\nRetired: "
-						+ entry[5]);
+
+				split.add(getString(R.string.class_info_category, entry[3]));
+
+				split.add(getString(R.string.class_info_entered_service,
+						entry[4])
+						+ "\n"
+						+ getString(R.string.class_info_retired, entry[5]));
 
 				ArrayList<String> operatorList = parseOperators(entry[6]);
 				String operators = "";
@@ -413,12 +426,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					operators = operators + operator + ", ";
 				}
 				operators = operators.substring(0, operators.length() - 2);
-				split.add("Operators: " + operators);
+				split.add(getString(R.string.class_info_operators, operators));
 
 				if (unitNotes.containsKey(entry[0])) {
 					String notes = unitNotes.get(entry[0]);
 					if (notes.length() > 0) {
-						split.add("Notes: " + notes);
+						split.add(getString(R.string.class_info_notes, notes));
 					}
 				}
 
@@ -633,7 +646,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					operators.add(operator);
 				}
 			} else {
-				operators.add("(none)");
+				operators.add(getString(R.string.class_info_none));
 			}
 			return operators;
 		}

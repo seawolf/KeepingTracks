@@ -62,8 +62,8 @@ public class StatsActivity extends ListActivity {
 				} catch (ClassNotFoundException e) {
 					Toast.makeText(
 							getBaseContext(),
-							"Could not launch the requested activity: "
-									+ className, Toast.LENGTH_SHORT).show();
+							getString(R.string.stats_activity_error, className),
+							Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
