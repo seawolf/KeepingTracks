@@ -49,6 +49,8 @@ public class Journey {
 
 	public static final String KEY_STATS = "use_for_stats";
 
+	public static final int PAGE_SIZE = 50;
+
 	public Journey(Context c) {
 		this.context = c;
 		DBHelper = new KeepingTracks.DatabaseHelper(context);
@@ -113,6 +115,12 @@ public class Journey {
 						+ "," + KEY_FROM_HOUR + "," + KEY_FROM_MINUTE + "");
 	}
 
+	public Cursor getAllJourneysCount() {
+		System.out.println("Fetching count of all entries...");
+		return db.query(DATABASE_TABLE, new String[] { "COUNT(*)" }, null,
+				null, null, null, null);
+	}
+
 	public Cursor getAllJourneysReverse() {
 		System.out.println("Fetching all entries, in reverse order...");
 		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID,
@@ -126,6 +134,28 @@ public class Journey {
 				"" + KEY_FROM_YEAR + " DESC," + KEY_FROM_MONTH + " DESC,"
 						+ KEY_FROM_DAY + " DESC," + KEY_FROM_HOUR + " DESC,"
 						+ KEY_FROM_MINUTE + " DESC");
+	}
+
+	public Cursor getPagedJourneysReverse(int startFrom) {
+		return getPagedJourneysReverse(startFrom, PAGE_SIZE);
+	}
+
+	public Cursor getPagedJourneysReverse(int startFrom, int pageSize) {
+		System.out.println("Fetching " + pageSize
+				+ " entries, in reverse order, starting from " + startFrom
+				+ "...");
+		return db.query(DATABASE_TABLE, new String[] { KEY_ROWID,
+				KEY_FROM_STATION, KEY_FROM_DAY, KEY_FROM_MONTH, KEY_FROM_YEAR,
+				KEY_FROM_HOUR, KEY_FROM_MINUTE,
+
+				KEY_TO_STATION, KEY_TO_DAY, KEY_TO_MONTH, KEY_TO_YEAR,
+				KEY_TO_HOUR, KEY_TO_MINUTE,
+
+				KEY_CLASS, KEY_HEADCODE, KEY_STATS }, null, null, null, null,
+				"" + KEY_FROM_YEAR + " DESC," + KEY_FROM_MONTH + " DESC,"
+						+ KEY_FROM_DAY + " DESC," + KEY_FROM_HOUR + " DESC,"
+						+ KEY_FROM_MINUTE + " DESC" + " LIMIT " + pageSize
+						+ " OFFSET " + startFrom);
 	}
 
 	public Cursor getAllStatsJourneys() {
