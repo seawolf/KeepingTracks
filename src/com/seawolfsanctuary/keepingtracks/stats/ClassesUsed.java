@@ -44,7 +44,7 @@ public class ClassesUsed extends ListActivity {
 
 		ArrayList<String> listContents = new ArrayList<String>();
 		for (String classUsed : classesUsed.keySet()) {
-			if (classesUsed.get(classUsed) > 1) {
+			if (classesUsed.get(classUsed) == 1) {
 				listContents.add(getString(
 						R.string.stats_classes_used_line_single, classUsed,
 						classesUsed.get(classUsed)));
