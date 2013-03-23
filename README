@@ -12,7 +12,7 @@ Features
  - share your journeys by "checking in" on Foursquare (GPS enabled)
 
  - import & export your journeys (easy backups; SQLite can corrupt)
- - browse some photos of and information about train types
+ - browse some information, photos and make notes on train types
  - help bug-fixing by sending geeky data if the app crashes
 
 
@@ -22,7 +22,7 @@ Upcoming Releases
 Planned features include:
 
  - more statistics and analysis on your journeys
- - more useful information and personal notes on train types
+ - more useful information on train types
  - a revamped, ICS-style interface
  - a more tablet-friendly layout
 
