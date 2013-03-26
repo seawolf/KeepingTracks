@@ -281,6 +281,8 @@ public class CheckinActivity extends ListActivity {
 
 					// When Checking-In from AddActivity
 					if (checkin_details != null) {
+						System.out.println("Checkin details supplied.");
+
 						boolean fromStn = checkin_details.getString("from_stn")
 								.length() > 0;
 						boolean toStn = checkin_details.getString("to_stn")
@@ -290,13 +292,20 @@ public class CheckinActivity extends ListActivity {
 						boolean headcode = checkin_details.getString(
 								"detail_headcode").length() > 0;
 
+						System.out.println("From: " + fromStn);
+						System.out.println("To: " + toStn);
+						System.out.println("Unit: " + unit);
+						System.out.println("Headcode: " + headcode);
+
 						if (fromStn && toStn && !unit && !headcode) {
+							System.out.println("Setting message: stations");
 							checkinMessage = getString(
 									R.string.foursquare_checkin_mesage_stations,
 									checkin_details.getString("from_stn"),
 									checkin_details.getString("to_stn"));
 						}
 						if (fromStn && toStn && unit && !headcode) {
+							System.out.println("Setting message: half (unit)");
 							checkinMessage = getString(
 									R.string.foursquare_checkin_mesage_advanced_half,
 									checkin_details.getString("from_stn"),
@@ -304,6 +313,8 @@ public class CheckinActivity extends ListActivity {
 									checkin_details.getString("detail_class"));
 						}
 						if (fromStn && toStn && !unit && headcode) {
+							System.out
+									.println("Setting message: half (headcode)");
 							checkinMessage = getString(
 									R.string.foursquare_checkin_mesage_advanced_half,
 									checkin_details.getString("from_stn"),
@@ -311,7 +322,8 @@ public class CheckinActivity extends ListActivity {
 									checkin_details
 											.getString("detail_headcode"));
 						}
-						if (fromStn && toStn && unit && !headcode) {
+						if (fromStn && toStn && unit && headcode) {
+							System.out.println("Setting message: full");
 							checkinMessage = getString(
 									R.string.foursquare_checkin_mesage_advanced_full,
 									checkin_details.getString("from_stn"),
