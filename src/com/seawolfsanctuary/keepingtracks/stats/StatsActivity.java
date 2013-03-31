@@ -61,7 +61,7 @@ public class StatsActivity extends ListActivity {
 					startActivity(intent);
 				} catch (ClassNotFoundException e) {
 					Toast.makeText(
-							getBaseContext(),
+							getApplicationContext(),
 							getString(R.string.stats_activity_error, className),
 							Toast.LENGTH_SHORT).show();
 				}

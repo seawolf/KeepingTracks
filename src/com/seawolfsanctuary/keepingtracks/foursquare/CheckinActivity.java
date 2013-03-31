@@ -338,7 +338,7 @@ public class CheckinActivity extends ListActivity {
 					CheckBox chk_Shout = (CheckBox) findViewById(R.id.chk_Shout);
 					if (chk_Shout.isChecked()) {
 						params.put("message", checkinMessage);
-						Toast.makeText(getBaseContext(),
+						Toast.makeText(getApplicationContext(),
 								params.getString("message"), Toast.LENGTH_LONG)
 								.show();
 					} else {

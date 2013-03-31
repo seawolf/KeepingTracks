@@ -77,7 +77,7 @@ public class ClassesUsed extends ListActivity {
 					startActivity(i);
 				} else {
 					Toast.makeText(
-							getBaseContext(),
+							getApplicationContext(),
 							getString(R.string.class_info_download_unavailable),
 							Toast.LENGTH_SHORT).show();
 				}
@@ -112,12 +112,12 @@ public class ClassesUsed extends ListActivity {
 		if (showToast) {
 			if (allClasses.size() == 1) {
 				Toast.makeText(
-						getBaseContext(),
+						getApplicationContext(),
 						getString(R.string.list_saved_loaded_single,
 								allClasses.size()), Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(
-						getBaseContext(),
+						getApplicationContext(),
 						getString(R.string.list_saved_loaded_multiple,
 								allClasses.size()), Toast.LENGTH_SHORT).show();
 			}

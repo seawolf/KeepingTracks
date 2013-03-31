@@ -291,7 +291,7 @@ public class AddActivity extends TabActivity {
 			array = new String(buffer).split("\n");
 
 			if (array.length < 1) {
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						getText(R.string.add_new_empty_stations),
 						Toast.LENGTH_LONG).show();
 			}
@@ -331,7 +331,7 @@ public class AddActivity extends TabActivity {
 
 		summary += getString(R.string.add_summary_from,
 				Helpers.trimCodeFromStation(actv_FromSearch.getText()
-						.toString(), getBaseContext()));
+						.toString(), getApplicationContext()));
 
 		summary += "\n";
 
@@ -351,7 +351,7 @@ public class AddActivity extends TabActivity {
 
 		summary += getString(R.string.add_summary_to,
 				Helpers.trimCodeFromStation(actv_ToSearch.getText().toString(),
-						getBaseContext()));
+						getApplicationContext()));
 
 		summary += "\n";
 
@@ -432,11 +432,11 @@ public class AddActivity extends TabActivity {
 
 			if (updated == true) {
 				success = true;
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						getString(R.string.edit_saved_edited),
 						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						getString(R.string.edit_saved_error),
 						Toast.LENGTH_SHORT).show();
 			}
@@ -460,11 +460,11 @@ public class AddActivity extends TabActivity {
 
 			if (id != -1) {
 				success = true;
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						getString(R.string.add_new_added), Toast.LENGTH_SHORT)
 						.show();
 			} else {
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						getString(R.string.add_new_error), Toast.LENGTH_SHORT)
 						.show();
 			}
@@ -475,9 +475,9 @@ public class AddActivity extends TabActivity {
 			if (chk_Checkin.isChecked()) {
 				Bundle details = new Bundle();
 				details.putString("from_stn", Helpers.trimCodeFromStation(
-						actv_FromSearch.getText().toString(), getBaseContext()));
+						actv_FromSearch.getText().toString(), getApplicationContext()));
 				details.putString("to_stn", Helpers.trimCodeFromStation(
-						actv_ToSearch.getText().toString(), getBaseContext()));
+						actv_ToSearch.getText().toString(), getApplicationContext()));
 				details.putString("detail_class", txt_DetailClass.getText()
 						.toString());
 				details.putString("detail_headcode", txt_DetailHeadcode
@@ -544,7 +544,7 @@ public class AddActivity extends TabActivity {
 		}
 
 		if (from.length() < 3) {
-			Toast.makeText(getBaseContext(),
+			Toast.makeText(getApplicationContext(),
 					getString(R.string.add_new_headcode_error_from_blank),
 					Toast.LENGTH_LONG).show();
 			mTabHost.setCurrentTab(0);
@@ -810,7 +810,7 @@ public class AddActivity extends TabActivity {
 				AlertDialog alert = builder.create();
 				alert.show();
 			} else { // resultList.get(0).get(0) == "ERROR"
-				Toast.makeText(getBaseContext(), resultList.get(0).get(1),
+				Toast.makeText(getApplicationContext(), resultList.get(0).get(1),
 						Toast.LENGTH_LONG).show();
 			}
 		}
@@ -821,7 +821,7 @@ public class AddActivity extends TabActivity {
 			for (int j = 0; j < completions.getCount(); j++) {
 				String suggestion = (String) completions.getItem(j);
 				String stationName = Helpers.trimCodeFromStation(suggestion,
-						getBaseContext());
+						getApplicationContext());
 				// System.out.println(suggestion + "==" + criteria);
 				if (criteria.equals(stationName)) {
 					// System.out.println("MATCH");

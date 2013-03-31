@@ -108,7 +108,7 @@ public class FavouriteStations extends Activity {
 			}
 
 			// Update
-			stations.add(Helpers.trimNameFromStation(stn, getBaseContext()));
+			stations.add(Helpers.trimNameFromStation(stn, getApplicationContext()));
 
 			// Save
 			visitCounts.put(visits, stations);

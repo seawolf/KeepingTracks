@@ -205,8 +205,8 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				String[] entry = data.get(i);
 				names.add(getString(
 						R.string.list_saved_entry_name,
-						Helpers.trimCodeFromStation(entry[0], getBaseContext()),
-						Helpers.trimCodeFromStation(entry[6], getBaseContext()),
+						Helpers.trimCodeFromStation(entry[0], getApplicationContext()),
+						Helpers.trimCodeFromStation(entry[6], getApplicationContext()),
 						Helpers.leftPad(entry[1], 2),
 						Helpers.leftPad(entry[2], 2),
 						Helpers.leftPad(entry[3], 4)));
@@ -222,7 +222,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				ArrayList<String> split = new ArrayList<String>();
 
 				split.add(getString(R.string.list_saved_entry_from, Helpers
-						.nameAndCodeFromStation(entry[0], getBaseContext()),
+						.nameAndCodeFromStation(entry[0], getApplicationContext()),
 						Helpers.leftPad(entry[3], 2), Helpers.leftPad(entry[2],
 								2), Helpers.leftPad(entry[1], 2),
 
@@ -230,7 +230,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 								2)));
 
 				split.add(getString(R.string.list_saved_entry_to, Helpers
-						.nameAndCodeFromStation(entry[6], getBaseContext()),
+						.nameAndCodeFromStation(entry[6], getApplicationContext()),
 						Helpers.leftPad(entry[9], 2), Helpers.leftPad(entry[8],
 								2), Helpers.leftPad(entry[7], 2),
 
@@ -382,7 +382,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			}
 
 			System.out.println(msg);
-			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 		}
 		return allJourneys;
 	}
@@ -401,7 +401,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			startActivity(intent);
 
 		} catch (Exception e) {
-			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -422,7 +422,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			startActivity(intent);
 
 		} catch (Exception e) {
-			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -502,10 +502,10 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			db_journeys.close();
 			success = true;
 
-			Toast.makeText(getBaseContext(), R.string.list_saved_answer_delete,
+			Toast.makeText(getApplicationContext(), R.string.list_saved_answer_delete,
 					Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
-			Toast.makeText(getBaseContext(), "Error: " + e.getMessage(),
+			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -583,7 +583,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			startActivity(intent);
 
 			Toast.makeText(
-					getBaseContext(),
+					getApplicationContext(),
 					getString(R.string.list_saved_import_status, successes,
 							failures), Toast.LENGTH_LONG).show();
 		}
@@ -614,7 +614,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				msg = getString(R.string.list_saved_export_failed);
 			}
 
-			Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 		}
 	}
 

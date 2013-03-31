@@ -51,7 +51,7 @@ public class UserPrefsActivity extends Activity {
 				+ appFiles.getAbsolutePath());
 
 		if (listOfFiles.length == 0) {
-			Toast.makeText(getBaseContext(),
+			Toast.makeText(getApplicationContext(),
 					getString(R.string.user_prefs_crash_none),
 					Toast.LENGTH_SHORT).show();
 		} else {
@@ -68,7 +68,7 @@ public class UserPrefsActivity extends Activity {
 				}
 			}
 			Toast.makeText(
-					getBaseContext(),
+					getApplicationContext(),
 					getString(R.string.user_prefs_crash_count, ""
 							+ filesRemoved), Toast.LENGTH_SHORT).show();
 		}

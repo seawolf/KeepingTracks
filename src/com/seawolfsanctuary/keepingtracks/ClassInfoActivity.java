@@ -119,7 +119,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					}
 
 					private void updateNotes(String classNo, String value) {
-						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						UnitClass db_unitClass = new UnitClass(getApplicationContext());
 						db_unitClass.open();
 						boolean success = false;
 						if (value.length() > 0) {
@@ -142,7 +142,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				DialogInterface.OnClickListener editNotesListener = new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface di, int btnClicked) {
 						String notes = "";
-						UnitClass db_unitClass = new UnitClass(getBaseContext());
+						UnitClass db_unitClass = new UnitClass(getApplicationContext());
 						db_unitClass.open();
 						Cursor c = db_unitClass.getUnitNotes(classNo);
 						if (c.moveToFirst()) {
@@ -548,7 +548,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 								+ classNo), "image/*");
 				startActivity(i);
 			} else {
-				Toast.makeText(getBaseContext(),
+				Toast.makeText(getApplicationContext(),
 						R.string.class_info_download_photo, Toast.LENGTH_SHORT)
 						.show();
 			}
@@ -652,7 +652,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		private Hashtable<String, String> getUnitClassNotes() {
-			UnitClass db_unitClass = new UnitClass(getBaseContext());
+			UnitClass db_unitClass = new UnitClass(getApplicationContext());
 			db_unitClass.open();
 			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
 			db_unitClass.close();
