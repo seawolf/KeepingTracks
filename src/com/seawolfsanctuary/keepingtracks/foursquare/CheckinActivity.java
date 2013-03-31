@@ -253,6 +253,7 @@ public class CheckinActivity extends ListActivity {
 				.getSystemService(Context.LOCATION_SERVICE));
 
 		removeLocationListener();
+
 		attachNetworkLocation();
 		attachGPSLocation();
 
@@ -372,15 +373,25 @@ public class CheckinActivity extends ListActivity {
 	}
 
 	private void attachNetworkLocation() {
-		getLocationManager().requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
-				locationListener);
+		if (Helpers.isLocationEnabledNetwork(getApplicationContext())) {
+			getLocationManager().requestLocationUpdates(
+					LocationManager.NETWORK_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
+					locationListener);
+		} else {
+			System.out
+					.println("ACCESS_COARSE_LOCATION permission not granted; cannot use Network location.");
+		}
 	}
 
 	private void attachGPSLocation() {
-		getLocationManager().requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
-				locationListener);
+		if (Helpers.isLocationEnabledGPS(getApplicationContext())) {
+			getLocationManager().requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
+					locationListener);
+		} else {
+			System.out
+					.println("ACCESS_FINE_LOCATION permission not granted; cannot use GPS location.");
+		}
 	}
 
 	private void removeLocationListener() {

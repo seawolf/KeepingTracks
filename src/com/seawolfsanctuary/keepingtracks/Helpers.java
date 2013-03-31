@@ -9,6 +9,7 @@ import java.util.Hashtable;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -350,6 +351,18 @@ public class Helpers {
 				}
 			}
 		}
+	}
+
+	public static boolean isLocationEnabledNetwork(Context c) {
+		LocationManager lm = (LocationManager) c
+				.getSystemService(Context.LOCATION_SERVICE);
+		return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+	}
+
+	public static boolean isLocationEnabledGPS(Context c) {
+		LocationManager lm = (LocationManager) c
+				.getSystemService(Context.LOCATION_SERVICE);
+		return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 
 	public static String guageSizeToName(String guage) {
