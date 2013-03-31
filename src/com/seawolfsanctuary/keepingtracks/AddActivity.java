@@ -70,6 +70,9 @@ public class AddActivity extends TabActivity {
 
 	private ProgressDialog dialog;
 
+	boolean isLocationEnabledNetwork = false;
+	boolean isLocationEnabledGPS = false;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -98,6 +101,11 @@ public class AddActivity extends TabActivity {
 		setContentView(R.layout.add_activity);
 		settings = getSharedPreferences(UserPrefsActivity.APP_PREFS,
 				MODE_PRIVATE);
+
+		isLocationEnabledNetwork = Helpers
+				.isLocationEnabledNetwork(getApplicationContext());
+		isLocationEnabledGPS = Helpers
+				.isLocationEnabledGPS(getApplicationContext());
 
 		template = getIntent().getExtras();
 		Helpers.loadCurrentJourney(template, AddActivity.this);
@@ -214,15 +222,17 @@ public class AddActivity extends TabActivity {
 					actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
-					chk_Checkin
-							.setEnabled(Helpers.readAccessToken().length() > 0);
 					chk_Checkin.setChecked(false);
+					boolean foursquareSetup = (Helpers.readAccessToken()
+							.length() > 0);
+					boolean locationAvailable = (isLocationEnabledNetwork || isLocationEnabledGPS);
+					chk_Checkin
+							.setEnabled(foursquareSetup && locationAvailable);
 
 					if (actv_FromSearch.getText().toString().length() > 0
 							|| actv_ToSearch.getText().toString().length() > 0) {
 						chk_Checkin.setChecked(!template.containsKey("editing"));
 					}
-
 				}
 			}
 		});
