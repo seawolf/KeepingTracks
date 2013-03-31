@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -253,6 +254,7 @@ public class CheckinActivity extends ListActivity {
 				.getSystemService(Context.LOCATION_SERVICE));
 
 		removeLocationListener();
+
 		attachNetworkLocation();
 		attachGPSLocation();
 
@@ -360,15 +362,27 @@ public class CheckinActivity extends ListActivity {
 	}
 
 	private void attachNetworkLocation() {
-		getLocationManager().requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
-				locationListener);
+		if (getApplicationContext().checkCallingOrSelfPermission(
+				"android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+			getLocationManager().requestLocationUpdates(
+					LocationManager.NETWORK_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
+					locationListener);
+		} else {
+			System.out
+					.println("ACCESS_COARSE_LOCATION permission not granted; cannot use Network location.");
+		}
 	}
 
 	private void attachGPSLocation() {
-		getLocationManager().requestLocationUpdates(
-				LocationManager.GPS_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
-				locationListener);
+		if (getApplicationContext().checkCallingOrSelfPermission(
+				"android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+			getLocationManager().requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, SHORT_LOOKUP_LIFETIME, 0,
+					locationListener);
+		} else {
+			System.out
+					.println("ACCESS_FINE_LOCATION permission not granted; cannot use GPS location.");
+		}
 	}
 
 	private void removeLocationListener() {
