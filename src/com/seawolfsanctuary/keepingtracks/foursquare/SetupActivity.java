@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -167,27 +166,6 @@ public class SetupActivity extends Activity {
 		}
 
 		return redirect_uri;
-	}
-
-	public void authenticate(View v) {
-		try {
-
-			String client_id = fetchClientID();
-			String client_secret = fetchClientSecret();
-			String redirect_uri = fetchRedirectURI();
-
-			System.out.println("Client ID: " + client_id);
-			System.out.println("Client Secret: " + client_secret);
-			System.out.println("Redirect URI: " + redirect_uri);
-
-			String authentication_url = "https://foursquare.com/oauth2/authenticate?client_id="
-					+ client_id
-					+ "&response_type=token&redirect_uri="
-					+ redirect_uri;
-
-		} catch (Exception e) {
-			//
-		}
 	}
 
 	private void reloadActivity() {

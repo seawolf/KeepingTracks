@@ -29,7 +29,7 @@ public class Helpers {
 			.getExternalStorageDirectory().toString()
 			+ "/Android/data/com.seawolfsanctuary.keepingtracks";
 
-	public static final String dataDirectoryURI = "file:///sdcard/Android/data/com.seawolfsanctuary.keepingtracks";
+	public static final String dataDirectoryURI = "file://" + dataDirectoryPath;
 
 	public static final String classInfoPhotosURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/";
 	public static final String classInfoThumbsURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/thumbs/";
@@ -104,6 +104,7 @@ public class Helpers {
 	public static boolean writeAccessToken(String accessToken) {
 		boolean success = false;
 		try {
+			new File(dataDirectoryPath).mkdirs();
 
 			File f = new File(dataDirectoryPath + "/access_token.txt");
 
