@@ -222,16 +222,19 @@ public class AddActivity extends TabActivity {
 					actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 
-					chk_Checkin.setChecked(false);
 					boolean foursquareSetup = (Helpers.readAccessToken()
 							.length() > 0);
 					boolean locationAvailable = (isLocationEnabledNetwork || isLocationEnabledGPS);
-					chk_Checkin
-							.setEnabled(foursquareSetup && locationAvailable);
 
-					if (actv_FromSearch.getText().toString().length() > 0
-							|| actv_ToSearch.getText().toString().length() > 0) {
-						chk_Checkin.setChecked(!template.containsKey("editing"));
+					if (foursquareSetup && locationAvailable) {
+						if (actv_FromSearch.getText().length() > 0
+								|| actv_ToSearch.getText().length() > 0) {
+							chk_Checkin.setChecked(!template
+									.containsKey("editing"));
+						}
+					} else {
+						chk_Checkin.setEnabled(false);
+						chk_Checkin.setChecked(false);
 					}
 				}
 			}
