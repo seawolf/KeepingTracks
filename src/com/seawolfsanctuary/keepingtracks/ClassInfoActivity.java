@@ -207,7 +207,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				if (targetDir.exists()) {
 					targetDir.delete();
 				}
-				targetDir.mkdir();
+				targetDir.mkdirs();
 
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
@@ -267,7 +267,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				if (targetDir.exists()) {
 					targetDir.delete();
 				}
-				targetDir.mkdir();
+				targetDir.mkdirs();
+
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
 					String destination = d[0];
