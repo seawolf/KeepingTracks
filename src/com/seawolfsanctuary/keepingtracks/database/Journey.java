@@ -472,6 +472,8 @@ public class Journey {
 				return true;
 
 			} catch (Exception e) {
+				System.out.println("External storage writable but failed:" +
+						e.getLocalizedMessage());
 				return false;
 			}
 
