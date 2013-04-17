@@ -211,11 +211,8 @@ public class UnitClass {
 		if (mExternalStorageWritable) {
 			try {
 
-				File f = new File(Helpers.exportDirectoryPath + "/" + dataFile);
-				if (f.exists()) {
-					f.delete();
-				}
-				f.createNewFile();
+				File f = Helpers.fileAt(Helpers.exportDirectoryPath, dataFile,
+						true);
 				FileWriter writer = new FileWriter(f, true);
 				String msep = "\",\"";
 
