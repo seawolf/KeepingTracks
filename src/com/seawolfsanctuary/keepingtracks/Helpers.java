@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -368,5 +369,32 @@ public class Helpers {
 		}
 
 		return result;
+	}
+
+	public static File dirAt(String path, boolean removeIfExists) throws IOException {
+		File d = new File(path);
+
+		if (removeIfExists == true && d.exists()) {
+			d.delete();
+		}
+
+		d.mkdirs();
+
+		return d;
+	}
+
+	public static File fileAt(String path, String filename, boolean removeIfExists) throws IOException {
+		File d = dirAt(path, removeIfExists);
+		File f = new File(d.getPath() + filename);
+
+		if (removeIfExists == true && f.exists()) {
+			f.delete();
+		}
+
+		if (! f.exists()) {
+			f.createNewFile();
+		}
+
+		return f;
 	}
 }

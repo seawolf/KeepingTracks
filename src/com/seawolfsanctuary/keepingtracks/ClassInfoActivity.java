@@ -201,13 +201,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 			try {
 				URL bundleDownloadURL = new URL(Helpers.classInfoThumbsURI);
-
-				File targetDir = new File(Helpers.dataDirectoryPath
-						+ "/class_photos/thumbs");
-				if (targetDir.exists()) {
-					targetDir.delete();
-				}
-				targetDir.mkdir();
+				File targetDir = Helpers.dirAt(Helpers.dataDirectoryPath
+						+ "/class_photos/thumbs", false);
 
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
@@ -223,17 +218,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File(Helpers.dataDirectoryPath
-							+ "/class_photos/thumbs/" + destination);
-					if (target.exists()) {
-						target.delete();
-					}
-
 					try {
-						target.createNewFile();
-						FileOutputStream f = new FileOutputStream(
-								Helpers.dataDirectoryPath
-										+ "/class_photos/thumbs/" + destination);
+						File target = Helpers.fileAt(Helpers.dataDirectoryPath
+								+ "/class_photos/thumbs/", destination, true);
+
+						FileOutputStream f = new FileOutputStream(target);
 						InputStream in = c.getInputStream();
 						byte[] buffer = new byte[1024];
 						int len1 = 0;
@@ -247,8 +236,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 								+ " thumbnail failed.\n" + e.getMessage());
 						e.printStackTrace();
 						try {
-							File f = new File(Helpers.dataDirectoryPath
-									+ "/class_photos/thumbs/" + destination);
+							File f = Helpers.fileAt(Helpers.dataDirectoryPath
+									+ "/class_photos/thumbs/", destination, false);
 							f.delete();
 						} catch (Exception x) {
 							// meh
@@ -262,12 +251,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				bundleDownloadURL = new URL(Helpers.classInfoPhotosURI);
 
-				targetDir = new File(Helpers.dataDirectoryPath
-						+ "/class_photos");
-				if (targetDir.exists()) {
-					targetDir.delete();
-				}
-				targetDir.mkdir();
+				targetDir = Helpers.dirAt(Helpers.dataDirectoryPath + "/class_photos", false);
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
 					String destination = d[0];
@@ -282,14 +266,10 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					c.setDoOutput(true);
 					c.connect();
 
-					File target = new File(Helpers.dataDirectoryPath
-							+ "/class_photos/" + destination);
-					if (target.exists()) {
-						target.delete();
-					}
+					File target = Helpers.fileAt(Helpers.dataDirectoryPath
+							+ "/class_photos/", destination, true);
 
 					try {
-						target.createNewFile();
 						FileOutputStream f = new FileOutputStream(
 								Helpers.dataDirectoryPath + "/class_photos/"
 										+ destination);
@@ -306,8 +286,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 								+ " photo failed.\n" + e.getMessage());
 						e.printStackTrace();
 						try {
-							File f = new File(Helpers.dataDirectoryPath
-									+ "/class_photos/" + destination);
+							File f = Helpers.fileAt(Helpers.dataDirectoryPath
+									+ "/class_photos/", destination, false);
 							f.delete();
 						} catch (Exception x) {
 							// meh

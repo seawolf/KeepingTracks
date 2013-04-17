@@ -437,12 +437,8 @@ public class Journey {
 
 		if (mExternalStorageWritable) {
 			try {
-
-				File f = new File(Helpers.exportDirectoryPath + "/routes.csv");
-				if (f.exists()) {
-					f.delete();
-				}
-				f.createNewFile();
+				File f = Helpers.fileAt(Helpers.exportDirectoryPath,
+								"routes.csv", true);
 				FileWriter writer = new FileWriter(f, true);
 				String msep = "\",\"";
 
