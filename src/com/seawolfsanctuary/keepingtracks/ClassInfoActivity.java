@@ -388,7 +388,6 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
 			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 			Hashtable<String, String> unitNotes = getUnitClassNotes();
-			System.out.println(unitNotes);
 
 			for (int i = 0; i < entries.size(); i++) {
 				String[] entry = entries.get(i);
