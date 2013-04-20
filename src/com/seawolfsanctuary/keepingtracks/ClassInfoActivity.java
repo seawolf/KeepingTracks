@@ -413,7 +413,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				split.add(null);
 
-				split.add(getString(R.string.class_info_category, entry[3]));
+				split.add(getString(R.string.class_info_category, entry[3])
+						+ "\n"
+						+ getString(R.string.class_info_manufacturer, entry[2]));
 
 				split.add(getString(R.string.class_info_entered_service,
 						entry[4])
