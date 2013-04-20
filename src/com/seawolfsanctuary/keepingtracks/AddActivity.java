@@ -265,6 +265,7 @@ public class AddActivity extends TabActivity {
 		} catch (NullPointerException e) {
 			// meh
 		}
+		MenuActivity.hideLoader();
 	}
 
 	private String[] read_csv(String filename) {

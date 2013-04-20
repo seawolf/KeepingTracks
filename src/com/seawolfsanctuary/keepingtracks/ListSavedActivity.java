@@ -185,6 +185,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			}
 		});
 
+		MenuActivity.hideLoader();
 		currentlyLoading = false;
 		checkForLegacy(this.getExpandableListView());
 	}

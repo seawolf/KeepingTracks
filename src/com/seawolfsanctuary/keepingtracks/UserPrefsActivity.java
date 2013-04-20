@@ -42,6 +42,7 @@ public class UserPrefsActivity extends Activity {
 		chk_AlwaysUseStats = (CheckBox) findViewById(R.id.chk_AlwaysUseStats);
 		chk_AlwaysUseStats.setChecked(settings.getBoolean("AlwaysUseStats",
 				false));
+		MenuActivity.hideLoader();
 	}
 
 	public void clearCrashReports(View v) {
