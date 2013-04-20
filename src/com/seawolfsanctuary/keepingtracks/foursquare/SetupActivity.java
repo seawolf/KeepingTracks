@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 
 public class SetupActivity extends Activity {
@@ -100,6 +101,7 @@ public class SetupActivity extends Activity {
 
 		webview.loadUrl(authentication_url);
 
+		MenuActivity.hideLoader();
 	}
 
 	private static String fetchClientID() {

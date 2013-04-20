@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 
@@ -67,5 +68,6 @@ public class StatsActivity extends ListActivity {
 				}
 			}
 		});
+		MenuActivity.hideLoader();
 	}
 }

@@ -175,6 +175,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				return true;
 			}
 		});
+		MenuActivity.hideLoader();
 	}
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {

@@ -1,6 +1,7 @@
 package com.seawolfsanctuary.keepingtracks;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +15,8 @@ import com.seawolfsanctuary.keepingtracks.foursquare.SetupActivity;
 import com.seawolfsanctuary.keepingtracks.stats.StatsActivity;
 
 public class MenuActivity extends Activity {
+
+	static ProgressDialog loader;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,22 +54,34 @@ public class MenuActivity extends Activity {
 		}
 	}
 
+	public void showLoader() {
+		loader = ProgressDialog.show(MenuActivity.this, "", "", true);
+	}
+
+	public static void hideLoader() {
+		loader.dismiss();
+	}
+
 	public void startAddActivity(View v) {
+		showLoader();
 		Intent intent = new Intent(this, AddActivity.class);
 		startActivity(intent);
 	}
 
 	public void startListSavedActivity(View v) {
+		showLoader();
 		Intent intent = new Intent(this, ListSavedActivity.class);
 		startActivity(intent);
 	}
 
 	public void startClassInfoActivity(View v) {
+		showLoader();
 		Intent intent = new Intent(this, ClassInfoActivity.class);
 		startActivity(intent);
 	}
 
 	public void startFoursquareSetupOrCheckinActivity(View v) {
+		showLoader();
 		if (Helpers.readAccessToken() == "") {
 			startFoursquareSetupActivity(v);
 		} else {
@@ -85,13 +100,14 @@ public class MenuActivity extends Activity {
 	}
 
 	public void startStatsActivity(View v) {
+		showLoader();
 		Intent intent = new Intent(this, StatsActivity.class);
 		startActivity(intent);
 	}
 
 	public void startUserPrefsActivity(View v) {
+		showLoader();
 		Intent intent = new Intent(this, UserPrefsActivity.class);
 		startActivity(intent);
 	}
-
 }

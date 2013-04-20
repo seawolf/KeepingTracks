@@ -38,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.Helpers;
+import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 
 public class CheckinActivity extends ListActivity {
@@ -352,6 +353,7 @@ public class CheckinActivity extends ListActivity {
 
 			}
 		});
+		MenuActivity.hideLoader();
 	}
 
 	@Override
