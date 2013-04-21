@@ -368,7 +368,6 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
 			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 			Hashtable<String, String> unitNotes = getUnitClassNotes();
-			System.out.println(unitNotes);
 
 			for (int i = 0; i < entries.size(); i++) {
 				String[] entry = entries.get(i);
@@ -394,7 +393,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				split.add(null);
 
-				split.add(getString(R.string.class_info_category, entry[3]));
+				split.add(getString(R.string.class_info_category, entry[3])
+						+ "\n"
+						+ getString(R.string.class_info_manufacturer, entry[2]));
 
 				split.add(getString(R.string.class_info_entered_service,
 						entry[4])

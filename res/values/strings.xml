@@ -72,6 +72,7 @@
     <string name="class_info_retired">Retired: %s</string>
     <string name="class_info_in_service">in service</string>
     <string name="class_info_unknown">(unknown)</string>
+    <string name="class_info_manufacturer">Manufacturer: %s</string>
     <string name="class_info_category">Category: %s</string>
     <string name="class_info_operators">Operators: %s</string>
     <string name="class_info_none">(none)</string>
