@@ -375,7 +375,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				if (entry.length < 7) {
 					String[] new_entry = new String[] { entry[0], entry[1],
-							"(unused)", entry[3], entry[4], "", "" };
+							entry[2], entry[3], entry[4], "", "" };
 					entry = new_entry;
 				}
 
