@@ -119,7 +119,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					}
 
 					private void updateNotes(String classNo, String value) {
-						UnitClass db_unitClass = new UnitClass(getApplicationContext());
+						UnitClass db_unitClass = new UnitClass(
+								getApplicationContext());
 						db_unitClass.open();
 						boolean success = false;
 						if (value.length() > 0) {
@@ -142,7 +143,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				DialogInterface.OnClickListener editNotesListener = new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface di, int btnClicked) {
 						String notes = "";
-						UnitClass db_unitClass = new UnitClass(getApplicationContext());
+						UnitClass db_unitClass = new UnitClass(
+								getApplicationContext());
 						db_unitClass.open();
 						Cursor c = db_unitClass.getUnitNotes(classNo);
 						if (c.moveToFirst()) {
@@ -238,7 +240,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 						e.printStackTrace();
 						try {
 							File f = Helpers.fileAt(Helpers.dataDirectoryPath
-									+ "/class_photos/thumbs/", destination, false);
+									+ "/class_photos/thumbs/", destination,
+									false);
 							f.delete();
 						} catch (Exception x) {
 							// meh
@@ -252,7 +255,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 				bundleDownloadURL = new URL(Helpers.classInfoPhotosURI);
 
-				targetDir = Helpers.dirAt(Helpers.dataDirectoryPath + "/class_photos", false);
+				targetDir = Helpers.dirAt(Helpers.dataDirectoryPath
+						+ "/class_photos", false);
 				for (int i = 0; i < data.size(); i++) {
 					String[] d = data.get(i);
 					String destination = d[0];
@@ -373,17 +377,11 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				String[] entry = entries.get(i);
 				ArrayList<String> split = new ArrayList<String>();
 
-				if (entry.length < 7) {
-					String[] new_entry = new String[] { entry[0], entry[1],
-							entry[2], entry[3], entry[4], "", "" };
-					entry = new_entry;
-				}
-
-				if (entry[4] == "0000") {
+				if (entry[4].equals("0000")) {
 					entry[4] = getString(R.string.class_info_unknown);
 				}
 
-				if (entry[5] == "0000") {
+				if (entry[5].equals("0000")) {
 					entry[5] = getString(R.string.class_info_unknown);
 				}
 
