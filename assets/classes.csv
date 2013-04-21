@@ -1,17 +1,17 @@
 139,"PPM60","Parry People Movers","Diesel-Mechanical Multiple Unit",2009,,"Lightweight Community Transport|London Midland"
-140,"Pacer Prototype","BREL","Diesel-Mechanical Multiple Unit",1980,1981,
+140,"Pacer Prototype","BREL","Diesel-Mechanical Multiple Unit",1980,1981,""
 141,"Pacer","Leyland","Diesel-Mechanical Multiple Unit",1981,1997,"British Rail|Islamic Republic of Iran Railways"
 142,"Pacer","BREL / Layland","Diesel-Mechanical Multiple Unit",1985,,"Arriva|Northern"
 143,"Pacer","Hunslet / Walter Alexander","Diesel-Mechanical Multiple Unit",1985,,"Arriva|First Great Western"
 144,"Pacer","BREL / Walter Alexander","Diesel-Mechanical Multiple Unit",1986,,"Northern"
-150,"Sprinter","BREL","Diesel-Mechanical Multiple Unit",1984,,
-151,"Sprinter Prototype","Metro-Cammell","Diesel-Mechanical Multiple Unit",1985,1989,
-153,"Super Sprinter (1-car; ex-cl.155)","British Leyland","Diesel-Mechanical Multiple Unit",1991,,
-155,"Super Sprinter (2-car)","British Leyland","Diesel-Mechanical Multiple Unit",1987,,
-156,"Super Sprinter (2-car)","Metro-Cammell","Diesel-Mechanical Multiple Unit",1987,,
-157,"Sprinter - 2-car Prototype","Metro-Cammell","Diesel-Mechanical Multiple Unit",0000,0000,
-158,"Express Sprinter","BREL","Diesel-Mechanical Multiple Unit",1989,,
-159,"South Western Turbo","BREL","Diesel-Mechanical Multiple Unit",1993,,
+150,"Sprinter","BREL","Diesel-Mechanical Multiple Unit",1984,,""
+151,"Sprinter Prototype","Metro-Cammell","Diesel-Mechanical Multiple Unit",1985,1989,""
+153,"Super Sprinter (1-car; ex-cl.155)","British Leyland","Diesel-Mechanical Multiple Unit",1991,,""
+155,"Super Sprinter (2-car)","British Leyland","Diesel-Mechanical Multiple Unit",1987,,""
+156,"Super Sprinter (2-car)","Metro-Cammell","Diesel-Mechanical Multiple Unit",1987,,""
+157,"Sprinter - 2-car Prototype","Metro-Cammell","Diesel-Mechanical Multiple Unit",0000,0000,""
+158,"Express Sprinter","BREL","Diesel-Mechanical Multiple Unit",1989,,""
+159,"South Western Turbo","BREL","Diesel-Mechanical Multiple Unit",1993,,""
 165,"Networker Turbo","BREL","Diesel-Mechanical Multiple Unit",1992,,"Chiltern|First Great Western"
 166,"Networker Turbo Express","ABB","Diesel-Mechanical Multiple Unit",1992,,"First Great Western"
 168,"Clubman","ADTranz / Bombardier","Diesel-Mechanical Multiple Unit",1998,,"Chiltern"
@@ -39,8 +39,8 @@
 332,"Heathrow Express","Siemens / CAF","Electric (AC) Multiple Unit",1998,,"Heathrow Express"
 333,"Heathrow Express","Siemens / CAF","Electric (AC) Multiple Unit",2000,,"Northern"
 334,"Juniper","Alstom","Electric (AC) Multiple Unit",2001,,"First ScotRail"
-341,"Networker (Proposed)","ABB","Electric Multiple Unit",0000,,"British Rail"
-342,"Networker (Proposed)","ABB","Electric Multiple Unit",0000,,"British Rail"
+341,"Networker (Proposed)","ABB","Electric Multiple Unit",0000,0000,"British Rail"
+342,"Networker (Proposed)","ABB","Electric Multiple Unit",0000,0000,"British Rail"
 345,"Crossrail (Proposed)","(unknown)","Electric (AC) Multiple Unit",2017,2017,"First Capital Connect"
 350,"Desiro","Siemens","Electric (AC / DC) Multiple Unit",2005,,"London Midland"
 357,"Electrostar","ADTranz \ Bombardier","Electric (AC) Multiple Unit",1999,,"c2c"
