@@ -78,7 +78,7 @@ public class ClassesUsed extends ListActivity {
 				} else {
 					Toast.makeText(
 							getApplicationContext(),
-							getString(R.string.class_info_download_unavailable),
+							getString(R.string.data_file_download_unavailable),
 							Toast.LENGTH_SHORT).show();
 				}
 			}

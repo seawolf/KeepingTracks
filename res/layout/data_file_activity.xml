@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:text="@string/class_info"
+        android:text="@string/data_file"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -20,11 +20,11 @@
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingTop="10dp"
-        android:text="@string/class_info_prompt" />
+        android:text="@string/data_file_prompt" />
 
     <include
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        layout="@layout/class_info_activity_list" />
+        layout="@layout/data_file_activity_list" />
 
 </LinearLayout>

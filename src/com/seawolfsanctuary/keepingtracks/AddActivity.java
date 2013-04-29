@@ -502,13 +502,13 @@ public class AddActivity extends TabActivity {
 		return success;
 	}
 
-	public void startClassInfoActivity(View view) {
+	public void startDataFileActivity(View view) {
 		template = Helpers.saveCurrentJourney(template, AddActivity.this);
 		if (template == null) {
 			template = new Bundle();
 		}
 
-		Intent intent = new Intent(this, ClassInfoActivity.class);
+		Intent intent = new Intent(this, DataFileActivity.class);
 		intent.putExtras(template);
 		startActivity(intent);
 		// TODO: can we finish this if a class is selected from new activity,

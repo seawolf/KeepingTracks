@@ -44,8 +44,8 @@
             android:label="@string/list_saved" >
         </activity>
         <activity
-            android:name="com.seawolfsanctuary.keepingtracks.ClassInfoActivity"
-            android:label="@string/class_info" >
+            android:name="com.seawolfsanctuary.keepingtracks.DataFileActivity"
+            android:label="@string/data_file" >
         </activity>
         <activity
             android:name="com.seawolfsanctuary.keepingtracks.foursquare.SetupActivity"

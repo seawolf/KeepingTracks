@@ -74,9 +74,9 @@ public class MenuActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void startClassInfoActivity(View v) {
+	public void startDataFileActivity(View v) {
 		showLoader();
-		Intent intent = new Intent(this, ClassInfoActivity.class);
+		Intent intent = new Intent(this, DataFileActivity.class);
 		startActivity(intent);
 	}
 

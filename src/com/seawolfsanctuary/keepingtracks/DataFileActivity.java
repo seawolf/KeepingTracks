@@ -39,7 +39,7 @@ import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
-public class ClassInfoActivity extends ExpandableListActivity {
+public class DataFileActivity extends ExpandableListActivity {
 
 	public static final int IMAGE_POSITION = 0;
 
@@ -48,7 +48,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.class_info_context_menu, menu);
+		inflater.inflate(R.menu.data_file_context_menu, menu);
 		return true;
 	}
 
@@ -59,9 +59,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			progressDialog
-					.setTitle(getString(R.string.class_info_download_title));
+					.setTitle(getString(R.string.data_file_download_title));
 			progressDialog
-					.setMessage(getString(R.string.class_info_download_text));
+					.setMessage(getString(R.string.data_file_download_text));
 			progressDialog.setCancelable(true);
 			new DownloadBundleTask(progressDialog).execute();
 		default:
@@ -73,7 +73,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.class_info_activity);
+		setContentView(R.layout.data_file_activity);
 
 		template = getIntent().getExtras();
 
@@ -81,7 +81,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			template = new Bundle();
 		}
 
-		final ClassInfoAdapter adaptor = new ClassInfoAdapter();
+		final DataFileAdapter adaptor = new DataFileAdapter();
 		setListAdapter(adaptor);
 		registerForContextMenu(getExpandableListView());
 
@@ -108,7 +108,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 								AddActivity.class);
 						intent.putExtras(template);
 						startActivity(intent);
-						ClassInfoActivity.this.finish();
+						DataFileActivity.this.finish();
 					}
 				};
 
@@ -133,9 +133,9 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 						if (success == true) {
 							Intent intent = new Intent(view.getContext(),
-									ClassInfoActivity.class);
+									DataFileActivity.class);
 							startActivity(intent);
-							ClassInfoActivity.this.finish();
+							DataFileActivity.this.finish();
 						}
 					}
 				};
@@ -156,22 +156,22 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 						new AlertDialog.Builder(view.getContext())
 								.setTitle(
-										getString(R.string.class_info_notes_title))
+										getString(R.string.data_file_notes_title))
 								.setView(input)
 								.setPositiveButton(
-										getString(R.string.class_info_notes_save),
+										getString(R.string.data_file_notes_save),
 										saveNotesListener).show();
 					}
 				};
 
 				new AlertDialog.Builder(parent.getContext())
-						.setTitle(R.string.class_info_options_title)
-						.setMessage(R.string.class_info_options_text)
+						.setTitle(R.string.data_file_options_title)
+						.setMessage(R.string.data_file_options_text)
 						.setPositiveButton(
-								getString(R.string.class_info_options_journey),
+								getString(R.string.data_file_options_journey),
 								newJourneyListener)
 						.setNeutralButton(
-								getString(R.string.class_info_options_notes),
+								getString(R.string.data_file_options_notes),
 								editNotesListener).show();
 
 				return true;
@@ -182,7 +182,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
 		private ProgressDialog progressDialog;
-		private String downloadingError = getString(R.string.class_info_download_error);
+		private String downloadingError = getString(R.string.data_file_download_error);
 
 		public DownloadBundleTask(ProgressDialog dialogFromActivity) {
 			progressDialog = dialogFromActivity;
@@ -193,8 +193,8 @@ public class ClassInfoActivity extends ExpandableListActivity {
 		}
 
 		protected Boolean doInBackground(Void... params) {
-			ClassInfoAdapter adapter = new ClassInfoAdapter();
-			ArrayList<String> entries = adapter.loadClassInfo(true);
+			DataFileAdapter adapter = new DataFileAdapter();
+			ArrayList<String> entries = adapter.loadDataFile(true);
 			ArrayList<String[]> data = adapter.parseEntries(entries);
 
 			progressDialog.setMax(data.size() * 2);
@@ -319,7 +319,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 
 			progressDialog
 					.setMessage(getString(
-							R.string.class_info_download_progress, photo_type,
+							R.string.data_file_download_progress, photo_type,
 							class_no));
 		}
 
@@ -327,27 +327,27 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			progressDialog.dismiss();
 
 			Intent intent = new Intent(getApplicationContext(),
-					ClassInfoActivity.class);
-			ClassInfoActivity.this.finish();
+					DataFileActivity.class);
+			DataFileActivity.this.finish();
 			startActivity(intent);
 
 			if (success) {
 				Toast.makeText(getApplicationContext(),
-						getString(R.string.class_info_download_complete),
+						getString(R.string.data_file_download_complete),
 						Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(
 						getApplicationContext(),
-						getString(R.string.class_info_download_error) + "\n"
+						getString(R.string.data_file_download_error) + "\n"
 								+ downloadingError, Toast.LENGTH_LONG).show();
 			}
 		}
 
 	}
 
-	private class ClassInfoAdapter extends BaseExpandableListAdapter {
+	private class DataFileAdapter extends BaseExpandableListAdapter {
 
-		public ArrayList<String> entries = loadClassInfo(true);
+		public ArrayList<String> entries = loadDataFile(true);
 		public ArrayList<String[]> data = parseEntries(entries);
 		ArrayList<String> names = new ArrayList<String>(getNames(data));
 
@@ -378,27 +378,27 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				ArrayList<String> split = new ArrayList<String>();
 
 				if (entry[4].equals("0000")) {
-					entry[4] = getString(R.string.class_info_unknown);
+					entry[4] = getString(R.string.data_file_unknown);
 				}
 
 				if (entry[5].equals("0000")) {
-					entry[5] = getString(R.string.class_info_unknown);
+					entry[5] = getString(R.string.data_file_unknown);
 				}
 
 				if (entry[5].length() < 1) {
-					entry[5] = getString(R.string.class_info_in_service);
+					entry[5] = getString(R.string.data_file_in_service);
 				}
 
 				split.add(null);
 
-				split.add(getString(R.string.class_info_category, entry[3])
+				split.add(getString(R.string.data_file_category, entry[3])
 						+ "\n"
-						+ getString(R.string.class_info_manufacturer, entry[2]));
+						+ getString(R.string.data_file_manufacturer, entry[2]));
 
-				split.add(getString(R.string.class_info_entered_service,
+				split.add(getString(R.string.data_file_entered_service,
 						entry[4])
 						+ "\n"
-						+ getString(R.string.class_info_retired, entry[5]));
+						+ getString(R.string.data_file_retired, entry[5]));
 
 				ArrayList<String> operatorList = parseOperators(entry[6]);
 				String operators = "";
@@ -406,12 +406,12 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					operators = operators + operator + ", ";
 				}
 				operators = operators.substring(0, operators.length() - 2);
-				split.add(getString(R.string.class_info_operators, operators));
+				split.add(getString(R.string.data_file_operators, operators));
 
 				if (unitNotes.containsKey(entry[0])) {
 					String notes = unitNotes.get(entry[0]);
 					if (notes.length() > 0) {
-						split.add(getString(R.string.class_info_notes, notes));
+						split.add(getString(R.string.data_file_notes, notes));
 					}
 				}
 
@@ -438,7 +438,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
 					ViewGroup.LayoutParams.FILL_PARENT, 64);
 
-			TextView textView = new TextView(ClassInfoActivity.this);
+			TextView textView = new TextView(DataFileActivity.this);
 			textView.setLayoutParams(lp);
 			// Centre the text vertically
 			textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -452,7 +452,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
 					ViewGroup.LayoutParams.FILL_PARENT, 128);
 
-			ImageView imageView = new ImageView(ClassInfoActivity.this);
+			ImageView imageView = new ImageView(DataFileActivity.this);
 			imageView.setLayoutParams(lp);
 			// Set the image starting position
 			imageView.setPadding(36, 0, 0, 0);
@@ -476,7 +476,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					return imageView;
 				} else {
 					TextView textView = getGenericTextView();
-					textView.setText(R.string.class_info_download_thumb);
+					textView.setText(R.string.data_file_download_thumb);
 					return textView;
 				}
 			} else {
@@ -529,7 +529,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 				startActivity(i);
 			} else {
 				Toast.makeText(getApplicationContext(),
-						R.string.class_info_download_photo, Toast.LENGTH_SHORT)
+						R.string.data_file_download_photo, Toast.LENGTH_SHORT)
 						.show();
 			}
 		}
@@ -577,7 +577,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 			return array;
 		}
 
-		private ArrayList<String> loadClassInfo(boolean showToast) {
+		private ArrayList<String> loadDataFile(boolean showToast) {
 
 			try {
 				ArrayList<String> array = new ArrayList<String>();
@@ -626,7 +626,7 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					operators.add(operator);
 				}
 			} else {
-				operators.add(getString(R.string.class_info_none));
+				operators.add(getString(R.string.data_file_none));
 			}
 			return operators;
 		}
