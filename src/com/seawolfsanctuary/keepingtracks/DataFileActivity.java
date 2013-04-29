@@ -10,8 +10,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -33,7 +35,10 @@ import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 public class DataFileActivity extends Activity {
 
 	private Bundle template;
-	ArrayList<String> names;
+	private ArrayList<String> names;
+	private ArrayList<String[]> data;
+
+	// private ArrayList<ArrayList<String>> lists;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,24 +81,96 @@ public class DataFileActivity extends Activity {
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int position, long id) {
-				Toast.makeText(DataFileActivity.this,
-						"Class: " + names.get(position), Toast.LENGTH_SHORT)
-						.show();
+				String classNo = names.get(position);
+				String name = data.get(position)[1];
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						DataFileActivity.this);
+				builder.setTitle(name + " (" + classNo + ")");
+				builder.setItems(presentData(data.get(position)),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+							}
+						});
+				builder.create().show();
 			}
 		});
 
 		MenuActivity.hideLoader();
 	}
 
+	private String[] presentData(String[] entry) {
+
+		Hashtable<String, String> unitNotes = getUnitClassNotes();
+
+		if (entry[4].equals("0000")) {
+			entry[4] = getString(R.string.data_file_unknown);
+		}
+
+		if (entry[5].equals("0000")) {
+			entry[5] = getString(R.string.data_file_unknown);
+		}
+
+		if (entry[5].length() < 1) {
+			entry[5] = getString(R.string.data_file_in_service);
+		}
+
+		ArrayList<String> operatorList = parseOperators(entry[6]);
+		String operators = "";
+		for (String operator : operatorList) {
+			operators = operators + operator + ", ";
+		}
+		operators = operators.substring(0, operators.length() - 2);
+
+		String presentedNotes = "(none)";
+		if (unitNotes.containsKey(entry[0])) {
+			String notes = unitNotes.get(entry[0]);
+			if (notes.length() > 0) {
+				presentedNotes = notes;
+			}
+		}
+
+		return new String[] {
+				getString(R.string.data_file_manufacturer, entry[2]),
+				getString(R.string.data_file_category, entry[3]),
+				getString(R.string.data_file_entered_service, entry[4]),
+				getString(R.string.data_file_retired, entry[5]),
+				getString(R.string.data_file_operators, operators),
+				getString(R.string.data_file_notes, presentedNotes) };
+	}
+
+	private ArrayList<String> parseOperators(String operatorString) {
+		ArrayList<String> operators = new ArrayList<String>();
+		if (operatorString.length() > 0) {
+			String[] pipedOperators = operatorString.split("[|]");
+			for (String operator : pipedOperators) {
+				operators.add(operator);
+			}
+		} else {
+			operators.add(getString(R.string.data_file_none));
+		}
+		return operators;
+	}
+
+	private Hashtable<String, String> getUnitClassNotes() {
+		UnitClass db_unitClass = new UnitClass(getApplicationContext());
+		db_unitClass.open();
+		Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
+		db_unitClass.close();
+		return notes;
+	}
+
 	public class ImageAdapter extends BaseAdapter {
 		private Context mContext;
 
 		public ArrayList<String> entries = loadDataFile(true);
-		public ArrayList<String[]> data = parseEntries(entries);
 
 		public ImageAdapter(Context c) {
 			mContext = c;
+			data = parseEntries(entries);
 			names = new ArrayList<String>(getNames(data));
+			// lists = getData(data);
 		}
 
 		public int getCount() {
@@ -137,6 +214,58 @@ public class DataFileActivity extends Activity {
 				names.add(name);
 			}
 			return names;
+		}
+
+		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
+			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+			Hashtable<String, String> unitNotes = getUnitClassNotes();
+
+			for (int i = 0; i < entries.size(); i++) {
+				String[] entry = entries.get(i);
+				ArrayList<String> split = new ArrayList<String>();
+
+				if (entry[4].equals("0000")) {
+					entry[4] = getString(R.string.data_file_unknown);
+				}
+
+				if (entry[5].equals("0000")) {
+					entry[5] = getString(R.string.data_file_unknown);
+				}
+
+				if (entry[5].length() < 1) {
+					entry[5] = getString(R.string.data_file_in_service);
+				}
+
+				split.add(null);
+
+				split.add(getString(R.string.data_file_category, entry[3])
+						+ "\n"
+						+ getString(R.string.data_file_manufacturer, entry[2]));
+
+				split.add(getString(R.string.data_file_entered_service,
+						entry[4])
+						+ "\n"
+						+ getString(R.string.data_file_retired, entry[5]));
+
+				ArrayList<String> operatorList = parseOperators(entry[6]);
+				String operators = "";
+				for (String operator : operatorList) {
+					operators = operators + operator + ", ";
+				}
+				operators = operators.substring(0, operators.length() - 2);
+				split.add(getString(R.string.data_file_operators, operators));
+
+				if (unitNotes.containsKey(entry[0])) {
+					String notes = unitNotes.get(entry[0]);
+					if (notes.length() > 0) {
+						split.add(getString(R.string.data_file_notes, notes));
+					}
+				}
+
+				data.add(split);
+			}
+
+			return data;
 		}
 
 		private boolean checkForPhoto(String classNo) {
@@ -221,27 +350,6 @@ public class DataFileActivity extends Activity {
 			}
 
 			return data;
-		}
-
-		private ArrayList<String> parseOperators(String operatorString) {
-			ArrayList<String> operators = new ArrayList<String>();
-			if (operatorString.length() > 0) {
-				String[] pipedOperators = operatorString.split("[|]");
-				for (String operator : pipedOperators) {
-					operators.add(operator);
-				}
-			} else {
-				operators.add(getString(R.string.data_file_none));
-			}
-			return operators;
-		}
-
-		private Hashtable<String, String> getUnitClassNotes() {
-			UnitClass db_unitClass = new UnitClass(getApplicationContext());
-			db_unitClass.open();
-			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
-			db_unitClass.close();
-			return notes;
 		}
 	}
 
@@ -406,7 +514,5 @@ public class DataFileActivity extends Activity {
 								+ downloadingError, Toast.LENGTH_LONG).show();
 			}
 		}
-
 	}
-
 }
