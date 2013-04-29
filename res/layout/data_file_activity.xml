@@ -25,6 +25,6 @@
     <include
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        layout="@layout/data_file_activity_list" />
+        layout="@layout/data_file_activity_grid" />
 
 </LinearLayout>

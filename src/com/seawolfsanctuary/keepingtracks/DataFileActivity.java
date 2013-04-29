@@ -9,41 +9,31 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import android.app.AlertDialog;
-import android.app.ExpandableListActivity;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
-public class DataFileActivity extends ExpandableListActivity {
-
-	public static final int IMAGE_POSITION = 0;
+public class DataFileActivity extends Activity {
 
 	private Bundle template;
+	ArrayList<String> names;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,111 +63,186 @@ public class DataFileActivity extends ExpandableListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.data_file_activity);
-
 		template = getIntent().getExtras();
-
 		if (template == null) {
 			template = new Bundle();
 		}
 
-		final DataFileAdapter adaptor = new DataFileAdapter();
-		setListAdapter(adaptor);
-		registerForContextMenu(getExpandableListView());
+		setContentView(R.layout.data_file_activity);
 
-		ExpandableListView lv = getExpandableListView();
-		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent,
-					final View view, final int id, long position) {
+		GridView gridview = (GridView) findViewById(R.id.gridview);
+		gridview.setAdapter(new ImageAdapter(this));
 
-				final ArrayList<String[]> data = adaptor.data;
-				final String classNo = data.get(id)[0].toString();
-				final EditText input = new EditText(view.getContext());
-
-				DialogInterface.OnClickListener newJourneyListener = new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface di, int btnClicked) {
-						if (template == null) {
-							template = new Bundle();
-						} else {
-							template.remove("detail_class");
-						}
-
-						template.putCharSequence("detail_class", classNo);
-						Intent intent = new Intent(view.getContext(),
-								AddActivity.class);
-						intent.putExtras(template);
-						startActivity(intent);
-						DataFileActivity.this.finish();
-					}
-				};
-
-				final DialogInterface.OnClickListener saveNotesListener = new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface di, int btnClicked) {
-						Editable value = input.getText();
-						updateNotes(classNo, value.toString());
-					}
-
-					private void updateNotes(String classNo, String value) {
-						UnitClass db_unitClass = new UnitClass(
-								getApplicationContext());
-						db_unitClass.open();
-						boolean success = false;
-						if (value.length() > 0) {
-							success = db_unitClass.insertOrUpdateUnitNotes(
-									classNo, value);
-						} else {
-							success = db_unitClass.deleteUnitNotes(classNo);
-						}
-						db_unitClass.close();
-
-						if (success == true) {
-							Intent intent = new Intent(view.getContext(),
-									DataFileActivity.class);
-							startActivity(intent);
-							DataFileActivity.this.finish();
-						}
-					}
-				};
-
-				DialogInterface.OnClickListener editNotesListener = new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface di, int btnClicked) {
-						String notes = "";
-						UnitClass db_unitClass = new UnitClass(
-								getApplicationContext());
-						db_unitClass.open();
-						Cursor c = db_unitClass.getUnitNotes(classNo);
-						if (c.moveToFirst()) {
-							notes = c.getString(c
-									.getColumnIndex(UnitClass.KEY_NOTES));
-						}
-						db_unitClass.close();
-						input.setText(notes);
-
-						new AlertDialog.Builder(view.getContext())
-								.setTitle(
-										getString(R.string.data_file_notes_title))
-								.setView(input)
-								.setPositiveButton(
-										getString(R.string.data_file_notes_save),
-										saveNotesListener).show();
-					}
-				};
-
-				new AlertDialog.Builder(parent.getContext())
-						.setTitle(R.string.data_file_options_title)
-						.setMessage(R.string.data_file_options_text)
-						.setPositiveButton(
-								getString(R.string.data_file_options_journey),
-								newJourneyListener)
-						.setNeutralButton(
-								getString(R.string.data_file_options_notes),
-								editNotesListener).show();
-
-				return true;
+		gridview.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				Toast.makeText(DataFileActivity.this,
+						"Class: " + names.get(position), Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
+
 		MenuActivity.hideLoader();
+	}
+
+	public class ImageAdapter extends BaseAdapter {
+		private Context mContext;
+
+		public ArrayList<String> entries = loadDataFile(true);
+		public ArrayList<String[]> data = parseEntries(entries);
+
+		public ImageAdapter(Context c) {
+			mContext = c;
+			names = new ArrayList<String>(getNames(data));
+		}
+
+		public int getCount() {
+			return entries.size();
+		}
+
+		public Object getItem(int position) {
+			return null;
+		}
+
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		// create a new ImageView for each item referenced by the Adapter
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ImageView imageView;
+			if (convertView == null) {
+				imageView = new ImageView(mContext);
+				imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+				imageView.setPadding(8, 8, 8, 8);
+			} else {
+				imageView = (ImageView) convertView;
+			}
+
+			String classNo = names.get(position);
+			if (checkForPhoto(classNo)) {
+				imageView.setImageDrawable(loadPhoto(classNo));
+			} else {
+				imageView.setImageResource(R.drawable.data_file_unknown);
+			}
+			return imageView;
+		}
+
+		private ArrayList<String> getNames(ArrayList<String[]> data) {
+			ArrayList<String> names = new ArrayList<String>();
+			for (int i = 0; i < data.size(); i++) {
+				String[] entry = data.get(i);
+				String name = entry[0];
+				names.add(name);
+			}
+			return names;
+		}
+
+		private boolean checkForPhoto(String classNo) {
+			try {
+				File f = new File(Helpers.dataDirectoryPath
+						+ "/class_photos/thumbs/", classNo);
+				return f.exists();
+			} catch (Exception e) {
+				return false;
+			}
+		}
+
+		private Drawable loadPhoto(String classNo) {
+			Drawable d = null;
+			try {
+				File f = new File(Helpers.dataDirectoryPath
+						+ "/class_photos/thumbs/", classNo);
+				Drawable p = Drawable.createFromPath(f.getPath());
+				d = p;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+			return d;
+		}
+
+		private String[] readCSV(String filename) {
+			String[] array = {};
+
+			try {
+				InputStream input;
+				input = getAssets().open(filename);
+				int size = input.available();
+				byte[] buffer = new byte[size];
+
+				input.read(buffer);
+				input.close();
+				array = new String(buffer).split("\n");
+
+			} catch (Exception e) {
+			}
+
+			return array;
+		}
+
+		private ArrayList<String> loadDataFile(boolean showToast) {
+
+			try {
+				ArrayList<String> array = new ArrayList<String>();
+
+				String[] classInfo = readCSV("classes.csv");
+				for (String infoLine : classInfo) {
+					array.add(infoLine);
+				}
+
+				return array;
+
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return new ArrayList<String>();
+			}
+
+		}
+
+		private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
+			ArrayList<String[]> data = new ArrayList<String[]>();
+
+			try {
+				for (Iterator<String> i = entries.iterator(); i.hasNext();) {
+					String str = (String) i.next();
+					String[] elements = str.split(",");
+					String[] entry = new String[elements.length];
+
+					for (int j = 0; j < entry.length; j++) {
+						entry[j] = Helpers.trimCSVSpeech(elements[j]);
+					}
+
+					data.add(entry);
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+			return data;
+		}
+
+		private ArrayList<String> parseOperators(String operatorString) {
+			ArrayList<String> operators = new ArrayList<String>();
+			if (operatorString.length() > 0) {
+				String[] pipedOperators = operatorString.split("[|]");
+				for (String operator : pipedOperators) {
+					operators.add(operator);
+				}
+			} else {
+				operators.add(getString(R.string.data_file_none));
+			}
+			return operators;
+		}
+
+		private Hashtable<String, String> getUnitClassNotes() {
+			UnitClass db_unitClass = new UnitClass(getApplicationContext());
+			db_unitClass.open();
+			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
+			db_unitClass.close();
+			return notes;
+		}
 	}
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
@@ -193,7 +258,7 @@ public class DataFileActivity extends ExpandableListActivity {
 		}
 
 		protected Boolean doInBackground(Void... params) {
-			DataFileAdapter adapter = new DataFileAdapter();
+			ImageAdapter adapter = new ImageAdapter(getApplicationContext());
 			ArrayList<String> entries = adapter.loadDataFile(true);
 			ArrayList<String[]> data = adapter.parseEntries(entries);
 
@@ -318,9 +383,8 @@ public class DataFileActivity extends ExpandableListActivity {
 					+ progress[0].substring(1);
 
 			progressDialog
-					.setMessage(getString(
-							R.string.data_file_download_progress, photo_type,
-							class_no));
+					.setMessage(getString(R.string.data_file_download_progress,
+							photo_type, class_no));
 		}
 
 		protected void onPostExecute(Boolean success) {
@@ -343,301 +407,6 @@ public class DataFileActivity extends ExpandableListActivity {
 			}
 		}
 
-	}
-
-	private class DataFileAdapter extends BaseExpandableListAdapter {
-
-		public ArrayList<String> entries = loadDataFile(true);
-		public ArrayList<String[]> data = parseEntries(entries);
-		ArrayList<String> names = new ArrayList<String>(getNames(data));
-
-		private String[] presentedNames = Helpers
-				.arrayListToArray(getNames(data));
-		private String[][] presentedData = Helpers
-				.multiArrayListToArray(getData(data));
-
-		private ArrayList<String> getNames(ArrayList<String[]> data) {
-			ArrayList<String> names = new ArrayList<String>();
-			for (int i = 0; i < data.size(); i++) {
-				String[] entry = data.get(i);
-				String name = entry[0];
-				if (entry[1].length() > 0) {
-					name = name + "  -  " + entry[1];
-				}
-				names.add(name);
-			}
-			return names;
-		}
-
-		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
-			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-			Hashtable<String, String> unitNotes = getUnitClassNotes();
-
-			for (int i = 0; i < entries.size(); i++) {
-				String[] entry = entries.get(i);
-				ArrayList<String> split = new ArrayList<String>();
-
-				if (entry[4].equals("0000")) {
-					entry[4] = getString(R.string.data_file_unknown);
-				}
-
-				if (entry[5].equals("0000")) {
-					entry[5] = getString(R.string.data_file_unknown);
-				}
-
-				if (entry[5].length() < 1) {
-					entry[5] = getString(R.string.data_file_in_service);
-				}
-
-				split.add(null);
-
-				split.add(getString(R.string.data_file_category, entry[3])
-						+ "\n"
-						+ getString(R.string.data_file_manufacturer, entry[2]));
-
-				split.add(getString(R.string.data_file_entered_service,
-						entry[4])
-						+ "\n"
-						+ getString(R.string.data_file_retired, entry[5]));
-
-				ArrayList<String> operatorList = parseOperators(entry[6]);
-				String operators = "";
-				for (String operator : operatorList) {
-					operators = operators + operator + ", ";
-				}
-				operators = operators.substring(0, operators.length() - 2);
-				split.add(getString(R.string.data_file_operators, operators));
-
-				if (unitNotes.containsKey(entry[0])) {
-					String notes = unitNotes.get(entry[0]);
-					if (notes.length() > 0) {
-						split.add(getString(R.string.data_file_notes, notes));
-					}
-				}
-
-				data.add(split);
-			}
-
-			return data;
-		}
-
-		public Object getChild(int groupPosition, int childPosition) {
-			return presentedData[groupPosition][childPosition];
-		}
-
-		public long getChildId(int groupPosition, int childPosition) {
-			return childPosition;
-		}
-
-		public int getChildrenCount(int groupPosition) {
-			return presentedData[groupPosition].length;
-		}
-
-		public TextView getGenericTextView() {
-			// Layout parameters for the ExpandableListView
-			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, 64);
-
-			TextView textView = new TextView(DataFileActivity.this);
-			textView.setLayoutParams(lp);
-			// Centre the text vertically
-			textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-			// Set the text starting position
-			textView.setPadding(36, 0, 0, 0);
-			return textView;
-		}
-
-		public ImageView getGenericImageView() {
-			// Layout parameters for the ExpandableListView
-			AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, 128);
-
-			ImageView imageView = new ImageView(DataFileActivity.this);
-			imageView.setLayoutParams(lp);
-			// Set the image starting position
-			imageView.setPadding(36, 0, 0, 0);
-
-			return imageView;
-		}
-
-		public View getChildView(int groupPosition, int childPosition,
-				boolean isLastChild, View convertView, ViewGroup parent) {
-			if (childPosition == IMAGE_POSITION) {
-				final String classNo = data.get(groupPosition)[0];
-				ImageView imageView = getGenericImageView();
-				if (checkForPhoto(classNo) == true) {
-					imageView.setImageDrawable(load_photo(classNo));
-					imageView.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							show_photo(classNo);
-						}
-					});
-					return imageView;
-				} else {
-					TextView textView = getGenericTextView();
-					textView.setText(R.string.data_file_download_thumb);
-					return textView;
-				}
-			} else {
-				TextView textView = getGenericTextView();
-				textView.setText(getChild(groupPosition, childPosition)
-						.toString());
-				return textView;
-			}
-		}
-
-		public Object getGroup(int groupPosition) {
-			return presentedNames[groupPosition];
-		}
-
-		public int getGroupCount() {
-			return presentedNames.length;
-		}
-
-		public long getGroupId(int groupPosition) {
-			return groupPosition;
-		}
-
-		public View getGroupView(int groupPosition, boolean isExpanded,
-				View convertView, ViewGroup parent) {
-			TextView textView = getGenericTextView();
-			textView.setText(getGroup(groupPosition).toString());
-			return textView;
-		}
-
-		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			if (childPosition == IMAGE_POSITION) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		public boolean hasStableIds() {
-			return true;
-		}
-
-		private void show_photo(String classNo) {
-			File f = new File(Helpers.dataDirectoryPath + "/class_photos/",
-					classNo);
-			if (f.exists()) {
-				Intent i = new Intent(Intent.ACTION_VIEW);
-				i.setDataAndType(
-						Uri.parse(Helpers.dataDirectoryURI + "/class_photos/"
-								+ classNo), "image/*");
-				startActivity(i);
-			} else {
-				Toast.makeText(getApplicationContext(),
-						R.string.data_file_download_photo, Toast.LENGTH_SHORT)
-						.show();
-			}
-		}
-
-		private Drawable load_photo(String classNo) {
-			Drawable d = null;
-			try {
-				File f = new File(Helpers.dataDirectoryPath
-						+ "/class_photos/thumbs/", classNo);
-				Drawable p = Drawable.createFromPath(f.getPath());
-				d = p;
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-
-			return d;
-		}
-
-		private boolean checkForPhoto(String classNo) {
-			try {
-				File f = new File(Helpers.dataDirectoryPath
-						+ "/class_photos/thumbs/", classNo);
-				return f.exists();
-			} catch (Exception e) {
-				return false;
-			}
-		}
-
-		private String[] read_csv(String filename) {
-			String[] array = {};
-
-			try {
-				InputStream input;
-				input = getAssets().open(filename);
-				int size = input.available();
-				byte[] buffer = new byte[size];
-
-				input.read(buffer);
-				input.close();
-				array = new String(buffer).split("\n");
-
-			} catch (Exception e) {
-			}
-
-			return array;
-		}
-
-		private ArrayList<String> loadDataFile(boolean showToast) {
-
-			try {
-				ArrayList<String> array = new ArrayList<String>();
-
-				String[] classInfo = read_csv("classes.csv");
-				for (String infoLine : classInfo) {
-					array.add(infoLine);
-				}
-
-				return array;
-
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				return new ArrayList<String>();
-			}
-
-		}
-
-		private ArrayList<String[]> parseEntries(ArrayList<String> entries) {
-			ArrayList<String[]> data = new ArrayList<String[]>();
-
-			try {
-				for (Iterator<String> i = entries.iterator(); i.hasNext();) {
-					String str = (String) i.next();
-					String[] elements = str.split(",");
-					String[] entry = new String[elements.length];
-
-					for (int j = 0; j < entry.length; j++) {
-						entry[j] = Helpers.trimCSVSpeech(elements[j]);
-					}
-
-					data.add(entry);
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-
-			return data;
-		}
-
-		private ArrayList<String> parseOperators(String operatorString) {
-			ArrayList<String> operators = new ArrayList<String>();
-			if (operatorString.length() > 0) {
-				String[] pipedOperators = operatorString.split("[|]");
-				for (String operator : pipedOperators) {
-					operators.add(operator);
-				}
-			} else {
-				operators.add(getString(R.string.data_file_none));
-			}
-			return operators;
-		}
-
-		private Hashtable<String, String> getUnitClassNotes() {
-			UnitClass db_unitClass = new UnitClass(getApplicationContext());
-			db_unitClass.open();
-			Hashtable<String, String> notes = db_unitClass.getAllUnitNotes();
-			db_unitClass.close();
-			return notes;
-		}
 	}
 
 }
