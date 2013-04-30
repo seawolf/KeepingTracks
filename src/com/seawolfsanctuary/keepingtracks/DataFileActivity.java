@@ -17,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -84,18 +85,22 @@ public class DataFileActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View view,
 					int position, long id) {
-				if (template == null) {
-					template = new Bundle();
+				String classNo = names.get(position);
+				File f = new File(Helpers.dataDirectoryPath + "/class_photos/",
+						classNo);
+				if (f.exists()) {
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setDataAndType(
+							Uri.parse(Helpers.dataDirectoryURI
+									+ "/class_photos/" + classNo), "image/*");
+					startActivity(i);
+					return true;
 				} else {
-					template.remove("detail_class");
+					Toast.makeText(getApplicationContext(),
+							R.string.data_file_download_photo,
+							Toast.LENGTH_SHORT).show();
+					return false;
 				}
-
-				template.putCharSequence("detail_class", names.get(position));
-				Intent intent = new Intent(view.getContext(), AddActivity.class);
-				intent.putExtras(template);
-				startActivity(intent);
-				DataFileActivity.this.finish();
-				return true;
 			}
 		});
 
@@ -188,6 +193,22 @@ public class DataFileActivity extends Activity {
 
 							break;
 
+						case 6:
+							if (template == null) {
+								template = new Bundle();
+							} else {
+								template.remove("detail_class");
+							}
+
+							template.putCharSequence("detail_class",
+									names.get(position));
+							Intent intent = new Intent(getApplicationContext(),
+									AddActivity.class);
+							intent.putExtras(template);
+							startActivity(intent);
+							DataFileActivity.this.finish();
+							break;
+
 						default:
 							break;
 						}
@@ -226,7 +247,8 @@ public class DataFileActivity extends Activity {
 				getString(R.string.data_file_entered_service, entry[4]),
 				getString(R.string.data_file_retired, entry[5]),
 				getString(R.string.data_file_operators, operators),
-				getString(R.string.data_file_notes, parseNotes(entry[0])) };
+				getString(R.string.data_file_notes, parseNotes(entry[0])),
+				getString(R.string.data_file_add_journey, entry[0]) };
 	}
 
 	private ArrayList<String> parseOperators(String operatorString) {

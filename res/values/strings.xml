@@ -67,7 +67,8 @@
     <string name="list_saved_export_failed">Failed to export journeys. Check the SD card is available and writable.</string>
     <string name="headcode_selection">Select Departure</string>
     <string name="data_file">Data File</string>
-    <string name="data_file_prompt">Tap an entry to see details, then the photo to view it full-size. Photos can be downloaded from the context menu. Tap and hold a class name to add a journey with it.</string>
+    <string name="data_file_prompt">Tap a photo to see details, or tap and hold on a photo to view it full-size. Photos can be downloaded from the context menu.</string>
+    <string name="data_file_add_journey">New journey with class %s …</string>
     <string name="data_file_entered_service">Entered Service: %s</string>
     <string name="data_file_retired">Retired: %s</string>
     <string name="data_file_in_service">in service</string>
