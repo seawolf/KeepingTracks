@@ -32,6 +32,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
@@ -309,23 +310,21 @@ public class DataFileActivity extends Activity {
 
 		// create a new ImageView for each item referenced by the Adapter
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ImageView imageView;
-			if (convertView == null) {
-				imageView = new ImageView(mContext);
-				imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-				imageView.setPadding(8, 8, 8, 8);
+			String classNo = names.get(position);
+			View v = getLayoutInflater().inflate(
+					R.layout.data_file_activity_grid_item, null);
+
+			TextView tv = (TextView) v.findViewById(R.id.data_file_caption);
+			tv.setText("Class " + classNo);
+
+			ImageView iv = (ImageView) v.findViewById(R.id.data_file_image);
+			if (checkForPhoto(classNo)) {
+				iv.setImageDrawable(loadPhoto(classNo));
 			} else {
-				imageView = (ImageView) convertView;
+				iv.setImageResource(R.drawable.data_file_unknown);
 			}
 
-			String classNo = names.get(position);
-			if (checkForPhoto(classNo)) {
-				imageView.setImageDrawable(loadPhoto(classNo));
-			} else {
-				imageView.setImageResource(R.drawable.data_file_unknown);
-			}
-			return imageView;
+			return v;
 		}
 
 		private ArrayList<String> getNames(ArrayList<String[]> data) {
