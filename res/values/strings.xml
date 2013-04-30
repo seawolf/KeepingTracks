@@ -91,6 +91,7 @@
     <string name="data_file_options_notes">Notes…</string>
     <string name="data_file_notes_title">Update Notes</string>
     <string name="data_file_notes_save">Save</string>
+    <string name="data_file_notes_save_error">Notes update failed. Please try again.</string>
     <string name="data_file_menu_download">Download Photo Bundle...</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_login">Login to Foursquare</string>

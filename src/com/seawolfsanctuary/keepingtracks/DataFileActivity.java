@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -78,19 +80,98 @@ public class DataFileActivity extends Activity {
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+					final int position, long id) {
 				String classNo = names.get(position);
 				String name = data.get(position)[1];
+				String[] items = presentData(data.get(position));
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						DataFileActivity.this);
 				builder.setTitle(name + " (" + classNo + ")");
-				builder.setItems(presentData(data.get(position)),
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							// manufacturer
+							break;
+						case 1:
+							// category
+							break;
+						case 2:
+							// entered service
+							break;
+						case 3:
+							// retired
+							break;
+						case 4:
+							// operators
+							break;
+						case 5:
+							// notes
+							final String classNo = names.get(position);
+							final EditText input = new EditText(
+									getBaseContext());
+
+							String notes = "";
+							UnitClass db_unitClass = new UnitClass(
+									getApplicationContext());
+							db_unitClass.open();
+							Cursor c = db_unitClass.getUnitNotes(classNo);
+							if (c.moveToFirst()) {
+								notes = c.getString(c
+										.getColumnIndex(UnitClass.KEY_NOTES));
 							}
-						});
+							db_unitClass.close();
+							input.setText(notes);
+
+							DialogInterface.OnClickListener saveNotesListener = new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface di,
+										int btnClicked) {
+									String value = input.getText().toString();
+									UnitClass db_unitClass = new UnitClass(
+											getApplicationContext());
+									db_unitClass.open();
+									boolean success = false;
+									if (value.length() > 0) {
+										success = db_unitClass
+												.insertOrUpdateUnitNotes(
+														classNo, value);
+									} else {
+										success = db_unitClass
+												.deleteUnitNotes(classNo);
+									}
+									db_unitClass.close();
+
+									if (success == true) {
+										Intent intent = new Intent(
+												getBaseContext(),
+												DataFileActivity.class);
+										startActivity(intent);
+										DataFileActivity.this.finish();
+									} else {
+										Toast.makeText(
+												getApplicationContext(),
+												getString(R.string.data_file_notes_save_error),
+												Toast.LENGTH_LONG).show();
+									}
+								}
+							};
+
+							new AlertDialog.Builder(getBaseContext())
+									.setTitle(
+											getString(R.string.data_file_notes_title))
+									.setView(input)
+									.setPositiveButton(
+											getString(R.string.data_file_notes_save),
+											saveNotesListener).show();
+
+							break;
+
+						default:
+							break;
+						}
+					}
+				});
 				builder.create().show();
 			}
 		});
