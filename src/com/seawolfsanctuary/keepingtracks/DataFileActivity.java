@@ -38,8 +38,6 @@ public class DataFileActivity extends Activity {
 	private ArrayList<String> names;
 	private ArrayList<String[]> data;
 
-	// private ArrayList<ArrayList<String>> lists;
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -101,9 +99,6 @@ public class DataFileActivity extends Activity {
 	}
 
 	private String[] presentData(String[] entry) {
-
-		Hashtable<String, String> unitNotes = getUnitClassNotes();
-
 		if (entry[4].equals("0000")) {
 			entry[4] = getString(R.string.data_file_unknown);
 		}
@@ -123,21 +118,13 @@ public class DataFileActivity extends Activity {
 		}
 		operators = operators.substring(0, operators.length() - 2);
 
-		String presentedNotes = "(none)";
-		if (unitNotes.containsKey(entry[0])) {
-			String notes = unitNotes.get(entry[0]);
-			if (notes.length() > 0) {
-				presentedNotes = notes;
-			}
-		}
-
 		return new String[] {
 				getString(R.string.data_file_manufacturer, entry[2]),
 				getString(R.string.data_file_category, entry[3]),
 				getString(R.string.data_file_entered_service, entry[4]),
 				getString(R.string.data_file_retired, entry[5]),
 				getString(R.string.data_file_operators, operators),
-				getString(R.string.data_file_notes, presentedNotes) };
+				getString(R.string.data_file_notes, parseNotes(entry[0])) };
 	}
 
 	private ArrayList<String> parseOperators(String operatorString) {
@@ -151,6 +138,18 @@ public class DataFileActivity extends Activity {
 			operators.add(getString(R.string.data_file_none));
 		}
 		return operators;
+	}
+
+	private String parseNotes(String classNo) {
+		Hashtable<String, String> unitNotes = getUnitClassNotes();
+		String presentedNotes = "(none)";
+		if (unitNotes.containsKey(classNo)) {
+			String notes = unitNotes.get(classNo);
+			if (notes.length() > 0) {
+				presentedNotes = notes;
+			}
+		}
+		return presentedNotes;
 	}
 
 	private Hashtable<String, String> getUnitClassNotes() {
@@ -170,7 +169,6 @@ public class DataFileActivity extends Activity {
 			mContext = c;
 			data = parseEntries(entries);
 			names = new ArrayList<String>(getNames(data));
-			// lists = getData(data);
 		}
 
 		public int getCount() {
@@ -214,58 +212,6 @@ public class DataFileActivity extends Activity {
 				names.add(name);
 			}
 			return names;
-		}
-
-		private ArrayList<ArrayList<String>> getData(ArrayList<String[]> entries) {
-			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-			Hashtable<String, String> unitNotes = getUnitClassNotes();
-
-			for (int i = 0; i < entries.size(); i++) {
-				String[] entry = entries.get(i);
-				ArrayList<String> split = new ArrayList<String>();
-
-				if (entry[4].equals("0000")) {
-					entry[4] = getString(R.string.data_file_unknown);
-				}
-
-				if (entry[5].equals("0000")) {
-					entry[5] = getString(R.string.data_file_unknown);
-				}
-
-				if (entry[5].length() < 1) {
-					entry[5] = getString(R.string.data_file_in_service);
-				}
-
-				split.add(null);
-
-				split.add(getString(R.string.data_file_category, entry[3])
-						+ "\n"
-						+ getString(R.string.data_file_manufacturer, entry[2]));
-
-				split.add(getString(R.string.data_file_entered_service,
-						entry[4])
-						+ "\n"
-						+ getString(R.string.data_file_retired, entry[5]));
-
-				ArrayList<String> operatorList = parseOperators(entry[6]);
-				String operators = "";
-				for (String operator : operatorList) {
-					operators = operators + operator + ", ";
-				}
-				operators = operators.substring(0, operators.length() - 2);
-				split.add(getString(R.string.data_file_operators, operators));
-
-				if (unitNotes.containsKey(entry[0])) {
-					String notes = unitNotes.get(entry[0]);
-					if (notes.length() > 0) {
-						split.add(getString(R.string.data_file_notes, notes));
-					}
-				}
-
-				data.add(split);
-			}
-
-			return data;
 		}
 
 		private boolean checkForPhoto(String classNo) {
