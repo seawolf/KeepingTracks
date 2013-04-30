@@ -105,7 +105,7 @@ public class DataFileActivity extends Activity {
 		});
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
+			public void onItemClick(AdapterView<?> parent, final View v,
 					final int position, long id) {
 				String classNo = names.get(position);
 				String name = data.get(position)[1];
@@ -136,7 +136,7 @@ public class DataFileActivity extends Activity {
 							// notes
 							final String classNo = names.get(position);
 							final EditText input = new EditText(
-									getBaseContext());
+									getApplicationContext());
 
 							String notes = "";
 							UnitClass db_unitClass = new UnitClass(
@@ -170,7 +170,7 @@ public class DataFileActivity extends Activity {
 
 									if (success == true) {
 										Intent intent = new Intent(
-												getBaseContext(),
+												getApplicationContext(),
 												DataFileActivity.class);
 										startActivity(intent);
 										DataFileActivity.this.finish();
@@ -183,7 +183,7 @@ public class DataFileActivity extends Activity {
 								}
 							};
 
-							new AlertDialog.Builder(getBaseContext())
+							new AlertDialog.Builder(v.getContext())
 									.setTitle(
 											getString(R.string.data_file_notes_title))
 									.setView(input)
