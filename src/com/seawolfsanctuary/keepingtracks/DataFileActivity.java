@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -77,6 +78,26 @@ public class DataFileActivity extends Activity {
 
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		gridview.setAdapter(new ImageAdapter(this));
+
+		gridview.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View view,
+					int position, long id) {
+				if (template == null) {
+					template = new Bundle();
+				} else {
+					template.remove("detail_class");
+				}
+
+				template.putCharSequence("detail_class", names.get(position));
+				Intent intent = new Intent(view.getContext(), AddActivity.class);
+				intent.putExtras(template);
+				startActivity(intent);
+				DataFileActivity.this.finish();
+				return true;
+			}
+		});
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
