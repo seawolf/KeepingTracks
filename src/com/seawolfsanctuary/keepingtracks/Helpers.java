@@ -181,6 +181,14 @@ public class Helpers {
 		return station;
 	}
 
+	public static String trimCategoryFromPlace(String placeName, Context c) {
+		if (placeName.length() > 0 && placeName.contains(": ")) {
+			String category = placeName.split(":")[0];
+			placeName = placeName.replace(category + ": ", "");
+		}
+		return placeName;
+	}
+
 	public static Bundle saveCurrentJourney(Bundle previousBundle, Activity src) {
 		Bundle journey = new Bundle();
 

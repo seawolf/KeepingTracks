@@ -279,7 +279,9 @@ public class CheckinActivity extends ListActivity {
 					// Delete this to check-in with no shout
 					String checkinMessage = getString(
 							R.string.foursquare_checkin_mesage_blank,
-							params.getString("venueName"));
+							Helpers.trimCategoryFromPlace(
+									params.getString("venueName"),
+									view.getContext()));
 
 					// When Checking-In from AddActivity
 					if (checkin_details != null) {
