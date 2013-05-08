@@ -46,7 +46,7 @@ public class DataFileActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.data_file_context_menu, menu);
+		inflater.inflate(R.menu.context_menu_data_file, menu);
 		return true;
 	}
 

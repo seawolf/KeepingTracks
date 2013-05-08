@@ -211,7 +211,7 @@ public class CheckinActivity extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.foursquare_context_menu, menu);
+		inflater.inflate(R.menu.context_menu_foursquare, menu);
 		return true;
 	}
 

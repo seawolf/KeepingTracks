@@ -141,6 +141,7 @@
     <string name="stats_classes_used_line_single">%1$s (%2$s time)</string>
     <string name="stats_classes_used_line_multiple">%1$s (%2$s times)</string>
     <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
     <string name="none">(none)</string>

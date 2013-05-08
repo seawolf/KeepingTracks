@@ -76,7 +76,7 @@ public class AddActivity extends TabActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu, menu);
+		inflater.inflate(R.menu.context_menu_add, menu);
 		return true;
 	}
 
@@ -84,10 +84,16 @@ public class AddActivity extends TabActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
-		case R.id.list:
-			Intent intent = new Intent(this, ListSavedActivity.class);
+		case R.id.save:
+			boolean success = writeEntry(this.getCurrentFocus());
+			if (success == true) {
+				Intent intent = new Intent(this, ListSavedActivity.class);
+				AddActivity.this.finish();
+				startActivity(intent);
+			}
+			return success;
+		case R.id.cancel:
 			AddActivity.this.finish();
-			startActivity(intent);
 			return true;
 		default:
 			return true;

@@ -47,7 +47,7 @@ public class ListSavedActivity extends ExpandableListActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu, menu);
+		inflater.inflate(R.menu.context_menu_list, menu);
 		return true;
 	}
 
