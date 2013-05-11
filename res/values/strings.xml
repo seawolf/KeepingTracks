@@ -3,6 +3,8 @@
 
     <string name="app_name">KeepingTracks</string>
     <string name="app_name_icon">Keeping Tracks</string>
+    <string name="website">Website</string>
+    <string name="website_url">http://keepingtracks.seawolfsanctuary.com</string>
     <string name="search">Search…</string>
     <string name="tr_class">Train</string>
     <string name="tr_headcode">Journey</string>

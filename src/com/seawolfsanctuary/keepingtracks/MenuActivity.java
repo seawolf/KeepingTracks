@@ -3,6 +3,7 @@ package com.seawolfsanctuary.keepingtracks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,11 @@ public class MenuActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
+		case R.id.website:
+			Uri websiteUrl = Uri.parse("" + getText(R.string.website_url));
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, websiteUrl);
+			startActivity(launchBrowser);
+			return true;
 		case R.id.exit:
 			MenuActivity.this.finish();
 			return true;
