@@ -479,9 +479,11 @@ public class AddActivity extends TabActivity {
 			if (chk_Checkin.isChecked()) {
 				Bundle details = new Bundle();
 				details.putString("from_stn", Helpers.trimCodeFromStation(
-						actv_FromSearch.getText().toString(), getApplicationContext()));
+						actv_FromSearch.getText().toString(),
+						getApplicationContext()));
 				details.putString("to_stn", Helpers.trimCodeFromStation(
-						actv_ToSearch.getText().toString(), getApplicationContext()));
+						actv_ToSearch.getText().toString(),
+						getApplicationContext()));
 				details.putString("detail_class", txt_DetailClass.getText()
 						.toString());
 				details.putString("detail_headcode", txt_DetailHeadcode
@@ -559,9 +561,11 @@ public class AddActivity extends TabActivity {
 					"" + dp_FromDate.getYear(), month,
 					"" + dp_FromDate.getDayOfMonth() };
 
-			dialog = ProgressDialog.show(AddActivity.this,
-					getString(R.string.add_new_headcode_progress_title),
-					getString(R.string.add_new_headcode_progress_text), true);
+			dialog = ProgressDialog
+					.show(AddActivity.this,
+							getString(R.string.add_new_headcode_depboard_progress_title),
+							getString(R.string.add_new_headcode_depboard_progress_text),
+							true);
 			dialog.setCancelable(true);
 
 			new DownloadJourneysTask().execute(journeyDetails);
@@ -577,7 +581,7 @@ public class AddActivity extends TabActivity {
 			ArrayList<ArrayList<String>> formattedJourneys = new ArrayList<ArrayList<String>>();
 
 			ArrayList<String> result = new ArrayList<String>();
-			String dataError = getString(R.string.add_new_headcode_error_default);
+			String dataError = getString(R.string.add_new_headcode_error_default_depboard);
 
 			formattedJourneys.add(result);
 
@@ -645,8 +649,6 @@ public class AddActivity extends TabActivity {
 						for (int r = 1; r < rawRows.length; r++) {
 							String row = rawRows[r];
 							rows.add(row);
-							// System.out.println("Added row " + r + ": " +
-							// row);
 						}
 
 						ArrayList<ArrayList<String>> journeys = new ArrayList<ArrayList<String>>();
@@ -668,6 +670,23 @@ public class AddActivity extends TabActivity {
 
 							ArrayList<String> journey = new ArrayList<String>();
 
+							// get journey ID from headcode a[@href]
+							String link = cells.get(0);
+							System.out.println("Link: " + link);
+							int linkPos = link.indexOf("href") + 6;
+							int linkSepPos = linkPos - 1;
+							String sep = "" + link.charAt(linkSepPos);
+
+							int secondSepPos = link.indexOf(sep, linkPos);
+							String linkHref = link.substring(linkPos,
+									secondSepPos - 1);
+
+							int idStart = linkHref.indexOf("/") + 10;
+							String journeyPart = linkHref.substring(idStart);
+							int idLength = journeyPart.indexOf("/");
+							String journeyId = journeyPart.substring(0,
+									idLength);
+
 							// Get cell contents and remove any more HTML tags
 							// from inside
 							for (int c = 0; c < cells.size(); c++) {
@@ -679,7 +698,6 @@ public class AddActivity extends TabActivity {
 										.toString());
 							}
 
-							// Pick out elements
 							// System.out.println("Headcode: " + cells.get(0));
 							// System.out.println("Departure: " + cells.get(1));
 							// System.out.println("Destination: " +
@@ -687,17 +705,14 @@ public class AddActivity extends TabActivity {
 							// System.out.println("Platform: " + cells.get(3));
 							// System.out.println("Operator: " + cells.get(4));
 
-							String line = cells.get(0);
-							line += ": " + cells.get(1);
-							line += " to " + cells.get(2);
-
-							if (cells.get(3).length() > 0) {
-								line += " (platform " + cells.get(3) + ")";
-							}
-
 							for (int i = 0; i < cells.size(); i++) {
 								journey.add(cells.get(i));
 							}
+
+							journey.add(journeyId);
+							journey.add(year);
+							journey.add(month);
+							journey.add(day);
 
 							result.clear();
 							result.add("SUCCESS");
@@ -738,14 +753,13 @@ public class AddActivity extends TabActivity {
 			if (resultList.get(0).get(0) == "SUCCESS") {
 				resultList.remove(0);
 				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 				tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
 				String[] presentedResults = new String[resultList.size()];
 
 				for (int i = 0; i < resultList.size(); i++) {
 					ArrayList<String> result = resultList.get(i);
-					// System.out.println("Result #" + i + ": " + result);
+					System.out.println("Result #" + i + ": " + result);
 
 					String platformInfo = result.get(3);
 					if (platformInfo.length() > 0) {
@@ -762,77 +776,269 @@ public class AddActivity extends TabActivity {
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						AddActivity.this);
-				builder.setTitle(getString(R.string.add_new_headcode_results_title));
+				builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int i) {
+							public void onClick(DialogInterface d, int i) {
+								ArrayList<String> selection = resultList.get(i);
 								SharedPreferences settings = getSharedPreferences(
 										UserPrefsActivity.APP_PREFS,
 										MODE_PRIVATE);
 
-								boolean bln_CompleteFromStation = settings
-										.getBoolean("CompleteFromStation", true);
-								boolean bln_CompleteToStation = settings
-										.getBoolean("CompleteToStation", true);
+								System.out.println("Using: " + selection.get(1));
+								int hours = Integer.parseInt(selection.get(1)
+										.substring(0, 2));
+								int minutes = Integer.parseInt(selection.get(1)
+										.substring(2, 4));
 
-								ArrayList<String> selection = resultList.get(i);
-								// System.out.println("Setting #" + i + ": " +
-								// selection);
-								txt_DetailHeadcode.setText(selection.get(0));
-								String destination = selection.get(2);
-
-								// Correct departure time
-								if (bln_CompleteFromStation == true) {
-									System.out.println("Using: "
-											+ selection.get(1));
-									int hours = Integer.parseInt(selection.get(
-											1).substring(0, 2));
-									int minutes = Integer.parseInt(selection
-											.get(1).substring(2, 4));
+								if (settings.getBoolean("CompleteFromStation",
+										true)) {
+									txt_DetailHeadcode.setText(selection.get(0));
 									tp_FromTime.setCurrentHour(hours);
 									tp_FromTime.setCurrentMinute(minutes);
 								}
-
-								// Complete destination if not already present
-								if (bln_CompleteToStation == true
-										&& actv_ToSearch.getText().length() < 1) {
-									// pick 1st equal from all completions :-(
-									actv_ToSearch.performCompletion();
-									String suggestion = autoComplete(
-											destination, ada_toSearchAdapter);
-									if (suggestion.length() > 0) {
-										actv_ToSearch.setText(suggestion);
-									} else {
-										actv_ToSearch.setText(destination);
-									}
-								}
-
 								updateText();
-								dialog.dismiss();
+								d.dismiss();
+
+								if (settings.getBoolean("CompleteToStation",
+										true)) {
+									System.out
+											.println("Starting DownloadJourneyDetailTask()");
+									String[] journeyDetails = new String[] {
+											selection.get(5), selection.get(6),
+											selection.get(7), selection.get(8), };
+									dialog = ProgressDialog
+											.show(AddActivity.this,
+													getString(R.string.add_new_headcode_schedule_progress_title),
+													getString(R.string.add_new_headcode_schedule_progress_text),
+													true);
+									dialog.setCancelable(true);
+
+									new DownloadJourneyDetailTask()
+											.execute(journeyDetails);
+								}
 							}
 						});
 				AlertDialog alert = builder.create();
 				alert.show();
 			} else { // resultList.get(0).get(0) == "ERROR"
-				Toast.makeText(getApplicationContext(), resultList.get(0).get(1),
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(),
+						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
 			}
 		}
+	}
 
-		private String autoComplete(String criteria,
-				ArrayAdapter<String> completions) {
-			// System.out.println("AutoCompleting...");
-			for (int j = 0; j < completions.getCount(); j++) {
-				String suggestion = (String) completions.getItem(j);
-				String stationName = Helpers.trimCodeFromStation(suggestion,
-						getApplicationContext());
-				// System.out.println(suggestion + "==" + criteria);
-				if (criteria.equals(stationName)) {
-					// System.out.println("MATCH");
-					return suggestion;
+	private class DownloadJourneyDetailTask extends
+			AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+
+		protected ArrayList<ArrayList<String>> doInBackground(
+				String[]... journeyDetails) {
+			ArrayList<ArrayList<String>> formattedStations = new ArrayList<ArrayList<String>>();
+
+			ArrayList<String> result = new ArrayList<String>();
+			String dataError = getString(R.string.add_new_headcode_error_default_schedule);
+
+			String[] journeyDetail = journeyDetails[0];
+			String journeyID = journeyDetail[0];
+			String year = journeyDetail[1];
+			String month = journeyDetail[2];
+			String day = journeyDetail[3];
+
+			try {
+				URL url = new URL("http://trains.im/schedule/" + journeyID
+						+ "/" + year + "/" + month + "/" + day);
+				System.out.println("Fetching journey detail from: "
+						+ url.toString());
+
+				StringBuilder builder = new StringBuilder();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(url.openStream(), "UTF-8"));
+
+				for (String line; (line = reader.readLine()) != null;) {
+					builder.append(line.trim());
 				}
+
+				String tableStart = "<table class=\"table table-striped\">";
+				String tableEnd = "</table>";
+				if (builder.indexOf(tableStart) < 0) {
+					result.add("ERROR");
+					result.add(dataError);
+					formattedStations.set(0, result);
+				} else {
+					String tablePart = builder.substring(builder
+							.indexOf(tableStart) + tableStart.length());
+					// System.out.println(tablePart);
+					String table = tablePart.substring(0,
+							tablePart.indexOf(tableEnd));
+
+					String bodyStart = "<tbody>";
+					String bodyEnd = "</tbody>";
+					if (table.indexOf(bodyStart) < 0) {
+						result.add("ERROR");
+						result.add(dataError);
+						formattedStations.set(0, result);
+					} else {
+						String bodyPart = table.substring(table
+								.indexOf(bodyStart) + bodyStart.length());
+						String body = bodyPart.substring(0,
+								bodyPart.indexOf(bodyEnd));
+
+						String rowStart = "<tr";
+						String rowEnd = "</tr>";
+						ArrayList<String> rows = new ArrayList<String>();
+
+						String[] rawRows = body.split(Pattern.quote(rowStart));
+						for (int r = 1; r < rawRows.length; r++) {
+							String row = rawRows[r];
+							rows.add(row);
+							System.out.println("Added row " + r + ": " + row);
+						}
+
+						ArrayList<ArrayList<String>> stations = new ArrayList<ArrayList<String>>();
+
+						for (int r = 0; r < rows.size(); r++) {
+							String row = rows.get(r);
+
+							// Split into array of cells
+							String cellStart = "<td";
+							String cellEnd = "</";
+
+							ArrayList<String> cells = new ArrayList<String>();
+							String[] rawCells = row.split(Pattern
+									.quote(cellStart));
+							for (int i = 0; i < rawCells.length; i++) {
+								cells.add(rawCells[i]);
+							}
+							cells.remove(0);
+
+							ArrayList<String> station = new ArrayList<String>();
+
+							// Get cell contents and remove any more HTML tags
+							// from inside
+							for (int c = 0; c < cells.size(); c++) {
+								String cellPart = cells.get(c);
+								String cell = cellPart.substring(
+										cellPart.indexOf(">") + 1,
+										cellPart.indexOf(cellEnd));
+								cells.set(c, android.text.Html.fromHtml(cell)
+										.toString());
+							}
+
+							// Pick out elements
+							String stnName = cells.get(0);
+							String stnCode = stnName
+									.substring(stnName.length() - 3);
+							stnName = stnName
+									.substring(0, stnName.length() - 5);
+
+							String platform = cells.get(1);
+							if (platform == " ") {
+								platform = ""
+										+ getText(R.string.add_new_headcode_results_no_platform);
+							}
+							// System.out.println("Station: " + stnName);
+							// System.out.println("Code: " + stnCode);
+							// System.out.println("Platform: " + cells.get(1));
+							// System.out.println("Arrival: " + cells.get(2));
+							// System.out.println("Departure: " + cells.get(3));
+
+							String line = stnName + "(" + stnCode + ")";
+							String time = cells.get(2);
+							if (!time.matches("[0-9]{4}")) {
+								time = "" + cells.get(3);
+							}
+
+							line += ": " + time;
+							station.add(stnName);
+							station.add(stnCode);
+							station.add(time);
+
+							result.clear();
+							result.add("SUCCESS");
+							result.add("" + stations.size());
+
+							if (formattedStations.size() == 0) {
+								formattedStations.add(result);
+								formattedStations.add(station);
+							} else {
+								formattedStations.set(0, result);
+								formattedStations.add(station);
+							}
+						}
+					}
+				}
+
+				try {
+					reader.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					System.err.println(e.getStackTrace());
+				}
+
+			} catch (UnsupportedEncodingException e) {
+				System.err.println(e.getMessage());
+				System.err.println(e.getStackTrace());
+				result.add("ERROR");
+				result.add(getString(R.string.add_new_headcode_error_invalid));
+				formattedStations.set(0, result);
+			} catch (IOException e) {
+				result.add("ERROR");
+				result.add(getString(R.string.add_new_headcode_error_io));
+				formattedStations.set(0, result);
 			}
-			return "";
+
+			return formattedStations;
+		}
+
+		protected void onPostExecute(
+				final ArrayList<ArrayList<String>> resultList) {
+			dialog.dismiss();
+			if (resultList.get(0).get(0) == "SUCCESS") {
+				resultList.remove(0);
+				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+				tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+
+				String[] presentedResults = new String[resultList.size()];
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						AddActivity.this);
+				builder.setTitle(getString(R.string.add_new_headcode_schedule_results_title));
+
+				for (int i = 0; i < resultList.size(); i++) {
+					ArrayList<String> result = resultList.get(i);
+					System.out.println("Result #" + i + ": " + result);
+					presentedResults[i] = result.get(2) + ": " + result.get(0);
+				}
+
+				builder.setSingleChoiceItems(presentedResults, -1,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface d, int i) {
+								ArrayList<String> selection = resultList.get(i);
+								String destination = "" + selection.get(1)
+										+ " " + selection.get(0);
+								actv_ToSearch.setText(destination);
+
+								String time = selection.get(2);
+								if (time.matches("[0-9]{4}")) {
+									int hrs = Integer.parseInt(time.substring(
+											0, 2));
+									int min = Integer.parseInt(time.substring(
+											2, 4));
+
+									tp_ToTime.setCurrentHour(hrs);
+									tp_ToTime.setCurrentMinute(min);
+								}
+
+								updateText();
+								d.dismiss();
+							}
+						});
+				AlertDialog alert = builder.create();
+				alert.show();
+			} else { // resultList.get(0).get(0) == "ERROR"
+				Toast.makeText(getApplicationContext(),
+						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 }
