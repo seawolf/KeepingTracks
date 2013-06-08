@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -1019,9 +1020,24 @@ public class AddActivity extends TabActivity {
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface d, int i) {
+								Context c = getApplicationContext();
+
 								ArrayList<String> selection = resultList.get(i);
 								String destination = "" + selection.get(1)
 										+ " " + selection.get(0);
+								String stationCode = Helpers
+										.trimNameFromStation(selection.get(0),
+												c);
+
+								String[] completions = read_csv("stations.lst");
+								for (String stationName : completions) {
+									if (Helpers.trimNameFromStation(
+											stationName, c) == stationCode) {
+										destination = stationName;
+										break;
+									}
+								}
+
 								actv_ToSearch.setText(destination);
 
 								String time = selection.get(2);
