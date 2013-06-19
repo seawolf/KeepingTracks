@@ -36,8 +36,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="43.69125"
-     inkscape:cy="24.978889"
+     inkscape:cx="-1.7480163"
+     inkscape:cy="18.675802"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,16 +62,16 @@
      transform="translate(0,-1002.3622)">
     <text
        xml:space="preserve"
-       style="font-size:58.24064635999999950px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:3;font-family:Wingdings;-inkscape-font-specification:Wingdings"
-       x="6.046196"
-       y="-1006.3182"
+       style="font-size:72.47784423999999603px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="691.83356"
+       y="-709.53937"
        id="text3781-5"
        sodipodi:linespacing="125%"
-       transform="scale(1,-1)"><tspan
+       transform="matrix(0.72775227,0.73381202,0.68702335,-0.68135,0,0)"><tspan
          sodipodi:role="line"
          id="tspan3783-0"
-         x="6.046196"
-         y="-1006.3182"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;stroke:#ffffff;stroke-width:3;font-family:Wingdings;-inkscape-font-specification:Wingdings;fill:none">S</tspan></text>
+         x="691.83356"
+         y="-709.53937"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans">➲</tspan></text>
   </g>
 </svg>
