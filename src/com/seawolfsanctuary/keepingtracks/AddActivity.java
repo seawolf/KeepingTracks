@@ -1017,16 +1017,15 @@ public class AddActivity extends TabActivity {
 								Context c = getApplicationContext();
 
 								ArrayList<String> selection = resultList.get(i);
+								String destinationCode = selection.get(1);
 								String destination = "" + selection.get(1)
 										+ " " + selection.get(0);
-								String stationCode = Helpers
-										.trimNameFromStation(selection.get(0),
-												c);
 
 								String[] completions = read_csv("stations.lst");
 								for (String stationName : completions) {
-									if (Helpers.trimNameFromStation(
-											stationName, c) == stationCode) {
+									String completionCode = Helpers
+											.trimNameFromStation(stationName, c);
+									if (completionCode.equals(destinationCode)) {
 										destination = stationName;
 										break;
 									}
