@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -989,6 +988,8 @@ public class AddActivity extends TabActivity {
 				result.add(getString(R.string.add_new_headcode_error_invalid));
 				formattedStations.set(0, result);
 			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				System.err.println(e.getStackTrace());
 				result.add("ERROR");
 				result.add(getString(R.string.add_new_headcode_error_io));
 				formattedStations.set(0, result);
@@ -1020,8 +1021,6 @@ public class AddActivity extends TabActivity {
 				builder.setSingleChoiceItems(presentedResults, -1,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface d, int i) {
-								Context c = getApplicationContext();
-
 								ArrayList<String> selection = resultList.get(i);
 								String destinationCode = selection.get(1);
 								String destination = "" + selection.get(1)
@@ -1030,7 +1029,8 @@ public class AddActivity extends TabActivity {
 								String[] completions = read_csv("stations.lst");
 								for (String stationName : completions) {
 									String completionCode = Helpers
-											.trimNameFromStation(stationName, c);
+											.trimNameFromStation(stationName,
+													getApplicationContext());
 									if (completionCode.equals(destinationCode)) {
 										destination = stationName;
 										break;
