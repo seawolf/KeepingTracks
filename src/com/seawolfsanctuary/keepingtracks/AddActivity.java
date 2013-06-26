@@ -510,20 +510,6 @@ public class AddActivity extends TabActivity {
 		return success;
 	}
 
-	public void startDataFileActivity(View view) {
-		template = Helpers.saveCurrentJourney(template, AddActivity.this);
-		if (template == null) {
-			template = new Bundle();
-		}
-
-		Intent intent = new Intent(this, DataFileActivity.class);
-		intent.putExtras(template);
-		startActivity(intent);
-		// TODO: can we finish this if a class is selected from new activity,
-		// but keep it if 'Back' is pushed instead?
-		AddActivity.this.finish();
-	}
-
 	private void foursquareCheckin(Bundle journey) {
 		Intent intent = new Intent(this, CheckinActivity.class);
 		intent.putExtras(journey);
