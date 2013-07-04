@@ -402,9 +402,15 @@ public class AddActivity extends TabActivity {
 
 	public void onHeadcodeCheckboxClicked(View view) {
 		CheckBox chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
+		boolean checked = chk_DetailHeadcode.isChecked();
+		onHeadcodeCheckboxClicked(view, checked);
+	}
+
+	public void onHeadcodeCheckboxClicked(View view, boolean checked) {
+		CheckBox chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 		TextView txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-		txt_DetailHeadcode.setEnabled(((CheckBox) chk_DetailHeadcode)
-				.isChecked());
+		chk_DetailHeadcode.setChecked(checked);
+		txt_DetailHeadcode.setEnabled(checked);
 
 		Helpers.hideKeyboard(view);
 	}
@@ -522,6 +528,7 @@ public class AddActivity extends TabActivity {
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+		chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 
 		String from = actv_FromSearch.getText().toString();
 		String to = actv_ToSearch.getText().toString();
@@ -561,6 +568,7 @@ public class AddActivity extends TabActivity {
 			dialog.setCancelable(true);
 
 			new DownloadJourneysTask().execute(journeyDetails);
+			onHeadcodeCheckboxClicked(view, true);
 		}
 
 	}
@@ -760,7 +768,7 @@ public class AddActivity extends TabActivity {
 								+ " " + platformInfo + ")";
 					}
 
-					presentedResults[i] = result.get(0) + ": " + result.get(1)
+					presentedResults[i] = result.get(1) + ": " + result.get(0)
 							+ " "
 							+ getString(R.string.add_new_headcode_results_to)
 							+ " " + result.get(2) + platformInfo;
