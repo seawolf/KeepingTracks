@@ -29,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ScrollView;
 import android.widget.TabHost;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -63,7 +64,14 @@ public class AddActivity extends TabActivity {
 	TimePicker tp_ToTime;
 	AutoCompleteTextView actv_ToSearch;
 
-	TextView txt_Summary;
+	TextView txt_summary_from_stn_data;
+	TextView txt_summary_from_datetime_data;
+	TextView txt_summary_to_stn_data;
+	TextView txt_summary_to_datetime_data;
+	TableRow trow_summary_class;
+	TextView txt_summary_class_data;
+	TableRow trow_summary_headcode;
+	TextView txt_summary_headcode_data;
 	CheckBox chk_Checkin;
 
 	SharedPreferences settings;
@@ -222,8 +230,7 @@ public class AddActivity extends TabActivity {
 				}
 
 				if (tabID == "tc_Summary") {
-					updateText();
-					txt_Summary = (TextView) findViewById(R.id.txt_Summary);
+					updateSummary();
 					chk_Checkin = (CheckBox) findViewById(R.id.chk_Checkin);
 					actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
@@ -261,7 +268,7 @@ public class AddActivity extends TabActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				updateText();
+				updateSummary();
 				Helpers.hideKeyboard(view);
 			}
 		};
@@ -319,7 +326,7 @@ public class AddActivity extends TabActivity {
 		return array;
 	}
 
-	private void updateText() {
+	private void updateSummary() {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
@@ -331,65 +338,49 @@ public class AddActivity extends TabActivity {
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
-		txt_Summary = (TextView) findViewById(R.id.txt_Summary);
-		String summaryText = constructSummary();
-		txt_Summary.setText(summaryText);
-	}
+		txt_summary_from_stn_data = (TextView) findViewById(R.id.txt_summary_from_stn_data);
+		txt_summary_from_datetime_data = (TextView) findViewById(R.id.txt_summary_from_datetime_data);
+		txt_summary_to_stn_data = (TextView) findViewById(R.id.txt_summary_to_stn_data);
+		txt_summary_to_datetime_data = (TextView) findViewById(R.id.txt_summary_to_datetime_data);
+		trow_summary_headcode = (TableRow) findViewById(R.id.trow_summary_headcode);
+		txt_summary_headcode_data = (TextView) findViewById(R.id.txt_summary_headcode_data);
+		trow_summary_class = (TableRow) findViewById(R.id.trow_summary_class);
+		txt_summary_class_data = (TextView) findViewById(R.id.txt_summary_class_data);
 
-	private String constructSummary() {
-		String summary = "";
+		txt_summary_from_stn_data.setText(Helpers.trimCodeFromStation(
+				actv_FromSearch.getText().toString(), getApplicationContext()));
 
-		summary += getString(R.string.add_summary_from,
-				Helpers.trimCodeFromStation(actv_FromSearch.getText()
-						.toString(), getApplicationContext()));
-
-		summary += "\n";
-
-		summary += getString(R.string.add_summary_on,
+		txt_summary_from_datetime_data.setText(getString(
+				R.string.add_summary_datetime,
 				Helpers.leftPad("" + dp_FromDate.getYear(), 4),
 				Helpers.leftPad("" + (dp_FromDate.getMonth() + 1), 2),
-				Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2));
-
-		summary += "\n";
-
-		summary += getString(R.string.add_summary_at,
+				Helpers.leftPad("" + dp_FromDate.getDayOfMonth(), 2),
 				Helpers.leftPad("" + tp_FromTime.getCurrentHour(), 2),
-				Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2));
+				Helpers.leftPad("" + tp_FromTime.getCurrentMinute(), 2)));
 
-		summary += "\n";
-		summary += "\n";
+		txt_summary_to_stn_data.setText(Helpers.trimCodeFromStation(
+				actv_ToSearch.getText().toString(), getApplicationContext()));
 
-		summary += getString(R.string.add_summary_to,
-				Helpers.trimCodeFromStation(actv_ToSearch.getText().toString(),
-						getApplicationContext()));
-
-		summary += "\n";
-
-		summary += getString(R.string.add_summary_on,
+		txt_summary_to_datetime_data.setText(getString(
+				R.string.add_summary_datetime,
 				Helpers.leftPad("" + dp_ToDate.getYear(), 4),
 				Helpers.leftPad("" + (dp_ToDate.getMonth() + 1), 2),
-				Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2));
-
-		summary += "\n";
-
-		summary += getString(R.string.add_summary_at,
+				Helpers.leftPad("" + dp_ToDate.getDayOfMonth(), 2),
 				Helpers.leftPad("" + tp_ToTime.getCurrentHour(), 2),
-				Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2));
+				Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2)));
 
 		if (settings.getBoolean("AdvancedJourneys", false) == true) {
-			summary += "\n";
-			summary += "\n";
+			trow_summary_headcode.setVisibility(View.VISIBLE);
+			trow_summary_class.setVisibility(View.VISIBLE);
 
-			summary += getString(R.string.add_summary_with, txt_DetailClass
-					.getText().toString());
-
-			summary += "\n";
-
-			summary += getString(R.string.add_summary_as, txt_DetailHeadcode
-					.getText().toString());
+			txt_summary_headcode_data.setText(txt_DetailHeadcode.getText()
+					.toString());
+			txt_summary_class_data
+					.setText(txt_DetailClass.getText().toString());
+		} else {
+			trow_summary_headcode.setVisibility(View.GONE);
+			trow_summary_class.setVisibility(View.GONE);
 		}
-
-		return summary;
 	}
 
 	public void onClassCheckboxClicked(View view) {
@@ -797,7 +788,7 @@ public class AddActivity extends TabActivity {
 									tp_FromTime.setCurrentHour(hours);
 									tp_FromTime.setCurrentMinute(minutes);
 								}
-								updateText();
+								updateSummary();
 								d.dismiss();
 
 								if (settings.getBoolean("CompleteToStation",
@@ -1044,7 +1035,7 @@ public class AddActivity extends TabActivity {
 									tp_ToTime.setCurrentMinute(min);
 								}
 
-								updateText();
+								updateSummary();
 								d.dismiss();
 							}
 						});
