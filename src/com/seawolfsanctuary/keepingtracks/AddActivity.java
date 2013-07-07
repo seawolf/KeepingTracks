@@ -574,6 +574,8 @@ public class AddActivity extends TabActivity {
 			ArrayList<String> result = new ArrayList<String>();
 			String dataError = getString(R.string.add_new_headcode_error_default_depboard);
 
+			result.add("ERROR");
+			result.add(dataError);
 			formattedJourneys.add(result);
 
 			String[] journeyDetails = journeysDetails[0];
@@ -609,11 +611,7 @@ public class AddActivity extends TabActivity {
 
 				String tableStart = "<table class=\"table table-striped\">";
 				String tableEnd = "</table>";
-				if (builder.indexOf(tableStart) < 0) {
-					result.add("ERROR");
-					result.add(dataError);
-					formattedJourneys.set(0, result);
-				} else {
+				if (builder.indexOf(tableStart) > 0) {
 					String tablePart = builder.substring(builder
 							.indexOf(tableStart) + tableStart.length());
 					// System.out.println(tablePart);
@@ -622,11 +620,7 @@ public class AddActivity extends TabActivity {
 
 					String bodyStart = "<tbody>";
 					String bodyEnd = "</tbody>";
-					if (table.indexOf(bodyStart) < 0) {
-						result.add("ERROR");
-						result.add(dataError);
-						formattedJourneys.set(0, result);
-					} else {
+					if (table.indexOf(bodyStart) > 0) {
 						String bodyPart = table.substring(table
 								.indexOf(bodyStart) + bodyStart.length());
 						String body = bodyPart.substring(0,
@@ -725,10 +719,12 @@ public class AddActivity extends TabActivity {
 			} catch (UnsupportedEncodingException e) {
 				System.err.println(e.getMessage());
 				System.err.println(e.getStackTrace());
+				result.clear();
 				result.add("ERROR");
 				result.add(getString(R.string.add_new_headcode_error_invalid));
 				formattedJourneys.set(0, result);
 			} catch (IOException e) {
+				result.clear();
 				result.add("ERROR");
 				result.add(getString(R.string.add_new_headcode_error_io));
 				formattedJourneys.set(0, result);
@@ -828,6 +824,9 @@ public class AddActivity extends TabActivity {
 
 			ArrayList<String> result = new ArrayList<String>();
 			String dataError = getString(R.string.add_new_headcode_error_default_schedule);
+			result.add("ERROR");
+			result.add(dataError);
+			formattedStations.add(result);
 
 			String[] journeyDetail = journeyDetails[0];
 			String journeyID = journeyDetail[0];
@@ -851,11 +850,7 @@ public class AddActivity extends TabActivity {
 
 				String tableStart = "<table class=\"table table-striped\">";
 				String tableEnd = "</table>";
-				if (builder.indexOf(tableStart) < 0) {
-					result.add("ERROR");
-					result.add(dataError);
-					formattedStations.set(0, result);
-				} else {
+				if (builder.indexOf(tableStart) > 0) {
 					String tablePart = builder.substring(builder
 							.indexOf(tableStart) + tableStart.length());
 					// System.out.println(tablePart);
@@ -864,11 +859,7 @@ public class AddActivity extends TabActivity {
 
 					String bodyStart = "<tbody>";
 					String bodyEnd = "</tbody>";
-					if (table.indexOf(bodyStart) < 0) {
-						result.add("ERROR");
-						result.add(dataError);
-						formattedStations.set(0, result);
-					} else {
+					if (table.indexOf(bodyStart) > 0) {
 						String bodyPart = table.substring(table
 								.indexOf(bodyStart) + bodyStart.length());
 						String body = bodyPart.substring(0,
@@ -925,10 +916,12 @@ public class AddActivity extends TabActivity {
 							String platform = cells.get(1);
 							String arrTime = cells.get(2);
 							String depTime = cells.get(3);
+
 							if (platform == " ") {
 								platform = ""
 										+ getText(R.string.add_new_headcode_results_no_platform);
 							}
+
 							// System.out.println("Station: " + stnName);
 							// System.out.println("Code: " + stnCode);
 							// System.out.println("Platform: " + platform);
