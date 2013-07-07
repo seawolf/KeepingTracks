@@ -577,8 +577,8 @@ public class AddActivity extends TabActivity {
 			formattedJourneys.add(result);
 
 			String[] journeyDetails = journeysDetails[0];
-			String fromStation = journeyDetails[0];
-			String toStation = journeyDetails[1];
+			String fromStation = journeyDetails[0].toString().toUpperCase();
+			String toStation = journeyDetails[1].toString().toUpperCase();
 			String hour = journeyDetails[2];
 			String minute = journeyDetails[3];
 			String year = journeyDetails[4];
@@ -923,23 +923,23 @@ public class AddActivity extends TabActivity {
 									.substring(0, stnName.length() - 5);
 
 							String platform = cells.get(1);
+							String arrTime = cells.get(2);
+							String depTime = cells.get(3);
 							if (platform == " ") {
 								platform = ""
 										+ getText(R.string.add_new_headcode_results_no_platform);
 							}
 							// System.out.println("Station: " + stnName);
 							// System.out.println("Code: " + stnCode);
-							// System.out.println("Platform: " + cells.get(1));
-							// System.out.println("Arrival: " + cells.get(2));
-							// System.out.println("Departure: " + cells.get(3));
+							// System.out.println("Platform: " + platform);
+							// System.out.println("Arrival: " + arrTime);
+							// System.out.println("Departure: " + depTime);
 
-							String line = stnName + "(" + stnCode + ")";
-							String time = cells.get(2);
+							String time = arrTime;
 							if (!time.matches("[0-9]{4}")) {
-								time = "" + cells.get(3);
+								time = "" + depTime;
 							}
 
-							line += ": " + time;
 							station.add(stnName);
 							station.add(stnCode);
 							station.add(time);
