@@ -21,6 +21,7 @@
     <string name="add_new_headcode_error_from_blank">Enter a \'From\' station code to fetch journeys.</string>
     <string name="add_new_headcode_error_default_depboard">Unable to parse data. Check the \'From\' station is correct.</string>
     <string name="add_new_headcode_error_default_schedule">Unable to parse data. Enter the \'To\' station manually.</string>
+    <string name="add_new_headcode_error_last_station">No further calling points on this service.</string>
     <string name="add_new_headcode_error_invalid">Received data was not in the expected format.</string>
     <string name="add_new_headcode_error_io">Network error. Check your Internet connection.</string>
     <string name="add_new_headcode_depboard_progress_title">Downloading Departures</string>

@@ -793,7 +793,8 @@ public class AddActivity extends TabActivity {
 											.println("Starting DownloadJourneyDetailTask()");
 									String[] journeyDetails = new String[] {
 											selection.get(5), selection.get(6),
-											selection.get(7), selection.get(8), };
+											selection.get(7), selection.get(8),
+											selection.get(1) };
 									dialog = ProgressDialog
 											.show(AddActivity.this,
 													getString(R.string.add_new_headcode_schedule_progress_title),
@@ -833,6 +834,7 @@ public class AddActivity extends TabActivity {
 			String year = journeyDetail[1];
 			String month = journeyDetail[2];
 			String day = journeyDetail[3];
+			String fromTime = journeyDetail[4];
 
 			try {
 				URL url = new URL("http://trains.im/schedule/" + journeyID
@@ -937,16 +939,18 @@ public class AddActivity extends TabActivity {
 							station.add(stnCode);
 							station.add(time);
 
-							result.clear();
-							result.add("SUCCESS");
-							result.add("" + stations.size());
+							if (Integer.parseInt(fromTime) < Integer
+									.parseInt(time)) {
+								result.clear();
+								result.add("SUCCESS");
 
-							if (formattedStations.size() == 0) {
-								formattedStations.add(result);
-								formattedStations.add(station);
-							} else {
-								formattedStations.set(0, result);
-								formattedStations.add(station);
+								if (formattedStations.size() == 0) {
+									formattedStations.add(result);
+									formattedStations.add(station);
+								} else {
+									formattedStations.set(0, result);
+									formattedStations.add(station);
+								}
 							}
 						}
 					}
@@ -957,6 +961,13 @@ public class AddActivity extends TabActivity {
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 					System.err.println(e.getStackTrace());
+				}
+
+				if (formattedStations.get(0).get(0).equals("ERROR")) {
+					formattedStations.clear();
+					result.add("ERROR");
+					result.add(getString(R.string.add_new_headcode_error_last_station));
+					formattedStations.set(0, result);
 				}
 
 			} catch (UnsupportedEncodingException e) {
