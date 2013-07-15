@@ -835,6 +835,7 @@ public class AddActivity extends TabActivity {
 			String month = journeyDetail[2];
 			String day = journeyDetail[3];
 			String fromTime = journeyDetail[4];
+			boolean passedStationInSchedule = false;
 
 			try {
 				URL url = new URL("http://trains.im/schedule/" + journeyID
@@ -941,6 +942,10 @@ public class AddActivity extends TabActivity {
 
 							if (Integer.parseInt(fromTime) < Integer
 									.parseInt(time)) {
+								passedStationInSchedule = true;
+							}
+
+							if (passedStationInSchedule) {
 								result.clear();
 								result.add("SUCCESS");
 
