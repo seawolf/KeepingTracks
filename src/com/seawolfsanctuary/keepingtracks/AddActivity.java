@@ -658,6 +658,7 @@ public class AddActivity extends TabActivity {
 							// get journey ID from headcode a[@href]
 							String link = cells.get(0);
 							System.out.println("Link: " + link);
+
 							int linkPos = link.indexOf("href") + 6;
 							int linkSepPos = linkPos - 1;
 							String sep = "" + link.charAt(linkSepPos);
@@ -666,11 +667,12 @@ public class AddActivity extends TabActivity {
 							String linkHref = link.substring(linkPos,
 									secondSepPos - 1);
 
-							int idStart = linkHref.indexOf("/") + 10;
-							String journeyPart = linkHref.substring(idStart);
-							int idLength = journeyPart.indexOf("/");
-							String journeyId = journeyPart.substring(0,
-									idLength);
+							System.out.println("Link HREF:" + linkHref);
+							String[] journeyParts = linkHref.split("/");
+							String journeyId = journeyParts[2];
+							year = journeyParts[3];
+							month = journeyParts[4];
+							day = journeyParts[5];
 
 							// Get cell contents and remove any more HTML tags
 							// from inside
@@ -830,16 +832,16 @@ public class AddActivity extends TabActivity {
 			formattedStations.add(result);
 
 			String[] journeyDetail = journeyDetails[0];
-			String journeyID = journeyDetail[0];
-			String year = journeyDetail[1];
-			String month = journeyDetail[2];
-			String day = journeyDetail[3];
+			String journeyId = journeyDetail[0];
+			String fromYear = journeyDetail[1];
+			String fromMonth = journeyDetail[2];
+			String fromDay = journeyDetail[3];
 			String fromTime = journeyDetail[4];
 			boolean passedStationInSchedule = false;
 
 			try {
-				URL url = new URL("http://trains.im/schedule/" + journeyID
-						+ "/" + year + "/" + month + "/" + day);
+				URL url = new URL("http://trains.im/schedule/" + journeyId
+						+ "/" + fromYear + "/" + fromMonth + "/" + fromDay);
 				System.out.println("Fetching journey detail from: "
 						+ url.toString());
 
@@ -884,7 +886,7 @@ public class AddActivity extends TabActivity {
 						for (int r = 0; r < rows.size(); r++) {
 							String row = rows.get(r);
 
-							// Split into array of cells
+							// Split into array of cellS
 							String cellStart = "<td";
 							String cellEnd = "</";
 
@@ -898,8 +900,26 @@ public class AddActivity extends TabActivity {
 
 							ArrayList<String> station = new ArrayList<String>();
 
-							// Get cell contents and remove any more HTML tags
-							// from inside
+							// get journey ID from headcode a[@href]
+							String link = cells.get(0);
+							System.out.println("Link: " + link);
+
+							int linkPos = link.indexOf("href") + 6;
+							int linkSepPos = linkPos - 1;
+							String sep = "" + link.charAt(linkSepPos);
+
+							int secondSepPos = link.indexOf(sep, linkPos);
+							String linkHref = link.substring(linkPos,
+									secondSepPos - 1);
+
+							System.out.println("Link HREF:" + linkHref);
+							String[] journeyParts = linkHref.split("/");
+							String year = journeyParts[3];
+							String month = journeyParts[4];
+							String day = journeyParts[5];
+
+							// Get contents of all cells and remove
+							// any more HTML tags from inside
 							for (int c = 0; c < cells.size(); c++) {
 								String cellPart = cells.get(c);
 								String cell = cellPart.substring(
@@ -925,11 +945,14 @@ public class AddActivity extends TabActivity {
 										+ getText(R.string.add_new_headcode_results_no_platform);
 							}
 
-							// System.out.println("Station: " + stnName);
-							// System.out.println("Code: " + stnCode);
-							// System.out.println("Platform: " + platform);
-							// System.out.println("Arrival: " + arrTime);
-							// System.out.println("Departure: " + depTime);
+							System.out.println("Station: " + stnName);
+							System.out.println("Code: " + stnCode);
+							System.out.println("Platform: " + platform);
+							System.out.println("Arrival: " + arrTime);
+							System.out.println("Departure: " + depTime);
+							System.out.println("Year: " + year);
+							System.out.println("Month: " + month);
+							System.out.println("Day: " + day);
 
 							String time = arrTime;
 							if (!time.matches("[0-9]{4}")) {
@@ -939,9 +962,22 @@ public class AddActivity extends TabActivity {
 							station.add(stnName);
 							station.add(stnCode);
 							station.add(time);
+							station.add(year);
+							station.add(month);
+							station.add(day);
 
-							if (Integer.parseInt(fromTime) < Integer
-									.parseInt(time)) {
+							System.out.println("Station: " + station);
+							boolean laterToday = (Integer.parseInt(fromTime) < Integer
+									.parseInt(time)
+									&& fromYear.equals(year)
+									&& fromMonth.equals(month) && fromDay
+									.equals(day));
+							boolean tommorrow = (Integer.parseInt(year) > Integer
+									.parseInt(fromYear)
+									|| Integer.parseInt(month) > Integer
+											.parseInt(fromMonth) || Integer
+									.parseInt(day) > Integer.parseInt(fromDay));
+							if (laterToday || tommorrow) {
 								passedStationInSchedule = true;
 							}
 
@@ -999,6 +1035,7 @@ public class AddActivity extends TabActivity {
 				resultList.remove(0);
 				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+				dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 				tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
 				String[] presentedResults = new String[resultList.size()];
@@ -1016,6 +1053,8 @@ public class AddActivity extends TabActivity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface d, int i) {
 								ArrayList<String> selection = resultList.get(i);
+								System.out.println("Selected #" + i + ": "
+										+ selection);
 								String destinationCode = selection.get(1);
 								String destination = "" + selection.get(1)
 										+ " " + selection.get(0);
@@ -1043,6 +1082,11 @@ public class AddActivity extends TabActivity {
 									tp_ToTime.setCurrentHour(hrs);
 									tp_ToTime.setCurrentMinute(min);
 								}
+
+								int year = Integer.parseInt(selection.get(3));
+								int month = Integer.parseInt(selection.get(4));
+								int day = Integer.parseInt(selection.get(5));
+								dp_ToDate.updateDate(year, month - 1, day);
 
 								updateSummary();
 								d.dismiss();
