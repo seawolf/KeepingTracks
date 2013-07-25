@@ -6,16 +6,36 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/data_file_image"
-        android:layout_width="wrap_content"
-        android:layout_height="90dp" >
-    </ImageView>
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/data_file_image"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/data_file_class_used"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="top"
+            android:gravity="right"
+            android:shadowColor="#000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:text="@string/data_file_used"
+            android:textSize="25sp" >
+        </TextView>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/data_file_caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
         android:gravity="center"
         android:text="@string/dotdotdot" >
     </TextView>
