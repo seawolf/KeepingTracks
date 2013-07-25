@@ -27,6 +27,7 @@
             android:shadowDy="2"
             android:shadowRadius="4"
             android:text="@string/data_file_used"
+            android:textColor="#00FF00"
             android:textSize="25sp" >
         </TextView>
     </FrameLayout>
