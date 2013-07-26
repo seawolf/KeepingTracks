@@ -292,12 +292,9 @@ public class DataFileActivity extends Activity {
 	}
 
 	public class ImageAdapter extends BaseAdapter {
-		private Context mContext;
-
 		public ArrayList<String> entries = loadDataFile(true);
 
 		public ImageAdapter(Context c) {
-			mContext = c;
 			data = parseEntries(entries);
 			names = new ArrayList<String>(getNames(data));
 		}
