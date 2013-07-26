@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -15,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -35,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.seawolfsanctuary.keepingtracks.database.Journey;
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
 public class DataFileActivity extends Activity {
@@ -42,6 +45,7 @@ public class DataFileActivity extends Activity {
 	private Bundle template;
 	private ArrayList<String> names;
 	private ArrayList<String[]> data;
+	protected ArrayList<String> classesUsed;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,6 +79,8 @@ public class DataFileActivity extends Activity {
 		if (template == null) {
 			template = new Bundle();
 		}
+
+		classesUsed = loadClassesUsed();
 
 		setContentView(R.layout.data_file_activity);
 
@@ -324,6 +330,12 @@ public class DataFileActivity extends Activity {
 				iv.setImageResource(R.drawable.data_file_unknown);
 			}
 
+			if (classesUsed.contains(classNo)) {
+				TextView tv_class_used = (TextView) v
+						.findViewById(R.id.data_file_class_used);
+				tv_class_used.setVisibility(tv_class_used.VISIBLE);
+			}
+
 			return v;
 		}
 
@@ -420,6 +432,43 @@ public class DataFileActivity extends Activity {
 
 			return data;
 		}
+	}
+
+	private ArrayList<String> loadClassesUsed() {
+		ArrayList<String> rawClassesUsed = new ArrayList<String>();
+		SharedPreferences settings = getSharedPreferences(
+				UserPrefsActivity.APP_PREFS, MODE_PRIVATE);
+
+		Journey db_journeys = new Journey(this);
+		db_journeys.open();
+
+		Cursor c;
+		if (settings.getBoolean("AlwaysUseStats", false) == true) {
+			c = db_journeys.getAllJourneys();
+		} else {
+			c = db_journeys.getAllStatsJourneys();
+		}
+
+		if (c.moveToFirst()) {
+			do {
+				System.out.println("Reading row #" + c.getInt(0) + "...");
+				rawClassesUsed.add(c.getString(13));
+			} while (c.moveToNext());
+		}
+		db_journeys.close();
+
+		ArrayList<String> classesUsed = new ArrayList<String>();
+		for (String journeyClasses : rawClassesUsed) {
+			for (String classUsed : Journey
+					.classesStringToArrayList(journeyClasses)) {
+				if (!classesUsed.contains(classUsed)) {
+					classesUsed.add(classUsed);
+				}
+			}
+		}
+
+		Collections.sort(classesUsed);
+		return classesUsed;
 	}
 
 	private class DownloadBundleTask extends AsyncTask<Void, String, Boolean> {
