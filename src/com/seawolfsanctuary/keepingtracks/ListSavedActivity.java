@@ -3,9 +3,10 @@ package com.seawolfsanctuary.keepingtracks;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.holoeverywhere.widget.ExpandableListView;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,9 +17,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -26,13 +24,16 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 
-public class ListSavedActivity extends ExpandableListActivity implements
+public class ListSavedActivity extends
+		org.holoeverywhere.app.ExpandableListActivity implements
 		OnScrollListener {
 
 	SharedPreferences settings;
@@ -44,43 +45,76 @@ public class ListSavedActivity extends ExpandableListActivity implements
 	int scrollY;
 	int totalAvailable = -1;
 
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
-	 * inflater = getMenuInflater(); inflater.inflate(R.menu.context_menu_list,
-	 * menu); return true; }
-	 * 
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
-	 * item selection switch (item.getItemId()) { case R.id.add_new: Intent
-	 * intent = new Intent(this, AddActivity.class);
-	 * ListSavedActivity.this.finish(); startActivity(intent); return true; case
-	 * R.id.import_csv: final Context context = this; new
-	 * AlertDialog.Builder(context)
-	 * .setTitle(getString(R.string.list_saved_import_title)) .setMessage(
-	 * getString(R.string.list_saved_import_text, Helpers.exportDirectoryPath +
-	 * "/routes.csv")) .setPositiveButton(
-	 * getString(R.string.list_saved_import_positive), new OnClickListener() {
-	 * public void onClick(DialogInterface arg0, int arg1) { ProgressDialog
-	 * progressDialog = new ProgressDialog( context); progressDialog
-	 * .setProgressStyle(ProgressDialog.STYLE_SPINNER); progressDialog
-	 * .setTitle(getString(R.string.list_saved_import_progress_title));
-	 * progressDialog .setMessage(getString(
-	 * R.string.list_saved_import_progress_text, Helpers.exportDirectoryPath +
-	 * "/routes.csv")); progressDialog.setCancelable(false); new
-	 * ImportTask(progressDialog) .execute(Helpers.exportDirectoryPath +
-	 * "/routes.csv"); } }) .setNegativeButton(
-	 * getString(R.string.list_saved_import_negative), new OnClickListener() {
-	 * public void onClick(DialogInterface arg0, int arg1) { // ignore }
-	 * }).show(); return true; case R.id.export_csv: ProgressDialog
-	 * progressDialog = new ProgressDialog(this);
-	 * progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	 * progressDialog
-	 * .setTitle(getString(R.string.list_saved_export_progress_title));
-	 * progressDialog.setMessage(getString(
-	 * R.string.list_saved_export_progress_text, Helpers.exportDirectoryPath +
-	 * "/routes.csv")); progressDialog.setCancelable(false); new
-	 * ExportTask(progressDialog).execute(); return true; default: return true;
-	 * } }
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.context_menu_list, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.add_new:
+			Intent intent = new Intent(this, AddActivity.class);
+			ListSavedActivity.this.finish();
+			startActivity(intent);
+			return true;
+		case R.id.import_csv:
+			final Context context = this;
+			new AlertDialog.Builder(context)
+					.setTitle(getString(R.string.list_saved_import_title))
+					.setMessage(
+							getString(R.string.list_saved_import_text,
+									Helpers.exportDirectoryPath + "/routes.csv"))
+					.setPositiveButton(
+							getString(R.string.list_saved_import_positive),
+							new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									ProgressDialog progressDialog = new ProgressDialog(
+											context);
+									progressDialog
+											.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+									progressDialog
+											.setTitle(getString(R.string.list_saved_import_progress_title));
+									progressDialog
+											.setMessage(getString(
+													R.string.list_saved_import_progress_text,
+													Helpers.exportDirectoryPath
+															+ "/routes.csv"));
+									progressDialog.setCancelable(false);
+									new ImportTask(progressDialog)
+											.execute(Helpers.exportDirectoryPath
+													+ "/routes.csv");
+								}
+							})
+					.setNegativeButton(
+							getString(R.string.list_saved_import_negative),
+							new OnClickListener() {
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									// ignore
+								}
+							}).show();
+			return true;
+		case R.id.export_csv:
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog
+					.setTitle(getString(R.string.list_saved_export_progress_title));
+			progressDialog.setMessage(getString(
+					R.string.list_saved_export_progress_text,
+					Helpers.exportDirectoryPath + "/routes.csv"));
+			progressDialog.setCancelable(false);
+			new ExportTask(progressDialog).execute();
+			return true;
+		default:
+			return true;
+		}
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -171,13 +205,13 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			ArrayList<String> names = new ArrayList<String>();
 			for (int i = 0; i < data.size(); i++) {
 				String[] entry = data.get(i);
-				names.add(getString(
-						R.string.list_saved_entry_name,
-						Helpers.trimCodeFromStation(entry[0], getApplicationContext()),
-						Helpers.trimCodeFromStation(entry[6], getApplicationContext()),
-						Helpers.leftPad(entry[1], 2),
-						Helpers.leftPad(entry[2], 2),
-						Helpers.leftPad(entry[3], 4)));
+				names.add(getString(R.string.list_saved_entry_name,
+						Helpers.trimCodeFromStation(entry[0],
+								getApplicationContext()), Helpers
+								.trimCodeFromStation(entry[6],
+										getApplicationContext()), Helpers
+								.leftPad(entry[1], 2), Helpers.leftPad(
+								entry[2], 2), Helpers.leftPad(entry[3], 4)));
 			}
 			return names;
 		}
@@ -190,20 +224,20 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				ArrayList<String> split = new ArrayList<String>();
 
 				split.add(getString(R.string.list_saved_entry_from, Helpers
-						.nameAndCodeFromStation(entry[0], getApplicationContext()),
-						Helpers.leftPad(entry[3], 2), Helpers.leftPad(entry[2],
-								2), Helpers.leftPad(entry[1], 2),
+						.nameAndCodeFromStation(entry[0],
+								getApplicationContext()), Helpers.leftPad(
+						entry[3], 2), Helpers.leftPad(entry[2], 2), Helpers
+						.leftPad(entry[1], 2),
 
-						Helpers.leftPad(entry[4], 2), Helpers.leftPad(entry[5],
-								2)));
+				Helpers.leftPad(entry[4], 2), Helpers.leftPad(entry[5], 2)));
 
 				split.add(getString(R.string.list_saved_entry_to, Helpers
-						.nameAndCodeFromStation(entry[6], getApplicationContext()),
-						Helpers.leftPad(entry[9], 2), Helpers.leftPad(entry[8],
-								2), Helpers.leftPad(entry[7], 2),
+						.nameAndCodeFromStation(entry[6],
+								getApplicationContext()), Helpers.leftPad(
+						entry[9], 2), Helpers.leftPad(entry[8], 2), Helpers
+						.leftPad(entry[7], 2),
 
-						Helpers.leftPad(entry[10], 2), Helpers.leftPad(
-								entry[11], 2)));
+				Helpers.leftPad(entry[10], 2), Helpers.leftPad(entry[11], 2)));
 
 				if (settings.getBoolean("AdvancedJourneys", false) == true) {
 					if (entry[12].length() > 0) {
@@ -350,7 +384,8 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			}
 
 			System.out.println(msg);
-			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT)
+					.show();
 		}
 		return allJourneys;
 	}
@@ -470,8 +505,9 @@ public class ListSavedActivity extends ExpandableListActivity implements
 			db_journeys.close();
 			success = true;
 
-			Toast.makeText(getApplicationContext(), R.string.list_saved_answer_delete,
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),
+					R.string.list_saved_answer_delete, Toast.LENGTH_SHORT)
+					.show();
 		} catch (Exception e) {
 			Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
@@ -582,7 +618,8 @@ public class ListSavedActivity extends ExpandableListActivity implements
 				msg = getString(R.string.list_saved_export_failed);
 			}
 
-			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+					.show();
 		}
 	}
 

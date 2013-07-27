@@ -38,7 +38,8 @@
             android:theme="@style/Holo.Theme.Dialog" />
         <activity
             android:name="com.seawolfsanctuary.keepingtracks.AddActivity"
-            android:label="@string/add_new" >
+            android:label="@string/add_new"
+            android:theme="@style/Holo.Theme" >
         </activity>
         <activity
             android:name="com.seawolfsanctuary.keepingtracks.ListSavedActivity"

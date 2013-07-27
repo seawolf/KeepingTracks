@@ -2,10 +2,13 @@ package com.seawolfsanctuary.keepingtracks;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.seawolfsanctuary.keepingtracks.foursquare.CheckinActivity;
 import com.seawolfsanctuary.keepingtracks.foursquare.SetupActivity;
 import com.seawolfsanctuary.keepingtracks.stats.StatsActivity;
@@ -14,18 +17,30 @@ public class MenuActivity extends org.holoeverywhere.app.Activity {
 
 	static ProgressDialog loader;
 
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
-	 * inflater = getMenuInflater(); inflater.inflate(R.menu.context_menu_main,
-	 * menu); return true; }
-	 * 
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
-	 * item selection switch (item.getItemId()) { case R.id.website: Uri
-	 * websiteUrl = Uri.parse("" + getText(R.string.website_url)); Intent
-	 * launchBrowser = new Intent(Intent.ACTION_VIEW, websiteUrl);
-	 * startActivity(launchBrowser); return true; case R.id.exit:
-	 * MenuActivity.this.finish(); return true; default: return true; } }
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.context_menu_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.website:
+			Uri websiteUrl = Uri.parse("" + getText(R.string.website_url));
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, websiteUrl);
+			startActivity(launchBrowser);
+			return true;
+		case R.id.exit:
+			MenuActivity.this.finish();
+			return true;
+		default:
+			return true;
+		}
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

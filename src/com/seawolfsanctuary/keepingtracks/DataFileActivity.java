@@ -33,6 +33,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
@@ -43,20 +46,30 @@ public class DataFileActivity extends org.holoeverywhere.app.Activity {
 	private ArrayList<String[]> data;
 	protected ArrayList<String> classesUsed;
 
-	/*
-	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
-	 * inflater = getMenuInflater();
-	 * inflater.inflate(R.menu.context_menu_data_file, menu); return true; }
-	 * 
-	 * @Override public boolean onOptionsItemSelected(MenuItem item) { switch
-	 * (item.getItemId()) { case R.id.download: ProgressDialog progressDialog =
-	 * new ProgressDialog(this);
-	 * progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	 * progressDialog .setTitle(getString(R.string.data_file_download_title));
-	 * progressDialog .setMessage(getString(R.string.data_file_download_text));
-	 * progressDialog.setCancelable(true); new
-	 * DownloadBundleTask(progressDialog).execute(); default: return true; } }
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.context_menu_data_file, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.download:
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			progressDialog
+					.setTitle(getString(R.string.data_file_download_title));
+			progressDialog
+					.setMessage(getString(R.string.data_file_download_text));
+			progressDialog.setCancelable(true);
+			new DownloadBundleTask(progressDialog).execute();
+		default:
+			return true;
+		}
+	}
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
