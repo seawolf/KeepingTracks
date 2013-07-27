@@ -23,6 +23,7 @@
             android:id="@+id/dp_FromDate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:calendarViewShown="false"
             android:padding="10dp" />
 
         <TimePicker
