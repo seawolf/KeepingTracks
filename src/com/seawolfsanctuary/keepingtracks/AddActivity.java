@@ -41,8 +41,6 @@ public class AddActivity extends TabActivity {
 
 	Bundle template;
 
-	TextView txt_Title;
-
 	TabHost mTabHost;
 
 	TextView txt_FromSearch;
@@ -123,8 +121,6 @@ public class AddActivity extends TabActivity {
 
 		template = getIntent().getExtras();
 		Helpers.loadCurrentJourney(template, AddActivity.this);
-
-		txt_Title = (TextView) findViewById(R.id.txt_Title);
 
 		mTabHost = getTabHost();
 		mTabHost.addTab(mTabHost.newTabSpec("tc_From").setIndicator("From")
@@ -283,10 +279,10 @@ public class AddActivity extends TabActivity {
 
 		try {
 			if (template.containsKey("editing")) {
-				txt_Title.setText(R.string.edit_saved);
+				getActionBar().setTitle(R.string.edit_saved);
 			}
 			if (template.containsKey("copying")) {
-				txt_Title.setText(R.string.copy_saved);
+				getActionBar().setTitle(R.string.copy_saved);
 			}
 		} catch (NullPointerException e) {
 			// meh
