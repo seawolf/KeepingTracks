@@ -10,6 +10,12 @@
     <string name="tr_headcode">Journey</string>
     <string name="add_new">Add Journey</string>
     <string name="add_new_empty_stations">The list of stations may not have been loaded correctly.</string>
+    <string name="add_tab_from">From</string>
+    <string name="add_tab_detail">Details</string>
+    <string name="add_tab_to">To</string>
+    <string name="add_tab_summary">Save</string>
+    <string name="add_from_stn_hint">Station name or code</string>
+    <string name="add_to_stn_hint">Station name or code</string>
     <string name="add_use_for_stats">Use for Statistics</string>
     <string name="add_summary_from">From:</string>
     <string name="add_summary_to">To:</string>
@@ -55,7 +61,7 @@
     <string name="list_saved_answer_editing">Editing journey with ID of %s</string>
     <string name="list_saved_answer_copying">Copying journey from position %s</string>
     <string name="list_saved_question_copy">Copy…</string>
-    <string name="list_saved_question_delete">Delete…</string>
+    <string name="list_saved_question_delete">Delete</string>
     <string name="list_saved_answer_delete">Journey deleted.</string>
     <string name="list_saved_autoimport_title">Old Data Found</string>
     <string name="list_saved_autoimport_text">The SD card has a file containing previous journeys.\n\nWould you like to import it into the database?</string>
@@ -75,6 +81,7 @@
     <string name="list_saved_export_progress_text">"Exporting journeys to CSV file at \'%s\' …</string>
     <string name="list_saved_export_success">Journeys exported to %s</string>
     <string name="list_saved_export_failed">Failed to export journeys. Check the SD card is available and writable.</string>
+    <string name="journey_parsing_error">Error parsing old routes: %s</string>
     <string name="headcode_selection">Select Departure</string>
     <string name="data_file">Data File</string>
     <string name="data_file_prompt">Tap a photo to see details, or tap and hold on a photo to view it full-size. Photos can be downloaded from the context menu.</string>
@@ -105,6 +112,7 @@
     <string name="data_file_notes_save">Save</string>
     <string name="data_file_notes_save_error">Notes update failed. Please try again.</string>
     <string name="data_file_menu_download">Download Photo Bundle...</string>
+    <string name="notes_parsing_error">Error parsing old notes: %s</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
     <string name="foursquare_login">Login to Foursquare</string>
     <string name="foursquare_token_current">Saved Token: %s</string>
@@ -117,7 +125,7 @@
     <string name="foursquare_checkin_success">Checked in!</string>
     <string name="foursquare_checkin_failure">Could not check-in.</string>
     <string name="foursquare_venue_select">Places Near You</string>
-    <string name="foursquare_venue_select_prompt">Select then correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
+    <string name="foursquare_venue_select_prompt">Select the correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
     <string name="foursquare_venue_select_visibility_private">Your check-in will be private</string>
     <string name="foursquare_venue_select_visibility_public">Your check-in will be public</string>
     <string name="foursquare_venue_select_shout">Include journey details with check-in</string>
@@ -156,6 +164,7 @@
     <string name="import_csv">Import…</string>
     <string name="export_csv">Export…</string>
     <string name="none">(none)</string>
+    <string name="loading">Loading…</string>
     <string name="dotdotdot">…</string>
     <string name="exit">Exit</string>
     <string name="user_prefs">Preferences</string>
@@ -175,7 +184,5 @@
     <string name="crash_dialog_comment_prompt">Please provide any useful information that may help fix the issue:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
     <string name="crash_clear">Clear Previous Reports</string>
-    <string name="journey_parsing_error">Error parsing old routes: %s</string>
-    <string name="notes_parsing_error">Error parsing old notes: %s</string>
 
 </resources>

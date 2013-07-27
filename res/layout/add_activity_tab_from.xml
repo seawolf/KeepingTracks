@@ -14,7 +14,8 @@
         <AutoCompleteTextView
             android:id="@+id/actv_FromSearch"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:hint="@string/add_from_stn_hint" >
 
             <requestFocus />
         </AutoCompleteTextView>
@@ -23,14 +24,12 @@
             android:id="@+id/dp_FromDate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            android:padding="10dp" />
+            android:calendarViewShown="false" />
 
         <TimePicker
             android:id="@+id/tp_FromTime"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

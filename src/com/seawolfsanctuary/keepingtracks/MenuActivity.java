@@ -59,7 +59,8 @@ public class MenuActivity extends org.holoeverywhere.app.Activity {
 	}
 
 	public void showLoader() {
-		loader = ProgressDialog.show(MenuActivity.this, "", "", true);
+		loader = ProgressDialog.show(MenuActivity.this, "",
+				getString(R.string.loading), true);
 	}
 
 	public static void hideLoader() {

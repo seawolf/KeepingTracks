@@ -123,14 +123,18 @@ public class AddActivity extends TabActivity {
 		Helpers.loadCurrentJourney(template, AddActivity.this);
 
 		mTabHost = getTabHost();
-		mTabHost.addTab(mTabHost.newTabSpec("tc_From").setIndicator("From")
+		mTabHost.addTab(mTabHost.newTabSpec("tc_From")
+				.setIndicator(getString(R.string.add_tab_from))
 				.setContent(R.id.tc_From));
-		mTabHost.addTab(mTabHost.newTabSpec("tc_Detail").setIndicator("Detail")
+		mTabHost.addTab(mTabHost.newTabSpec("tc_Detail")
+				.setIndicator(getString(R.string.add_tab_detail))
 				.setContent(R.id.tc_Detail));
-		mTabHost.addTab(mTabHost.newTabSpec("tc_To").setIndicator("To")
+		mTabHost.addTab(mTabHost.newTabSpec("tc_To")
+				.setIndicator(getString(R.string.add_tab_to))
 				.setContent(R.id.tc_To));
 		mTabHost.addTab(mTabHost.newTabSpec("tc_Summary")
-				.setIndicator("Summary").setContent(R.id.tc_Summary));
+				.setIndicator(getString(R.string.add_tab_summary))
+				.setContent(R.id.tc_Summary));
 
 		if (settings.getBoolean("AdvancedJourneys", false) == false) {
 			mTabHost.getTabWidget().getChildAt(1).setVisibility(View.GONE);
