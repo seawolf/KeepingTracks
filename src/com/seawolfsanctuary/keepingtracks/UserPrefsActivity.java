@@ -2,7 +2,6 @@ package com.seawolfsanctuary.keepingtracks;
 
 import java.io.File;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -10,7 +9,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-public class UserPrefsActivity extends Activity {
+public class UserPrefsActivity extends org.holoeverywhere.app.Activity {
 
 	public static final String APP_PREFS = "Global";
 

@@ -10,7 +10,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -26,7 +25,7 @@ import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 
-public class FavouriteStations extends Activity {
+public class FavouriteStations extends org.holoeverywhere.app.Activity {
 	private XYPlot mySimpleXYPlot;
 
 	@SuppressWarnings("serial")
@@ -108,7 +107,8 @@ public class FavouriteStations extends Activity {
 			}
 
 			// Update
-			stations.add(Helpers.trimNameFromStation(stn, getApplicationContext()));
+			stations.add(Helpers.trimNameFromStation(stn,
+					getApplicationContext()));
 
 			// Save
 			visitCounts.put(visits, stations);

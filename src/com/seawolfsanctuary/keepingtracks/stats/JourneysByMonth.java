@@ -6,7 +6,6 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,7 +21,7 @@ import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 
-public class JourneysByMonth extends Activity {
+public class JourneysByMonth extends org.holoeverywhere.app.Activity {
 	private XYPlot mySimpleXYPlot;
 
 	@Override

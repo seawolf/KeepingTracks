@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -22,7 +21,7 @@ import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 
-public class ClassesUsed extends ListActivity {
+public class ClassesUsed extends org.holoeverywhere.app.ListActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +75,7 @@ public class ClassesUsed extends ListActivity {
 									+ "/class_photos/" + classNo), "image/*");
 					startActivity(i);
 				} else {
-					Toast.makeText(
-							getApplicationContext(),
+					Toast.makeText(getApplicationContext(),
 							getString(R.string.data_file_download_unavailable),
 							Toast.LENGTH_SHORT).show();
 				}

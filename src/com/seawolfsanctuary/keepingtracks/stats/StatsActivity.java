@@ -2,7 +2,6 @@ package com.seawolfsanctuary.keepingtracks.stats;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
 
-public class StatsActivity extends ListActivity {
+public class StatsActivity extends org.holoeverywhere.app.ListActivity {
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<String> activities = new ArrayList<String>();
 
