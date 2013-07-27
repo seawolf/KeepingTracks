@@ -42,7 +42,8 @@
         </activity>
         <activity
             android:name="com.seawolfsanctuary.keepingtracks.ListSavedActivity"
-            android:label="@string/list_saved" >
+            android:label="@string/list_saved"
+            android:theme="@style/Holo.Theme" >
         </activity>
         <activity
             android:name="com.seawolfsanctuary.keepingtracks.DataFileActivity"

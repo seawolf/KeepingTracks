@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,9 +21,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -40,37 +36,27 @@ import android.widget.Toast;
 import com.seawolfsanctuary.keepingtracks.database.Journey;
 import com.seawolfsanctuary.keepingtracks.database.UnitClass;
 
-public class DataFileActivity extends Activity {
+public class DataFileActivity extends org.holoeverywhere.app.Activity {
 
 	private Bundle template;
 	private ArrayList<String> names;
 	private ArrayList<String[]> data;
 	protected ArrayList<String> classesUsed;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu_data_file, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.download:
-			ProgressDialog progressDialog = new ProgressDialog(this);
-			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			progressDialog
-					.setTitle(getString(R.string.data_file_download_title));
-			progressDialog
-					.setMessage(getString(R.string.data_file_download_text));
-			progressDialog.setCancelable(true);
-			new DownloadBundleTask(progressDialog).execute();
-		default:
-			return true;
-		}
-	}
-
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
+	 * inflater = getMenuInflater();
+	 * inflater.inflate(R.menu.context_menu_data_file, menu); return true; }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { switch
+	 * (item.getItemId()) { case R.id.download: ProgressDialog progressDialog =
+	 * new ProgressDialog(this);
+	 * progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	 * progressDialog .setTitle(getString(R.string.data_file_download_title));
+	 * progressDialog .setMessage(getString(R.string.data_file_download_text));
+	 * progressDialog.setCancelable(true); new
+	 * DownloadBundleTask(progressDialog).execute(); default: return true; } }
+	 */
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

@@ -18,16 +18,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -41,7 +37,7 @@ import com.seawolfsanctuary.keepingtracks.Helpers;
 import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 
-public class CheckinActivity extends ListActivity {
+public class CheckinActivity extends org.holoeverywhere.app.ListActivity {
 
 	private Bundle checkin_details = new Bundle();
 
@@ -208,37 +204,25 @@ public class CheckinActivity extends ListActivity {
 		return provider1.equals(provider2);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu_foursquare, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.foursquare_logout:
-			if (Helpers.removeAccessToken() == true) {
-				CheckinActivity.this.finish();
-				Toast.makeText(getApplicationContext(),
-						getString(R.string.foursquare_logout_success),
-						Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(getApplicationContext(),
-						getString(R.string.foursquare_logout_failure),
-
-						Toast.LENGTH_LONG).show();
-			}
-
-			return true;
-		default:
-			System.out.println("Unknown action: " + item.getItemId());
-			return true;
-		}
-	}
-
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
+	 * inflater = getMenuInflater();
+	 * inflater.inflate(R.menu.context_menu_foursquare, menu); return true; }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
+	 * item selection switch (item.getItemId()) { case R.id.foursquare_logout:
+	 * if (Helpers.removeAccessToken() == true) { CheckinActivity.this.finish();
+	 * Toast.makeText(getApplicationContext(),
+	 * getString(R.string.foursquare_logout_success),
+	 * Toast.LENGTH_SHORT).show(); } else {
+	 * Toast.makeText(getApplicationContext(),
+	 * getString(R.string.foursquare_logout_failure),
+	 * 
+	 * Toast.LENGTH_LONG).show(); }
+	 * 
+	 * return true; default: System.out.println("Unknown action: " +
+	 * item.getItemId()); return true; } }
+	 */
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

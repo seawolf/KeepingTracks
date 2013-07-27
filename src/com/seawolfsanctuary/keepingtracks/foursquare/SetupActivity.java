@@ -4,13 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -19,41 +15,30 @@ import com.seawolfsanctuary.keepingtracks.Helpers;
 import com.seawolfsanctuary.keepingtracks.MenuActivity;
 import com.seawolfsanctuary.keepingtracks.R;
 
-public class SetupActivity extends Activity {
+public class SetupActivity extends org.holoeverywhere.app.Activity {
 
 	private static final String CLIENT_ID = fetchClientID();
 	private static final String CLIENT_SECRET = fetchClientSecret();
 	private static final String REDIRECT_URI = fetchRedirectURI();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu_foursquare, menu);
-		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.foursquare_logout:
-			if (Helpers.removeAccessToken() == true) {
-				SetupActivity.this.finish();
-				Toast.makeText(getApplicationContext(),
-						getString(R.string.foursquare_logout_success),
-						Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(getApplicationContext(),
-						getString(R.string.foursquare_logout_failure),
-						Toast.LENGTH_LONG).show();
-			}
-
-			return true;
-		default:
-			System.out.println("Unkown action: " + item.getItemId());
-			return true;
-		}
-	}
-
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
+	 * inflater = getMenuInflater();
+	 * inflater.inflate(R.menu.context_menu_foursquare, menu); return true; }
+	 * 
+	 * public boolean onOptionsItemSelected(MenuItem item) { // Handle item
+	 * selection switch (item.getItemId()) { case R.id.foursquare_logout: if
+	 * (Helpers.removeAccessToken() == true) { SetupActivity.this.finish();
+	 * Toast.makeText(getApplicationContext(),
+	 * getString(R.string.foursquare_logout_success),
+	 * Toast.LENGTH_SHORT).show(); } else {
+	 * Toast.makeText(getApplicationContext(),
+	 * getString(R.string.foursquare_logout_failure), Toast.LENGTH_LONG).show();
+	 * }
+	 * 
+	 * return true; default: System.out.println("Unkown action: " +
+	 * item.getItemId()); return true; } }
+	 */
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

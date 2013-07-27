@@ -44,76 +44,43 @@ public class ListSavedActivity extends ExpandableListActivity implements
 	int scrollY;
 	int totalAvailable = -1;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu_list, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		switch (item.getItemId()) {
-		case R.id.add_new:
-			Intent intent = new Intent(this, AddActivity.class);
-			ListSavedActivity.this.finish();
-			startActivity(intent);
-			return true;
-		case R.id.import_csv:
-			final Context context = this;
-			new AlertDialog.Builder(context)
-					.setTitle(getString(R.string.list_saved_import_title))
-					.setMessage(
-							getString(R.string.list_saved_import_text,
-									Helpers.exportDirectoryPath + "/routes.csv"))
-					.setPositiveButton(
-							getString(R.string.list_saved_import_positive),
-							new OnClickListener() {
-								public void onClick(DialogInterface arg0,
-										int arg1) {
-									ProgressDialog progressDialog = new ProgressDialog(
-											context);
-									progressDialog
-											.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-									progressDialog
-											.setTitle(getString(R.string.list_saved_import_progress_title));
-									progressDialog
-											.setMessage(getString(
-													R.string.list_saved_import_progress_text,
-													Helpers.exportDirectoryPath
-															+ "/routes.csv"));
-									progressDialog.setCancelable(false);
-									new ImportTask(progressDialog)
-											.execute(Helpers.exportDirectoryPath
-													+ "/routes.csv");
-								}
-							})
-					.setNegativeButton(
-							getString(R.string.list_saved_import_negative),
-							new OnClickListener() {
-								public void onClick(DialogInterface arg0,
-										int arg1) {
-									// ignore
-								}
-							}).show();
-			return true;
-		case R.id.export_csv:
-			ProgressDialog progressDialog = new ProgressDialog(this);
-			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog
-					.setTitle(getString(R.string.list_saved_export_progress_title));
-			progressDialog.setMessage(getString(
-					R.string.list_saved_export_progress_text,
-					Helpers.exportDirectoryPath + "/routes.csv"));
-			progressDialog.setCancelable(false);
-			new ExportTask(progressDialog).execute();
-			return true;
-		default:
-			return true;
-		}
-	}
-
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { MenuInflater
+	 * inflater = getMenuInflater(); inflater.inflate(R.menu.context_menu_list,
+	 * menu); return true; }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
+	 * item selection switch (item.getItemId()) { case R.id.add_new: Intent
+	 * intent = new Intent(this, AddActivity.class);
+	 * ListSavedActivity.this.finish(); startActivity(intent); return true; case
+	 * R.id.import_csv: final Context context = this; new
+	 * AlertDialog.Builder(context)
+	 * .setTitle(getString(R.string.list_saved_import_title)) .setMessage(
+	 * getString(R.string.list_saved_import_text, Helpers.exportDirectoryPath +
+	 * "/routes.csv")) .setPositiveButton(
+	 * getString(R.string.list_saved_import_positive), new OnClickListener() {
+	 * public void onClick(DialogInterface arg0, int arg1) { ProgressDialog
+	 * progressDialog = new ProgressDialog( context); progressDialog
+	 * .setProgressStyle(ProgressDialog.STYLE_SPINNER); progressDialog
+	 * .setTitle(getString(R.string.list_saved_import_progress_title));
+	 * progressDialog .setMessage(getString(
+	 * R.string.list_saved_import_progress_text, Helpers.exportDirectoryPath +
+	 * "/routes.csv")); progressDialog.setCancelable(false); new
+	 * ImportTask(progressDialog) .execute(Helpers.exportDirectoryPath +
+	 * "/routes.csv"); } }) .setNegativeButton(
+	 * getString(R.string.list_saved_import_negative), new OnClickListener() {
+	 * public void onClick(DialogInterface arg0, int arg1) { // ignore }
+	 * }).show(); return true; case R.id.export_csv: ProgressDialog
+	 * progressDialog = new ProgressDialog(this);
+	 * progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	 * progressDialog
+	 * .setTitle(getString(R.string.list_saved_export_progress_title));
+	 * progressDialog.setMessage(getString(
+	 * R.string.list_saved_export_progress_text, Helpers.exportDirectoryPath +
+	 * "/routes.csv")); progressDialog.setCancelable(false); new
+	 * ExportTask(progressDialog).execute(); return true; default: return true;
+	 * } }
+	 */
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

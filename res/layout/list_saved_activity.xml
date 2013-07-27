@@ -6,15 +6,6 @@
     android:padding="10dp" >
 
     <TextView
-        android:id="@+id/txt_Title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="@string/list_saved"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
         android:id="@+id/txt_Prompt"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -26,5 +17,5 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         layout="@layout/list_saved_activity_list" />
-    
+
 </LinearLayout>
