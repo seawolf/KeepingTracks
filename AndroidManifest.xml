@@ -17,6 +17,7 @@
 
     <application
         android:name="com.seawolfsanctuary.keepingtracks.ACRAApplication"
+        android:allowBackup="true"
         android:allowClearUserData="true"
         android:enabled="true"
         android:icon="@drawable/ic_launcher"
