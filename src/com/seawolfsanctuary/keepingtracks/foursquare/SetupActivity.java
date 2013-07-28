@@ -165,6 +165,10 @@ public class SetupActivity extends org.holoeverywhere.app.Activity {
 										+ fragment.length(), url.length());
 								Helpers.writeAccessToken(accessToken);
 								SetupActivity.this.finish();
+								Toast.makeText(
+										getApplicationContext(),
+										getString(R.string.foursquare_setup_success),
+										Toast.LENGTH_LONG).show();
 							}
 						}
 					}

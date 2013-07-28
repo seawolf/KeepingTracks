@@ -118,7 +118,7 @@
     <string name="foursquare_setup_prepare_msg">Preparing to connect with Foursquare…</string>
     <string name="foursquare_setup_success">Thanks! You can now check-in with Foursquare.</string>
     <string name="foursquare_setup_failure_title">Set-Up Failed</string>
-    <string name="foursquare_setup_failure_msg">KeepingTracks needs some information from the website before connecting to Foursquare. Please check you network connection, and try again.</string>
+    <string name="foursquare_setup_failure_msg">Please check your network connection and try again.</string>
     <string name="foursquare_token_current">Saved Token: %s</string>
     <string name="foursquare_checkin">Station Check-In</string>
     <string name="foursquare_checkin_journey">Check-In</string>
