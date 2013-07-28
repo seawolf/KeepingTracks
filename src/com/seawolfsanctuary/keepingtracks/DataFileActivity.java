@@ -10,8 +10,10 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.AlertDialog.Builder;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -117,8 +119,7 @@ public class DataFileActivity extends org.holoeverywhere.app.Activity {
 				String name = data.get(position)[1];
 				String[] items = presentData(data.get(position));
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						DataFileActivity.this);
+				AlertDialog.Builder builder = new Builder(DataFileActivity.this);
 				builder.setTitle(name + " (" + classNo + ")");
 				builder.setItems(items, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
