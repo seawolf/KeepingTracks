@@ -37,9 +37,9 @@ public class Helpers {
 	public static final String classInfoPhotosURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/";
 	public static final String classInfoThumbsURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/class_photos/thumbs/";
 
-	public static final String foursquareClientID = "http://dl.dropbox.com/u/6413248/KeepingTracks/client_id.txt";
-	public static final String foursquareClientSecret = "http://dl.dropbox.com/u/6413248/KeepingTracks/client_secret.txt";
-	public static final String foursquareRedirectURI = "http://dl.dropbox.com/u/6413248/KeepingTracks/redirect_uri.txt";
+	public static final String foursquareClientID = "http://keepingtracks.seawolfsanctuary.com/app/foursquare/client_id";
+	public static final String foursquareClientSecret = "http://keepingtracks.seawolfsanctuary.com/app/foursquare/client_secret";
+	public static final String foursquareRedirectURI = "http://keepingtracks.seawolfsanctuary.com/app/foursquare/redirect_uri";
 
 	public static void hideKeyboard(View view) {
 		try {
