@@ -111,10 +111,14 @@
     <string name="data_file_notes_title">Update Notes</string>
     <string name="data_file_notes_save">Save</string>
     <string name="data_file_notes_save_error">Notes update failed. Please try again.</string>
-    <string name="data_file_menu_download">Download Photo Bundle...</string>
+    <string name="data_file_menu_download">Download Photo Bundle…</string>
     <string name="notes_parsing_error">Error parsing old notes: %s</string>
     <string name="foursquare_setup">Set-Up Foursquare</string>
-    <string name="foursquare_login">Login to Foursquare</string>
+    <string name="foursquare_setup_prepare_title">Preparing…</string>
+    <string name="foursquare_setup_prepare_msg">Preparing to connect with Foursquare…</string>
+    <string name="foursquare_setup_success">Thanks! You can now check-in with Foursquare.</string>
+    <string name="foursquare_setup_failure_title">Set-Up Failed</string>
+    <string name="foursquare_setup_failure_msg">KeepingTracks needs some information from the website before connecting to Foursquare. Please check you network connection, and try again.</string>
     <string name="foursquare_token_current">Saved Token: %s</string>
     <string name="foursquare_checkin">Station Check-In</string>
     <string name="foursquare_checkin_journey">Check-In</string>
@@ -166,6 +170,7 @@
     <string name="none">(none)</string>
     <string name="loading">Loading…</string>
     <string name="dotdotdot">…</string>
+    <string name="ok">OK</string>
     <string name="exit">Exit</string>
     <string name="user_prefs">Preferences</string>
     <string name="user_prefs_crash">Error (Crash) Handling</string>
