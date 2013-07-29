@@ -9,8 +9,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;

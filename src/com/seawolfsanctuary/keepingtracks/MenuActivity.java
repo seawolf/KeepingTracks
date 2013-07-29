@@ -1,6 +1,7 @@
 package com.seawolfsanctuary.keepingtracks;
 
-import android.app.ProgressDialog;
+import org.holoeverywhere.app.ProgressDialog;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
