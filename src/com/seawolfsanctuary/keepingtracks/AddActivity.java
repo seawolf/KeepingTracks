@@ -332,7 +332,9 @@ public class AddActivity extends TabActivity {
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
+		chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+		chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 		txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
@@ -343,10 +345,10 @@ public class AddActivity extends TabActivity {
 		txt_summary_from_datetime_data = (TextView) findViewById(R.id.txt_summary_from_datetime_data);
 		txt_summary_to_stn_data = (TextView) findViewById(R.id.txt_summary_to_stn_data);
 		txt_summary_to_datetime_data = (TextView) findViewById(R.id.txt_summary_to_datetime_data);
-		trow_summary_headcode = (TableRow) findViewById(R.id.trow_summary_headcode);
-		txt_summary_headcode_data = (TextView) findViewById(R.id.txt_summary_headcode_data);
 		trow_summary_class = (TableRow) findViewById(R.id.trow_summary_class);
 		txt_summary_class_data = (TextView) findViewById(R.id.txt_summary_class_data);
+		trow_summary_headcode = (TableRow) findViewById(R.id.trow_summary_headcode);
+		txt_summary_headcode_data = (TextView) findViewById(R.id.txt_summary_headcode_data);
 
 		txt_summary_from_stn_data.setText(Helpers.trimCodeFromStation(
 				actv_FromSearch.getText().toString(), getApplicationContext()));
@@ -371,13 +373,23 @@ public class AddActivity extends TabActivity {
 				Helpers.leftPad("" + tp_ToTime.getCurrentMinute(), 2)));
 
 		if (settings.getBoolean("AdvancedJourneys", false) == true) {
-			trow_summary_headcode.setVisibility(View.VISIBLE);
-			trow_summary_class.setVisibility(View.VISIBLE);
+			if (chk_DetailClass.isChecked() == true) {
+				trow_summary_class.setVisibility(View.VISIBLE);
+				txt_summary_class_data.setText(txt_DetailClass.getText()
+						.toString());
+			} else {
+				txt_summary_class_data.setText("");
+				trow_summary_class.setVisibility(View.GONE);
+			}
 
-			txt_summary_headcode_data.setText(txt_DetailHeadcode.getText()
-					.toString());
-			txt_summary_class_data
-					.setText(txt_DetailClass.getText().toString());
+			if (chk_DetailHeadcode.isChecked() == true) {
+				trow_summary_headcode.setVisibility(View.VISIBLE);
+				txt_summary_headcode_data.setText(txt_DetailHeadcode.getText()
+						.toString());
+			} else {
+				txt_summary_headcode_data.setText("");
+				trow_summary_headcode.setVisibility(View.GONE);
+			}
 		} else {
 			trow_summary_headcode.setVisibility(View.GONE);
 			trow_summary_class.setVisibility(View.GONE);
@@ -413,7 +425,9 @@ public class AddActivity extends TabActivity {
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
 		tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
 
+		chk_DetailClass = (CheckBox) findViewById(R.id.chk_DetailClass);
 		txt_DetailClass = (TextView) findViewById(R.id.txt_DetailClass);
+		chk_DetailHeadcode = (CheckBox) findViewById(R.id.chk_DetailHeadcode);
 		txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 		chk_DetailUseForStats = (CheckBox) findViewById(R.id.chk_DetailUseForStats);
 
@@ -421,7 +435,18 @@ public class AddActivity extends TabActivity {
 		dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 		tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
+		String detailClass = "";
+		if (chk_DetailClass.isChecked() == true) {
+			detailClass = txt_DetailClass.getText().toString();
+		}
+
+		String detailHeadcode = "";
+		if (chk_DetailHeadcode.isChecked() == true) {
+			detailHeadcode = txt_DetailHeadcode.getText().toString();
+		}
+
 		if (template.containsKey("editing")) {
+
 			// Editing an existing journey
 			Journey db_journeys = new Journey(this);
 			db_journeys.open();
@@ -433,8 +458,7 @@ public class AddActivity extends TabActivity {
 							.toString(), dp_ToDate.getYear(), (dp_ToDate
 							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
 					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
-					txt_DetailClass.getText().toString(), txt_DetailHeadcode
-							.getText().toString(), chk_DetailUseForStats
+					detailClass, detailHeadcode, chk_DetailUseForStats
 							.isChecked());
 			db_journeys.close();
 
@@ -461,8 +485,7 @@ public class AddActivity extends TabActivity {
 							.toString(), dp_ToDate.getYear(), (dp_ToDate
 							.getMonth() + 1), dp_ToDate.getDayOfMonth(),
 					tp_ToTime.getCurrentHour(), tp_ToTime.getCurrentMinute(),
-					txt_DetailClass.getText().toString(), txt_DetailHeadcode
-							.getText().toString(), chk_DetailUseForStats
+					detailClass, detailHeadcode, chk_DetailUseForStats
 							.isChecked());
 			db_journeys.close();
 
@@ -488,10 +511,8 @@ public class AddActivity extends TabActivity {
 				details.putString("to_stn", Helpers.trimCodeFromStation(
 						actv_ToSearch.getText().toString(),
 						getApplicationContext()));
-				details.putString("detail_class", txt_DetailClass.getText()
-						.toString());
-				details.putString("detail_headcode", txt_DetailHeadcode
-						.getText().toString());
+				details.putString("detail_class", detailClass);
+				details.putString("detail_headcode", detailHeadcode);
 
 				AddActivity.this.finish();
 				Intent intent = new Intent(this, ListSavedActivity.class);
