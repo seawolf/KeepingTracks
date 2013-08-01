@@ -59,10 +59,6 @@
             android:label="@string/foursquare_venue_select" >
         </activity>
         <activity
-            android:name="com.seawolfsanctuary.keepingtracks.HeadcodeSelectionActivity"
-            android:label="@string/headcode_selection" >
-        </activity>
-        <activity
             android:name="com.seawolfsanctuary.keepingtracks.stats.StatsActivity"
             android:label="@string/stats" >
         </activity>

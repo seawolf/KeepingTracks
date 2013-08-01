@@ -19,7 +19,6 @@
     <string name="add_use_for_stats">Use for Statistics</string>
     <string name="add_summary_from">From:</string>
     <string name="add_summary_to">To:</string>
-    <string name="add_summary_on">On:</string>
     <string name="add_summary_at">At:</string>
     <string name="add_summary_with">Train:</string>
     <string name="add_summary_as">Journey:</string>
@@ -39,7 +38,6 @@
     <string name="add_new_headcode_results_to">to</string>
     <string name="add_new_headcode_results_platform">platform</string>
     <string name="add_new_headcode_results_no_platform">no platform yet</string>
-    <string name="add_new_headcode_results_request">request stop</string>
     <string name="add_new_added">Journey added.</string>
     <string name="add_new_error">Error adding journey.</string>
     <string name="edit_saved">Edit Journey</string>
@@ -76,13 +74,11 @@
     <string name="list_saved_import_progress_title">Importing Journeys…</string>
     <string name="list_saved_import_progress_text">Importing journeys from CSV file at \'%s\' …</string>
     <string name="list_saved_import_status">Imported %1$s routes, %2$s failed.</string>
-    <string name="list_saved_export_title">Export Journeys</string>
     <string name="list_saved_export_progress_title">Exporting Journeys…</string>
     <string name="list_saved_export_progress_text">"Exporting journeys to CSV file at \'%s\' …</string>
     <string name="list_saved_export_success">Journeys exported to %s</string>
     <string name="list_saved_export_failed">Failed to export journeys. Check the SD card is available and writable.</string>
     <string name="journey_parsing_error">Error parsing old routes: %s</string>
-    <string name="headcode_selection">Select Departure</string>
     <string name="data_file">Data File</string>
     <string name="data_file_prompt">Tap a photo to see details, or tap and hold on a photo to view it full-size. Photos can be downloaded from the context menu.</string>
     <string name="data_file_used">&#10004;</string>
@@ -96,7 +92,6 @@
     <string name="data_file_operators">Operators: %s</string>
     <string name="data_file_none">(none)</string>
     <string name="data_file_notes">Notes: %s</string>
-    <string name="data_file_download_thumb">(photo unavailable)</string>
     <string name="data_file_download_photo">Please download the bundle to view this photo.</string>
     <string name="data_file_download_title">Downloading…</string>
     <string name="data_file_download_progress">%1$s for class %2$s</string>
@@ -104,10 +99,6 @@
     <string name="data_file_download_complete">Download finished!</string>
     <string name="data_file_download_error">Download failed.</string>
     <string name="data_file_download_unavailable">No photo found. This class may not have a photo yet.</string>
-    <string name="data_file_options_title">Class Selected</string>
-    <string name="data_file_options_text">Do you want to add/edit notes, or create a new journey with this class?</string>
-    <string name="data_file_options_journey">New Journey…</string>
-    <string name="data_file_options_notes">Notes…</string>
     <string name="data_file_notes_title">Update Notes</string>
     <string name="data_file_notes_save">Save</string>
     <string name="data_file_notes_save_error">Notes update failed. Please try again.</string>
@@ -119,7 +110,6 @@
     <string name="foursquare_setup_success">Thanks! You can now check-in with Foursquare.</string>
     <string name="foursquare_setup_failure_title">Set-Up Failed</string>
     <string name="foursquare_setup_failure_msg">Please check your network connection and try again.</string>
-    <string name="foursquare_token_current">Saved Token: %s</string>
     <string name="foursquare_checkin">Station Check-In</string>
     <string name="foursquare_checkin_journey">Check-In</string>
     <string name="foursquare_checkin_mesage_blank">I\'m on a train at %s.</string>
@@ -130,7 +120,6 @@
     <string name="foursquare_checkin_failure">Could not check-in.</string>
     <string name="foursquare_venue_select">Places Near You</string>
     <string name="foursquare_venue_select_prompt">Select the correct station venue from the list below. If neither the station nor nearby venues are in the list, try turning on wi-fi or GPS.</string>
-    <string name="foursquare_venue_select_visibility_private">Your check-in will be private</string>
     <string name="foursquare_venue_select_visibility_public">Your check-in will be public</string>
     <string name="foursquare_venue_select_shout">Include journey details with check-in</string>
     <string name="foursquare_updates_from">Updated venues based on %s location.</string>
@@ -181,13 +170,13 @@
     <string name="user_prefs_add_always_use_stats">Use all journeys for statistics</string>
     <string name="user_prefs_add_complete_from">Set origin based on departure board selection</string>
     <string name="user_prefs_add_complete_to">Set destination based on journey schedule selection</string>
-    <string name="crash_test">Test Catcher</string>
+    <string name="crash_test">Test Crash Catcher</string>
+    <string name="crash_clear">Clear Previous Reports</string>
     <string name="crash_notif_title">Application Crash Detected</string>
     <string name="crash_notif_text">KeepingTracks crashed. Please help to fix the issue.</string>
     <string name="crash_dialog_title">Submit Crash Report</string>
     <string name="crash_dialog_text">An unexpected error occurred forcing the application to close. Please help us fix this by sending us error data. No personal information is collected, only basic device details.</string>
     <string name="crash_dialog_comment_prompt">Please provide any useful information that may help fix the issue:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
-    <string name="crash_clear">Clear Previous Reports</string>
 
 </resources>

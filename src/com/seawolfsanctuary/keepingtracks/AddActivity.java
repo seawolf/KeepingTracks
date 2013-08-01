@@ -518,7 +518,7 @@ public class AddActivity extends TabActivity {
 				Intent intent = new Intent(this, ListSavedActivity.class);
 				startActivity(intent);
 
-				foursquareCheckin(details);
+				startFoursquareCheckin(details);
 			} else {
 				AddActivity.this.finish();
 				Intent intent = new Intent(this, ListSavedActivity.class);
@@ -529,14 +529,14 @@ public class AddActivity extends TabActivity {
 		return success;
 	}
 
-	private void foursquareCheckin(Bundle journey) {
+	private void startFoursquareCheckin(Bundle journey) {
 		Intent intent = new Intent(this, CheckinActivity.class);
 		intent.putExtras(journey);
 		startActivity(intent);
 		AddActivity.this.finish();
 	}
 
-	public void startHeadcodeSelectionActivity(View view) {
+	public void startHeadcodeSelection(View view) {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
 		dp_FromDate = (DatePicker) findViewById(R.id.dp_FromDate);
