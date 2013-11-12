@@ -129,6 +129,7 @@ public class ListSavedActivity extends
 		registerForContextMenu(getExpandableListView());
 
 		lv = getExpandableListView();
+		lv.setIndicatorBounds(30, 0);
 		lv.setOnScrollListener(this);
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
