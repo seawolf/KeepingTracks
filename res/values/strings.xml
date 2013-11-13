@@ -48,9 +48,9 @@
     <string name="list_saved_prompt">Tap a journey to see details. Tap and hold to edit, copy or delete.</string>
     <string name="list_saved_loaded_single">Loaded %s journey from database.</string>
     <string name="list_saved_loaded_multiple">Loaded %s journeys from database.</string>
-    <string name="list_saved_entry_name">%3$s/%4$s/%5$s\n%1$s - %2$s</string>
-    <string name="list_saved_entry_from">From: %1$s\n%4$s/%3$s/%2$s - %5$s:%6$s</string>
-    <string name="list_saved_entry_to">To: %1$s\n%4$s/%3$s/%2$s - %5$s:%6$s</string>
+    <string name="list_saved_entry_name">%3$s/%4$s/%5$s at %6$s:%7$s\n\t%1$s to %2$s</string>
+    <string name="list_saved_entry_from">%4$s/%3$s/%2$s at %5$s:%6$s - %1$s</string>
+    <string name="list_saved_entry_to">%4$s/%3$s/%2$s at %5$s:%6$s - %1$s</string>
     <string name="list_saved_entry_with">Train: %s</string>
     <string name="list_saved_entry_as">Journey: %s</string>
     <string name="list_saved_question_title">Journey Selected</string>

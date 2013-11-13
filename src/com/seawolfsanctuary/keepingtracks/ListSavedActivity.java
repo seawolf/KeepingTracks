@@ -212,7 +212,9 @@ public class ListSavedActivity extends
 								.trimCodeFromStation(entry[6],
 										getApplicationContext()), Helpers
 								.leftPad(entry[1], 2), Helpers.leftPad(
-								entry[2], 2), Helpers.leftPad(entry[3], 4)));
+								entry[2], 2), Helpers.leftPad(entry[3], 4),
+						Helpers.leftPad(entry[4], 2), Helpers.leftPad(entry[5],
+								2)));
 			}
 			return names;
 		}
