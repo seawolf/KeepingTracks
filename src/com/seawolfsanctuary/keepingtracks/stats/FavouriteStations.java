@@ -15,10 +15,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.androidplot.series.XYSeries;
 import com.androidplot.xy.BarFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
 import com.seawolfsanctuary.keepingtracks.Helpers;
 import com.seawolfsanctuary.keepingtracks.R;
@@ -160,15 +160,10 @@ public class FavouriteStations extends org.holoeverywhere.app.Activity {
 		mySimpleXYPlot.addSeries(series1, series1BarFormat);
 
 		mySimpleXYPlot.getLegendWidget().setVisible(false);
-		mySimpleXYPlot.disableAllMarkup();
 
-		mySimpleXYPlot
-				.setRangeLabel(getString(R.string.stats_favourite_stations_count));
-		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_PIXELS, 15);
+		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 2);
 		mySimpleXYPlot.setRangeValueFormat(new DecimalFormat("#"));
 
-		mySimpleXYPlot
-				.setDomainLabel(getString(R.string.stats_favourite_stations_station));
 		mySimpleXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
 		mySimpleXYPlot.setDomainValueFormat(new Format() {
 			@Override

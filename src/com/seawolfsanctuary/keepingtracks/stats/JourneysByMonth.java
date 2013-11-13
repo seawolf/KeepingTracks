@@ -11,11 +11,11 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.androidplot.series.XYSeries;
 import com.androidplot.xy.BarFormatter;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
 import com.seawolfsanctuary.keepingtracks.R;
 import com.seawolfsanctuary.keepingtracks.UserPrefsActivity;
@@ -65,7 +65,8 @@ public class JourneysByMonth extends org.holoeverywhere.app.Activity {
 		LineAndPointFormatter series1Format = new LineAndPointFormatter(
 				Color.rgb(0, 200, 0), // line color
 				Color.rgb(0, 100, 0), // point color
-				Color.rgb(0, 200, 0)); // fill color
+				Color.rgb(0, 200, 0), // fill color
+				null); // PointLabelFormatter
 
 		BarFormatter series1BarFormat = new BarFormatter(Color.rgb(0, 200, 0),
 				Color.rgb(0, 100, 0));
@@ -73,7 +74,6 @@ public class JourneysByMonth extends org.holoeverywhere.app.Activity {
 		mySimpleXYPlot.addSeries(series1, series1BarFormat);
 
 		mySimpleXYPlot.getLegendWidget().setVisible(false);
-		mySimpleXYPlot.disableAllMarkup();
 
 		mySimpleXYPlot.setRangeLabel("");
 		mySimpleXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 2);
