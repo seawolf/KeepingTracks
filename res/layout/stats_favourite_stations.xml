@@ -4,15 +4,23 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_weight="1"
-    android:orientation="horizontal">
+    android:orientation="horizontal" >
 
     <com.androidplot.xy.XYPlot
-            android:id="@+id/xy_FavouriteStations"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="10px"
-            android:layout_marginLeft="10px"
-            android:layout_marginRight="10px"
-            title=""/>
+        android:id="@+id/xy_FavouriteStations"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+        androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+        androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+        androidPlot.graphWidget.marginBottom="@dimen/margin_bottom"
+        androidPlot.graphWidget.marginLeft="@dimen/margin_left"
+        androidPlot.graphWidget.marginRight="@dimen/margin_right"
+        androidPlot.graphWidget.marginTop="@dimen/margin_top"
+        androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+        androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
+        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
+        title="" />
 
 </LinearLayout>
