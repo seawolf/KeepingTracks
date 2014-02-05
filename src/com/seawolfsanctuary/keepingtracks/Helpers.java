@@ -5,8 +5,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
 
 import android.app.Activity;
 import android.content.Context;
@@ -422,5 +431,40 @@ public class Helpers {
 		}
 
 		return f;
+	}
+
+	public static String fetchData(String url) {
+		System.out.println("Fetching data from:");
+		System.out.println(url);
+		InputStream inputStream = null;
+		String result = "";
+
+		try {
+			DefaultHttpClient httpclient = new DefaultHttpClient(
+					new BasicHttpParams());
+			HttpGet httpget = new HttpGet(new URL(url).toURI());
+			HttpResponse response = httpclient.execute(httpget);
+			HttpEntity entity = response.getEntity();
+			inputStream = entity.getContent();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					inputStream, "UTF-8"), 8);
+			StringBuilder sb = new StringBuilder();
+
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			result = sb.toString();
+		} catch (Exception e) {
+			// Oops
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (Exception squish) {
+			}
+		}
+
+		return result;
 	}
 }
