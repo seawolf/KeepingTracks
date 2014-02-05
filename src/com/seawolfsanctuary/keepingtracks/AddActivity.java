@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.ProgressDialog;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -611,152 +612,131 @@ public class AddActivity extends TabActivity {
 			String month = journeyDetails[5];
 			String day = journeyDetails[6];
 
-			Integer pageDurationHours = 2;
+			JSONObject schedules = fetchTimetable(fromStation, year, month,
+					day, hour, "00", "60");
 
-			String section = Integer
-					.toString((Integer.parseInt(hour) / pageDurationHours));
-			if (section.indexOf(".") != -1) {
-				section = section.substring(0, section.indexOf("."));
-			}
+			parseSchedules(schedules);
 
-			try {
-				URL url = new URL("http://trains.im/locationdepartures/"
-						+ fromStation + "/" + year + "/" + month + "/" + day
-						+ "/" + section);
-				System.out.println("Fetching journeys from: " + url.toString());
+			// for (int i = 0; i < cells.size(); i++) {
+			// journey.add(cells.get(i));
+			// }
 
-				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(url.openStream(), "UTF-8"));
+			// journey.add(journeyId);
+			// journey.add(year);
+			// journey.add(month);
+			// journey.add(day);
 
-				for (String line; (line = reader.readLine()) != null;) {
-					builder.append(line.trim());
-				}
+			// result.clear();
+			// result.add("SUCCESS");
+			// result.add("" + journeys.size());
+			// formattedJourneys.set(0, result);
 
-				String tableStart = "<table class=\"table table-striped\">";
-				String tableEnd = "</table>";
-				if (builder.indexOf(tableStart) > 0) {
-					String tablePart = builder.substring(builder
-							.indexOf(tableStart) + tableStart.length());
-					// System.out.println(tablePart);
-					String table = tablePart.substring(0,
-							tablePart.indexOf(tableEnd));
-
-					String bodyStart = "<tbody>";
-					String bodyEnd = "</tbody>";
-					if (table.indexOf(bodyStart) > 0) {
-						String bodyPart = table.substring(table
-								.indexOf(bodyStart) + bodyStart.length());
-						String body = bodyPart.substring(0,
-								bodyPart.indexOf(bodyEnd));
-
-						String rowStart = "<tr";
-						String rowEnd = "</tr>";
-						ArrayList<String> rows = new ArrayList<String>();
-
-						String[] rawRows = body.split(Pattern.quote(rowStart));
-						for (int r = 1; r < rawRows.length; r++) {
-							String row = rawRows[r];
-							rows.add(row);
-						}
-
-						ArrayList<ArrayList<String>> journeys = new ArrayList<ArrayList<String>>();
-
-						for (int r = 0; r < rows.size(); r++) {
-							String row = rows.get(r);
-
-							// Split into array of cells
-							String cellStart = "<td";
-							String cellEnd = "</";
-
-							ArrayList<String> cells = new ArrayList<String>();
-							String[] rawCells = row.split(Pattern
-									.quote(cellStart));
-							for (int i = 0; i < rawCells.length; i++) {
-								cells.add(rawCells[i]);
-							}
-							cells.remove(0);
-
-							ArrayList<String> journey = new ArrayList<String>();
-
-							// get journey ID from headcode a[@href]
-							String link = cells.get(0);
-							System.out.println("Link: " + link);
-
-							int linkPos = link.indexOf("href") + 6;
-							int linkSepPos = linkPos - 1;
-							String sep = "" + link.charAt(linkSepPos);
-
-							int secondSepPos = link.indexOf(sep, linkPos);
-							String linkHref = link.substring(linkPos,
-									secondSepPos - 1);
-
-							System.out.println("Link HREF:" + linkHref);
-							String[] journeyParts = linkHref.split("/");
-							String journeyId = journeyParts[2];
-							year = journeyParts[3];
-							month = journeyParts[4];
-							day = journeyParts[5];
-
-							// Get cell contents and remove any more HTML tags
-							// from inside
-							for (int c = 0; c < cells.size(); c++) {
-								String cellPart = cells.get(c);
-								String cell = cellPart.substring(
-										cellPart.indexOf(">") + 1,
-										cellPart.indexOf(cellEnd));
-								cells.set(c, android.text.Html.fromHtml(cell)
-										.toString());
-							}
-
-							// System.out.println("Headcode: " + cells.get(0));
-							// System.out.println("Departure: " + cells.get(1));
-							// System.out.println("Destination: " +
-							// cells.get(2));
-							// System.out.println("Platform: " + cells.get(3));
-							// System.out.println("Operator: " + cells.get(4));
-
-							for (int i = 0; i < cells.size(); i++) {
-								journey.add(cells.get(i));
-							}
-
-							journey.add(journeyId);
-							journey.add(year);
-							journey.add(month);
-							journey.add(day);
-
-							result.clear();
-							result.add("SUCCESS");
-							result.add("" + journeys.size());
-							formattedJourneys.set(0, result);
-
-							formattedJourneys.add(journey);
-						}
-					}
-				}
-
-				try {
-					reader.close();
-				} catch (IOException e) {
-					System.err.println(e.getMessage());
-					System.err.println(e.getStackTrace());
-				}
-
-			} catch (UnsupportedEncodingException e) {
-				System.err.println(e.getMessage());
-				System.err.println(e.getStackTrace());
-				result.clear();
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_invalid));
-				formattedJourneys.set(0, result);
-			} catch (IOException e) {
-				result.clear();
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_io));
-				formattedJourneys.set(0, result);
-			}
+			// formattedJourneys.add(journey);
 
 			return formattedJourneys;
+		}
+
+		private JSONObject fetchTimetable(String crsCode, String year,
+				String month, String date, String hour, String minute,
+				String duration) {
+
+			JSONObject json = new JSONObject();
+			String rawJson = Helpers
+					.fetchData("http://api.traintimes.im/locations.json?location="
+							+ crsCode
+							+ "&date="
+							+ Helpers.leftPad(year, 4)
+							+ "-"
+							+ Helpers.leftPad(month, 2)
+							+ "-"
+							+ Helpers.leftPad(date, 2)
+							+ "&startTime="
+							+ hour
+							+ "" + minute + "&period=" + duration);
+			try {
+				json = new JSONObject(rawJson);
+				System.out.println(json.toString(2));
+			} catch (JSONException e) {
+				// boo hiss boo
+			}
+
+			return json;
+		}
+
+		private void parseSchedules(JSONObject schedules) {
+			try {
+				JSONArray services = schedules.getJSONArray("services");
+				parseServices(services);
+
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (schedules): "
+						+ e.getMessage());
+			}
+		}
+
+		private void parseServices(JSONArray services) {
+			for (int i = 0; i < services.length(); i++) {
+				try {
+					JSONObject service = services.getJSONObject(i);
+					parseService(service);
+				} catch (JSONException e) {
+					System.err.println("Unable to parse JSON (services): "
+							+ e.getMessage());
+				}
+			}
+		}
+
+		private void parseService(JSONObject service) {
+			try {
+				String uid = service.getString("uid");
+				String headcode = service.getString("trainIdentity");
+				String tocCode = service.getString("operatorCode");
+				String platform = service.getString("platform");
+
+				String[] origin = parseServiceOrigin(service
+						.getJSONObject("origin"));
+				String[] destination = parseServiceDestination(service
+						.getJSONObject("destination"));
+
+				System.out.println("Service " + uid + " is " + headcode + ": "
+						+ origin[1] + " to " + destination[1] + " at platform "
+						+ platform + " by " + tocCode);
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (service): "
+						+ e.getMessage());
+			}
+		}
+
+		private String[] parseServiceOrigin(JSONObject origin) {
+			String[] originArray = new String[3];
+			try {
+				String crs = origin.getString("crs");
+				originArray[0] = crs;
+				String locationName = origin.getString("description");
+				originArray[1] = locationName;
+				String departureTime = origin.getString("departure_time");
+				originArray[2] = departureTime;
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (origin): "
+						+ e.getMessage());
+			}
+			return originArray;
+		}
+
+		private String[] parseServiceDestination(JSONObject destination) {
+			String[] destinationArray = new String[3];
+			try {
+				String crs = destination.getString("crs");
+				destinationArray[0] = crs;
+				String locationName = destination.getString("description");
+				destinationArray[1] = locationName;
+				String arrivalTime = destination.getString("arrival_time");
+				destinationArray[2] = arrivalTime;
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (destination): "
+						+ e.getMessage());
+			}
+			return destinationArray;
 		}
 
 		protected void onPostExecute(
@@ -841,33 +821,6 @@ public class AddActivity extends TabActivity {
 			}
 		}
 
-		private JSONObject fetchTimetable(String crsCode, String year,
-				String month, String date, String hour, String minute,
-				String duration) {
-
-			JSONObject json = new JSONObject();
-			String rawJson = Helpers
-					.fetchData("http://api.traintimes.im/locations.json?location="
-							+ crsCode
-							+ "&date="
-							+ Helpers.leftPad(year, 4)
-							+ "-"
-							+ Helpers.leftPad(month, 2)
-							+ "-"
-							+ Helpers.leftPad(date, 2)
-							+ "&startTime="
-							+ hour
-							+ "" + minute + "&period=" + duration);
-			try {
-				json = new JSONObject(rawJson);
-				System.out.println("JSON:");
-				System.out.println(json.toString(2));
-			} catch (JSONException e) {
-				// boo hiss boo
-			}
-
-			return json;
-		}
 	}
 
 	private class DownloadJourneyDetailTask extends
