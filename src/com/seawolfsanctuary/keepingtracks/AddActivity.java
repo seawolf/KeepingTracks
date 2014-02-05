@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.ProgressDialog;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.TabActivity;
 import android.content.DialogInterface;
@@ -837,6 +839,34 @@ public class AddActivity extends TabActivity {
 				Toast.makeText(getApplicationContext(),
 						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
 			}
+		}
+
+		private JSONObject fetchTimetable(String crsCode, String year,
+				String month, String date, String hour, String minute,
+				String duration) {
+
+			JSONObject json = new JSONObject();
+			String rawJson = Helpers
+					.fetchData("http://api.traintimes.im/locations.json?location="
+							+ crsCode
+							+ "&date="
+							+ Helpers.leftPad(year, 4)
+							+ "-"
+							+ Helpers.leftPad(month, 2)
+							+ "-"
+							+ Helpers.leftPad(date, 2)
+							+ "&startTime="
+							+ hour
+							+ "" + minute + "&period=" + duration);
+			try {
+				json = new JSONObject(rawJson);
+				System.out.println("JSON:");
+				System.out.println(json.toString(2));
+			} catch (JSONException e) {
+				// boo hiss boo
+			}
+
+			return json;
 		}
 	}
 
