@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -543,6 +544,7 @@ public class AddActivity extends TabActivity {
 		AddActivity.this.finish();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void startHeadcodeSelection(View view) {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
@@ -574,11 +576,14 @@ public class AddActivity extends TabActivity {
 					Toast.LENGTH_LONG).show();
 			mTabHost.setCurrentTab(0);
 		} else {
-			String[] journeyDetails = { from, to,
-					"" + tp_FromTime.getCurrentHour(),
-					"" + tp_FromTime.getCurrentMinute(),
-					"" + dp_FromDate.getYear(), month,
-					"" + dp_FromDate.getDayOfMonth() };
+			HashMap<String, String> journeyDetails = new HashMap<String, String>();
+			journeyDetails.put("from", from);
+			journeyDetails.put("to", to);
+			journeyDetails.put("hour", "" + tp_FromTime.getCurrentHour());
+			journeyDetails.put("min", "" + tp_FromTime.getCurrentMinute());
+			journeyDetails.put("year", "" + dp_FromDate.getYear());
+			journeyDetails.put("month", month);
+			journeyDetails.put("day", "" + dp_FromDate.getDayOfMonth());
 
 			dialog = ProgressDialog
 					.show(AddActivity.this,
@@ -593,51 +598,39 @@ public class AddActivity extends TabActivity {
 
 	}
 
-	private class DownloadJourneysTask extends
-			AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+	private class DownloadJourneysTask
+			extends
+			AsyncTask<HashMap<String, String>, Void, Collection<Map<String, Object>>> {
 
-		protected ArrayList<ArrayList<String>> doInBackground(
-				String[]... journeysDetails) {
-			ArrayList<ArrayList<String>> formattedJourneys = new ArrayList<ArrayList<String>>();
+		protected Collection<Map<String, Object>> doInBackground(
+				HashMap<String, String>... journeysDetails) {
+			Collection<Map<String, Object>> schedules;
 
-			ArrayList<String> result = new ArrayList<String>();
-			String dataError = getString(R.string.add_new_headcode_error_default_depboard);
+			HashMap<String, String> journeyDetails = journeysDetails[0];
+			JSONObject schedulesJson = fetchTimetable(journeyDetails
+					.get("from").toUpperCase(), journeyDetails.get("year"),
+					journeyDetails.get("month"), journeyDetails.get("day"),
+					journeyDetails.get("hour"), "00", "60");
 
-			result.add("ERROR");
-			result.add(dataError);
-			formattedJourneys.add(result);
+			schedules = parseSchedules(schedulesJson);
+			System.out.println("Fetched " + schedules.size()
+					+ " schedules from this station.");
 
-			String[] journeyDetails = journeysDetails[0];
-			String fromStation = journeyDetails[0].toString().toUpperCase();
-			String toStation = journeyDetails[1].toString().toUpperCase();
-			String hour = journeyDetails[2];
-			String minute = journeyDetails[3];
-			String year = journeyDetails[4];
-			String month = journeyDetails[5];
-			String day = journeyDetails[6];
+			for (Map<String, Object> schedule : schedules) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> origin = (Map<String, String>) schedule
+						.get("origin");
+				@SuppressWarnings("unchecked")
+				Map<String, String> destination = (Map<String, String>) schedule
+						.get("destination");
+				System.out.println("Service " + schedule.get("uid") + " is "
+						+ schedule.get("headcode") + ": " + origin.get("name")
+						+ " to " + destination.get("name") + " at platform "
+						+ schedule.get("platform") + " by "
+						+ schedule.get("tocCode"));
+			}
 
-			JSONObject schedules = fetchTimetable(fromStation, year, month,
-					day, hour, "00", "60");
-
-			parseSchedules(schedules);
-
-			// for (int i = 0; i < cells.size(); i++) {
-			// journey.add(cells.get(i));
-			// }
-
-			// journey.add(journeyId);
-			// journey.add(year);
-			// journey.add(month);
-			// journey.add(day);
-
-			// result.clear();
-			// result.add("SUCCESS");
-			// result.add("" + journeys.size());
-			// formattedJourneys.set(0, result);
-
-			// formattedJourneys.add(journey);
-
-			return formattedJourneys;
+			return schedules;
 		}
 
 		private JSONObject fetchTimetable(String crsCode, String year,
@@ -659,7 +652,6 @@ public class AddActivity extends TabActivity {
 							+ "" + minute + "&period=" + duration);
 			try {
 				json = new JSONObject(rawJson);
-				System.out.println(json.toString(2));
 			} catch (JSONException e) {
 				// boo hiss boo
 			}
@@ -667,25 +659,39 @@ public class AddActivity extends TabActivity {
 			return json;
 		}
 
-		private void parseSchedules(JSONObject schedulesJson) {
+		private Collection<Map<String, Object>> parseSchedules(
+				JSONObject schedulesJson) {
+			Collection<Map<String, Object>> services = new HashSet<Map<String, Object>>();
 			try {
 				JSONArray servicesJson = schedulesJson.getJSONArray("services");
-				Collection<Map<String, Object>> services = parseServices(servicesJson);
-				System.out.println("Fetched " + services.size()
-						+ " schedules from this station.");
+				services = parseServices(servicesJson, "dep");
 			} catch (JSONException e) {
 				System.err.println("Unable to parse JSON (schedules): "
 						+ e.getMessage());
 			}
+			return services;
 		}
 
-		private Collection<Map<String, Object>> parseServices(
-				JSONArray servicesJson) {
-			Collection<Map<String, Object>> services = new HashSet<Map<String, Object>>();
+		private List<Map<String, Object>> parseServices(JSONArray servicesJson,
+				String flagArrDep) {
+			List<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
 			for (int i = 0; i < servicesJson.length(); i++) {
 				try {
 					JSONObject service = servicesJson.getJSONObject(i);
-					services.add(parseService(service));
+					Map<String, Object> s = parseService(service);
+					if (s.get("train") == "true") {
+						if ((flagArrDep == "arr" && s.get("arrivalAt") != "null")
+								|| (flagArrDep == "dep" && s.get("departureAt") != "null")) {
+							services.add(s);
+						} else {
+							System.out.println("Schedule " + s.get("uid")
+									+ " (" + s.get("headcode")
+									+ ") is not scheduled to arrive/depart.");
+						}
+					} else {
+						System.out.println("Schedule " + s.get("uid") + " ("
+								+ s.get("headcode") + ") is not a train.");
+					}
 				} catch (JSONException e) {
 					System.err.println("Unable to parse JSON (services): "
 							+ e.getMessage());
@@ -698,9 +704,13 @@ public class AddActivity extends TabActivity {
 			Map<String, Object> service = new HashMap<String, Object>();
 			try {
 				service.put("uid", serviceJson.getString("uid"));
+				service.put("train", serviceJson.getString("train"));
 				service.put("headcode", serviceJson.getString("trainIdentity"));
 				service.put("tocCode", serviceJson.getString("operatorCode"));
 				service.put("platform", serviceJson.getString("platform"));
+				service.put("arrivalAt", serviceJson.getString("arrival_time"));
+				service.put("departureAt",
+						serviceJson.getString("departure_time"));
 
 				Map<String, String> origin = parseServiceOrigin(serviceJson
 						.getJSONObject("origin"));
@@ -708,7 +718,6 @@ public class AddActivity extends TabActivity {
 				Map<String, String> destination = parseServiceDestination(serviceJson
 						.getJSONObject("destination"));
 				service.put("destination", destination);
-
 				System.out.println("Service " + service.get("uid") + " is "
 						+ service.get("headcode") + ": " + origin.get("name")
 						+ " to " + destination.get("name") + " at platform "
@@ -748,88 +757,35 @@ public class AddActivity extends TabActivity {
 			return location;
 		}
 
+		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
-				final ArrayList<ArrayList<String>> resultList) {
+				final Collection<Map<String, Object>> schedules) {
 			dialog.dismiss();
 
-			if (resultList.get(0).get(0) == "SUCCESS") {
-				resultList.remove(0);
-				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-				tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					AddActivity.this);
 
-				String[] presentedResults = new String[resultList.size()];
+			builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
 
-				for (int i = 0; i < resultList.size(); i++) {
-					ArrayList<String> result = resultList.get(i);
-					System.out.println("Result #" + i + ": " + result);
+			final String[] scheduleLabels = new String[schedules.size()];
+			int i = 0;
+			for (Map<String, Object> schedule : schedules) {
+				Map<String, String> origin = (Map<String, String>) schedule
+						.get("origin");
+				Map<String, String> destination = (Map<String, String>) schedule
+						.get("destination");
 
-					String platformInfo = result.get(3);
-					if (platformInfo.length() > 0) {
-						platformInfo = " ("
-								+ getString(R.string.add_new_headcode_results_platform)
-								+ " " + platformInfo + ")";
-					}
-
-					presentedResults[i] = result.get(1) + ": " + result.get(0)
-							+ " "
-							+ getString(R.string.add_new_headcode_results_to)
-							+ " " + result.get(2) + platformInfo;
-				}
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AddActivity.this);
-				builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
-				builder.setSingleChoiceItems(presentedResults, -1,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface d, int i) {
-								ArrayList<String> selection = resultList.get(i);
-								SharedPreferences settings = getSharedPreferences(
-										UserPrefsActivity.APP_PREFS,
-										MODE_PRIVATE);
-
-								System.out.println("Using: " + selection.get(1));
-								int hours = Integer.parseInt(selection.get(1)
-										.substring(0, 2));
-								int minutes = Integer.parseInt(selection.get(1)
-										.substring(2, 4));
-
-								if (settings.getBoolean("CompleteFromStation",
-										true)) {
-									txt_DetailHeadcode.setText(selection.get(0));
-									tp_FromTime.setCurrentHour(hours);
-									tp_FromTime.setCurrentMinute(minutes);
-								}
-								updateSummary();
-								d.dismiss();
-
-								if (settings.getBoolean("CompleteToStation",
-										true)) {
-									System.out
-											.println("Starting DownloadJourneyDetailTask()");
-									String[] journeyDetails = new String[] {
-											selection.get(5), selection.get(6),
-											selection.get(7), selection.get(8),
-											selection.get(1) };
-									dialog = ProgressDialog
-											.show(AddActivity.this,
-													getString(R.string.add_new_headcode_schedule_progress_title),
-													getString(R.string.add_new_headcode_schedule_progress_text),
-													true);
-									dialog.setCancelable(true);
-
-									new DownloadJourneyDetailTask()
-											.execute(journeyDetails);
-								}
-							}
-						});
-				AlertDialog alert = builder.create();
-				alert.show();
-			} else { // resultList.get(0).get(0) == "ERROR"
-				Toast.makeText(getApplicationContext(),
-						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
+				scheduleLabels[i] = "" + schedule.get("headcode") + ": "
+						+ schedule.get("departureAt") + " to "
+						+ destination.get("name") + " (platform "
+						+ schedule.get("platform") + ")";
+				i++;
 			}
-		}
 
+			builder.setSingleChoiceItems(scheduleLabels, -1, null);
+			AlertDialog alert = builder.create();
+			alert.show();
+		}
 	}
 
 	private class DownloadJourneyDetailTask extends
