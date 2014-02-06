@@ -7,6 +7,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.holoeverywhere.app.AlertDialog;
@@ -663,80 +667,85 @@ public class AddActivity extends TabActivity {
 			return json;
 		}
 
-		private void parseSchedules(JSONObject schedules) {
+		private void parseSchedules(JSONObject schedulesJson) {
 			try {
-				JSONArray services = schedules.getJSONArray("services");
-				parseServices(services);
-
+				JSONArray servicesJson = schedulesJson.getJSONArray("services");
+				Collection<Map<String, Object>> services = parseServices(servicesJson);
+				System.out.println("Fetched " + services.size()
+						+ " schedules from this station.");
 			} catch (JSONException e) {
 				System.err.println("Unable to parse JSON (schedules): "
 						+ e.getMessage());
 			}
 		}
 
-		private void parseServices(JSONArray services) {
-			for (int i = 0; i < services.length(); i++) {
+		private Collection<Map<String, Object>> parseServices(
+				JSONArray servicesJson) {
+			Collection<Map<String, Object>> services = new HashSet<Map<String, Object>>();
+			for (int i = 0; i < servicesJson.length(); i++) {
 				try {
-					JSONObject service = services.getJSONObject(i);
-					parseService(service);
+					JSONObject service = servicesJson.getJSONObject(i);
+					services.add(parseService(service));
 				} catch (JSONException e) {
 					System.err.println("Unable to parse JSON (services): "
 							+ e.getMessage());
 				}
 			}
+			return services;
 		}
 
-		private void parseService(JSONObject service) {
+		private Map<String, Object> parseService(JSONObject serviceJson) {
+			Map<String, Object> service = new HashMap<String, Object>();
 			try {
-				String uid = service.getString("uid");
-				String headcode = service.getString("trainIdentity");
-				String tocCode = service.getString("operatorCode");
-				String platform = service.getString("platform");
+				service.put("uid", serviceJson.getString("uid"));
+				service.put("headcode", serviceJson.getString("trainIdentity"));
+				service.put("tocCode", serviceJson.getString("operatorCode"));
+				service.put("platform", serviceJson.getString("platform"));
 
-				String[] origin = parseServiceOrigin(service
+				Map<String, String> origin = parseServiceOrigin(serviceJson
 						.getJSONObject("origin"));
-				String[] destination = parseServiceDestination(service
+				service.put("origin", origin);
+				Map<String, String> destination = parseServiceDestination(serviceJson
 						.getJSONObject("destination"));
+				service.put("destination", destination);
 
-				System.out.println("Service " + uid + " is " + headcode + ": "
-						+ origin[1] + " to " + destination[1] + " at platform "
-						+ platform + " by " + tocCode);
+				System.out.println("Service " + service.get("uid") + " is "
+						+ service.get("headcode") + ": " + origin.get("name")
+						+ " to " + destination.get("name") + " at platform "
+						+ service.get("platform") + " by "
+						+ service.get("tocCode"));
 			} catch (JSONException e) {
 				System.err.println("Unable to parse JSON (service): "
 						+ e.getMessage());
 			}
+			return service;
 		}
 
-		private String[] parseServiceOrigin(JSONObject origin) {
-			String[] originArray = new String[3];
+		private Map<String, String> parseServiceOrigin(JSONObject origin) {
+			Map<String, String> location = new HashMap<String, String>();
 			try {
-				String crs = origin.getString("crs");
-				originArray[0] = crs;
-				String locationName = origin.getString("description");
-				originArray[1] = locationName;
-				String departureTime = origin.getString("departure_time");
-				originArray[2] = departureTime;
-			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (origin): "
-						+ e.getMessage());
-			}
-			return originArray;
-		}
-
-		private String[] parseServiceDestination(JSONObject destination) {
-			String[] destinationArray = new String[3];
-			try {
-				String crs = destination.getString("crs");
-				destinationArray[0] = crs;
-				String locationName = destination.getString("description");
-				destinationArray[1] = locationName;
-				String arrivalTime = destination.getString("arrival_time");
-				destinationArray[2] = arrivalTime;
+				location.put("crs", origin.getString("crs"));
+				location.put("name", origin.getString("description"));
+				location.put("time", origin.getString("departure_time"));
 			} catch (JSONException e) {
 				System.err.println("Unable to parse JSON (destination): "
 						+ e.getMessage());
 			}
-			return destinationArray;
+			return location;
+		}
+
+		private Map<String, String> parseServiceDestination(
+				JSONObject destination) {
+			Map<String, String> location = new HashMap<String, String>();
+			try {
+				location.put("crs", destination.getString("crs"));
+				location.put("name", destination.getString("description"));
+				location.put("time", destination.getString("arrival_time"));
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (destination): "
+						+ e.getMessage());
+			}
+			return location;
 		}
 
 		protected void onPostExecute(
