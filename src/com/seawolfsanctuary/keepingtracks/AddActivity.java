@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import android.app.TabActivity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -788,7 +789,16 @@ public class AddActivity extends TabActivity {
 				i++;
 			}
 
-			builder.setSingleChoiceItems(scheduleLabels, -1, null);
+			OnClickListener journeySelectOnClickListener = new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int itemId) {
+					Toast.makeText(getApplicationContext(),
+							"Selected: " + itemId, Toast.LENGTH_LONG).show();
+				}
+			};
+
+			builder.setSingleChoiceItems(scheduleLabels, -1,
+					journeySelectOnClickListener);
 			AlertDialog alert = builder.create();
 			alert.show();
 		}
