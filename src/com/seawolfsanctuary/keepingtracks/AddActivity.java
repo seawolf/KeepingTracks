@@ -775,10 +775,16 @@ public class AddActivity extends TabActivity {
 				Map<String, String> destination = (Map<String, String>) schedule
 						.get("destination");
 
+				String platformInfo = "";
+				if (schedule.get("platform") != null) {
+					platformInfo = " (platform " + schedule.get("platform")
+							+ ")";
+				}
+
 				scheduleLabels[i] = "" + schedule.get("headcode") + ": "
 						+ schedule.get("departureAt") + " to "
-						+ destination.get("name") + " (platform "
-						+ schedule.get("platform") + ")";
+						+ destination.get("name") + platformInfo;
+
 				i++;
 			}
 
