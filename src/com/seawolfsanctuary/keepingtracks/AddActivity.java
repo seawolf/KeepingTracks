@@ -874,29 +874,35 @@ public class AddActivity extends TabActivity {
 			try {
 				JSONArray scheduleLocations = scheduleJson
 						.getJSONArray("locations");
-				for (int i = 0; i < scheduleLocations.length(); i++) {
-					JSONObject locationJson = (JSONObject) scheduleLocations
-							.get(i);
-					// System.out.println("Parsing: " +
-					// locationJson.toString(2));
+				if (scheduleLocations.length() > 1) {
+					for (int i = 1; i < scheduleLocations.length(); i++) {
+						JSONObject locationJson = (JSONObject) scheduleLocations
+								.get(i);
+						// System.out.println("Parsing: " +
+						// locationJson.toString(2));
 
-					String locationCrs = locationJson.getString("crs");
-					String locationDesc = locationJson.getString("description");
-					Boolean publicCall = locationJson.getBoolean("publicCall");
-					Boolean pickupOnly = locationJson.getBoolean("picksUpOnly");
-					String arrivalDate = locationJson.getString("calldate");
-					String arrivalTime = locationJson.getString("arrival_time");
-					String platform = locationJson.getString("platform");
+						String locationCrs = locationJson.getString("crs");
+						String locationDesc = locationJson
+								.getString("description");
+						Boolean publicCall = locationJson
+								.getBoolean("publicCall");
+						Boolean pickupOnly = locationJson
+								.getBoolean("picksUpOnly");
+						String arrivalDate = locationJson.getString("calldate");
+						String arrivalTime = locationJson
+								.getString("arrival_time");
+						String platform = locationJson.getString("platform");
 
-					if (publicCall && !pickupOnly) {
-						HashMap<String, String> location = new HashMap<String, String>();
-						location.put("locationCrs", locationCrs);
-						location.put("locationDesc", locationDesc);
-						location.put("arrivalDate", arrivalDate);
-						location.put("arrivalTime", arrivalTime);
-						location.put("platform", platform);
+						if (publicCall && !pickupOnly) {
+							HashMap<String, String> location = new HashMap<String, String>();
+							location.put("locationCrs", locationCrs);
+							location.put("locationDesc", locationDesc);
+							location.put("arrivalDate", arrivalDate);
+							location.put("arrivalTime", arrivalTime);
+							location.put("platform", platform);
 
-						schedule.add(location);
+							schedule.add(location);
+						}
 					}
 				}
 			} catch (JSONException e) {
