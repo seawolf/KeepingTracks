@@ -80,7 +80,8 @@ public class AddActivity extends TabActivity {
 
 	SharedPreferences settings;
 
-	private ProgressDialog dialog;
+	protected ProgressDialog progressDialog;
+	protected AlertDialog alertPopup;
 
 	boolean isLocationEnabledNetwork = false;
 	boolean isLocationEnabledGPS = false;
@@ -582,13 +583,11 @@ public class AddActivity extends TabActivity {
 			journeyDetails.put("month", month);
 			journeyDetails.put("day", "" + dp_FromDate.getDayOfMonth());
 
-			dialog = ProgressDialog
+			progressDialog = ProgressDialog
 					.show(AddActivity.this,
 							getString(R.string.add_new_headcode_depboard_progress_title),
 							getString(R.string.add_new_headcode_depboard_progress_text),
 							true);
-			dialog.setCancelable(true);
-
 			new DownloadSchedulesTask().execute(journeyDetails);
 			onHeadcodeCheckboxClicked(view, true);
 		}
@@ -764,11 +763,10 @@ public class AddActivity extends TabActivity {
 		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
 				final Collection<Map<String, Object>> schedules) {
-			dialog.dismiss();
+			progressDialog.dismiss();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					AddActivity.this);
-
 			builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
 
 			final String[] scheduleLabels = new String[schedules.size()];
@@ -794,17 +792,23 @@ public class AddActivity extends TabActivity {
 
 			OnClickListener journeySelectOnClickListener = new OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int itemId) {
+				public void onClick(DialogInterface d, int itemId) {
 					HashMap<String, Object> scheduleParams = (HashMap<String, Object>) schedules
 							.toArray()[itemId];
+					alertPopup.dismiss();
+					progressDialog = ProgressDialog
+							.show(AddActivity.this,
+									getString(R.string.add_new_headcode_schedule_progress_title),
+									getString(R.string.add_new_headcode_schedule_progress_text),
+									true);
 					new DownloadScheduleTask().execute(scheduleParams);
 				}
 			};
 
 			builder.setSingleChoiceItems(scheduleLabels, -1,
 					journeySelectOnClickListener);
-			AlertDialog alert = builder.create();
-			alert.show();
+			alertPopup = builder.create();
+			alertPopup.show();
 		}
 	}
 
@@ -916,11 +920,11 @@ public class AddActivity extends TabActivity {
 		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
 				final Collection<Map<String, String>> locations) {
-			dialog.dismiss();
+			progressDialog.dismiss();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					AddActivity.this);
-			builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
+			builder.setTitle(getString(R.string.add_new_headcode_schedule_results_title));
 
 			final String[] locationLabels = new String[locations.size()];
 			int i = 0;
@@ -940,7 +944,7 @@ public class AddActivity extends TabActivity {
 
 			OnClickListener locationSelectOnClickListener = new OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int itemId) {
+				public void onClick(DialogInterface d, int itemId) {
 					HashMap<String, String> locationParams = (HashMap<String, String>) locations
 							.toArray()[itemId];
 
@@ -980,13 +984,14 @@ public class AddActivity extends TabActivity {
 					}
 
 					updateSummary();
+					alertPopup.dismiss();
 				}
 			};
 
 			builder.setSingleChoiceItems(locationLabels, -1,
 					locationSelectOnClickListener);
-			AlertDialog alert = builder.create();
-			alert.show();
+			alertPopup = builder.create();
+			alertPopup.show();
 		}
 	}
 }
