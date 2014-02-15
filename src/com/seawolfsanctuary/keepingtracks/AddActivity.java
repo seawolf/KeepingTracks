@@ -1,23 +1,25 @@
 package com.seawolfsanctuary.keepingtracks;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.holoeverywhere.app.AlertDialog;
 import org.holoeverywhere.app.ProgressDialog;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.TabActivity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -73,12 +75,21 @@ public class AddActivity extends TabActivity {
 	TextView txt_summary_headcode_data;
 	CheckBox chk_Checkin;
 
+	protected String[] completions;
+
 	SharedPreferences settings;
 
-	private ProgressDialog dialog;
+	protected ProgressDialog progressDialog;
+	protected AlertDialog alertPopup;
 
 	boolean isLocationEnabledNetwork = false;
 	boolean isLocationEnabledGPS = false;
+
+	private void ensureCompletions() {
+		if (completions == null) {
+			completions = read_csv("stations.lst");
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -257,7 +268,7 @@ public class AddActivity extends TabActivity {
 		mTabHost.setCurrentTab(0);
 
 		// Link array of completions
-		String[] completions = read_csv("stations.lst");
+		ensureCompletions();
 		ada_fromSearchAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
 		ada_toSearchAdapter = new ArrayAdapter<String>(this,
@@ -292,6 +303,9 @@ public class AddActivity extends TabActivity {
 		} catch (NullPointerException e) {
 			// meh
 		}
+
+		completions = read_csv("stations.lst");
+
 		MenuActivity.hideLoader();
 	}
 
@@ -536,6 +550,7 @@ public class AddActivity extends TabActivity {
 		AddActivity.this.finish();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void startHeadcodeSelection(View view) {
 		actv_FromSearch = (AutoCompleteTextView) findViewById(R.id.actv_FromSearch);
 		actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
@@ -567,559 +582,441 @@ public class AddActivity extends TabActivity {
 					Toast.LENGTH_LONG).show();
 			mTabHost.setCurrentTab(0);
 		} else {
-			String[] journeyDetails = { from, to,
-					"" + tp_FromTime.getCurrentHour(),
-					"" + tp_FromTime.getCurrentMinute(),
-					"" + dp_FromDate.getYear(), month,
-					"" + dp_FromDate.getDayOfMonth() };
+			ensureCompletions();
+			String[] matchedStation = Helpers.codeAndStationFromCode(from,
+					completions, AddActivity.this);
+			from = matchedStation[0];
+			actv_FromSearch.setText(matchedStation[1]);
+			updateSummary();
 
-			dialog = ProgressDialog
+			HashMap<String, String> journeyDetails = new HashMap<String, String>();
+			journeyDetails.put("from", from);
+			journeyDetails.put("to", to);
+			journeyDetails.put("hour", "" + tp_FromTime.getCurrentHour());
+			journeyDetails.put("min", "" + tp_FromTime.getCurrentMinute());
+			journeyDetails.put("year", "" + dp_FromDate.getYear());
+			journeyDetails.put("month", month);
+			journeyDetails.put("day", "" + dp_FromDate.getDayOfMonth());
+
+			progressDialog = ProgressDialog
 					.show(AddActivity.this,
 							getString(R.string.add_new_headcode_depboard_progress_title),
 							getString(R.string.add_new_headcode_depboard_progress_text),
 							true);
-			dialog.setCancelable(true);
-
-			new DownloadJourneysTask().execute(journeyDetails);
+			new DownloadSchedulesTask().execute(journeyDetails);
 			onHeadcodeCheckboxClicked(view, true);
 		}
 
 	}
 
-	private class DownloadJourneysTask extends
-			AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+	private class DownloadSchedulesTask
+			extends
+			AsyncTask<HashMap<String, String>, Void, ArrayList<Map<String, Object>>> {
 
-		protected ArrayList<ArrayList<String>> doInBackground(
-				String[]... journeysDetails) {
-			ArrayList<ArrayList<String>> formattedJourneys = new ArrayList<ArrayList<String>>();
+		protected ArrayList<Map<String, Object>> doInBackground(
+				HashMap<String, String>... journeysDetails) {
+			ArrayList<Map<String, Object>> schedules;
 
-			ArrayList<String> result = new ArrayList<String>();
-			String dataError = getString(R.string.add_new_headcode_error_default_depboard);
+			HashMap<String, String> journeyDetails = journeysDetails[0];
+			String locationCrs = journeyDetails.get("from").toUpperCase();
+			JSONObject schedulesJson = fetchTimetable(locationCrs,
+					journeyDetails.get("year"), journeyDetails.get("month"),
+					journeyDetails.get("day"), journeyDetails.get("hour"),
+					"00", "60");
+			schedules = parseSchedules(schedulesJson, locationCrs);
 
-			result.add("ERROR");
-			result.add(dataError);
-			formattedJourneys.add(result);
+			System.out.println("Fetched " + schedules.size()
+					+ " schedules from " + locationCrs);
 
-			String[] journeyDetails = journeysDetails[0];
-			String fromStation = journeyDetails[0].toString().toUpperCase();
-			String toStation = journeyDetails[1].toString().toUpperCase();
-			String hour = journeyDetails[2];
-			String minute = journeyDetails[3];
-			String year = journeyDetails[4];
-			String month = journeyDetails[5];
-			String day = journeyDetails[6];
-
-			Integer pageDurationHours = 2;
-
-			String section = Integer
-					.toString((Integer.parseInt(hour) / pageDurationHours));
-			if (section.indexOf(".") != -1) {
-				section = section.substring(0, section.indexOf("."));
+			for (Map<String, Object> schedule : schedules) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> origin = (Map<String, String>) schedule
+						.get("origin");
+				@SuppressWarnings("unchecked")
+				Map<String, String> destination = (Map<String, String>) schedule
+						.get("destination");
+				System.out.println("Service " + schedule.get("uid") + " is "
+						+ schedule.get("headcode") + ": " + origin.get("name")
+						+ " to " + destination.get("name") + " at platform "
+						+ schedule.get("platform") + " by "
+						+ schedule.get("tocCode"));
 			}
 
-			try {
-				URL url = new URL("http://trains.im/locationdepartures/"
-						+ fromStation + "/" + year + "/" + month + "/" + day
-						+ "/" + section);
-				System.out.println("Fetching journeys from: " + url.toString());
-
-				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(url.openStream(), "UTF-8"));
-
-				for (String line; (line = reader.readLine()) != null;) {
-					builder.append(line.trim());
-				}
-
-				String tableStart = "<table class=\"table table-striped\">";
-				String tableEnd = "</table>";
-				if (builder.indexOf(tableStart) > 0) {
-					String tablePart = builder.substring(builder
-							.indexOf(tableStart) + tableStart.length());
-					// System.out.println(tablePart);
-					String table = tablePart.substring(0,
-							tablePart.indexOf(tableEnd));
-
-					String bodyStart = "<tbody>";
-					String bodyEnd = "</tbody>";
-					if (table.indexOf(bodyStart) > 0) {
-						String bodyPart = table.substring(table
-								.indexOf(bodyStart) + bodyStart.length());
-						String body = bodyPart.substring(0,
-								bodyPart.indexOf(bodyEnd));
-
-						String rowStart = "<tr";
-						String rowEnd = "</tr>";
-						ArrayList<String> rows = new ArrayList<String>();
-
-						String[] rawRows = body.split(Pattern.quote(rowStart));
-						for (int r = 1; r < rawRows.length; r++) {
-							String row = rawRows[r];
-							rows.add(row);
-						}
-
-						ArrayList<ArrayList<String>> journeys = new ArrayList<ArrayList<String>>();
-
-						for (int r = 0; r < rows.size(); r++) {
-							String row = rows.get(r);
-
-							// Split into array of cells
-							String cellStart = "<td";
-							String cellEnd = "</";
-
-							ArrayList<String> cells = new ArrayList<String>();
-							String[] rawCells = row.split(Pattern
-									.quote(cellStart));
-							for (int i = 0; i < rawCells.length; i++) {
-								cells.add(rawCells[i]);
-							}
-							cells.remove(0);
-
-							ArrayList<String> journey = new ArrayList<String>();
-
-							// get journey ID from headcode a[@href]
-							String link = cells.get(0);
-							System.out.println("Link: " + link);
-
-							int linkPos = link.indexOf("href") + 6;
-							int linkSepPos = linkPos - 1;
-							String sep = "" + link.charAt(linkSepPos);
-
-							int secondSepPos = link.indexOf(sep, linkPos);
-							String linkHref = link.substring(linkPos,
-									secondSepPos - 1);
-
-							System.out.println("Link HREF:" + linkHref);
-							String[] journeyParts = linkHref.split("/");
-							String journeyId = journeyParts[2];
-							year = journeyParts[3];
-							month = journeyParts[4];
-							day = journeyParts[5];
-
-							// Get cell contents and remove any more HTML tags
-							// from inside
-							for (int c = 0; c < cells.size(); c++) {
-								String cellPart = cells.get(c);
-								String cell = cellPart.substring(
-										cellPart.indexOf(">") + 1,
-										cellPart.indexOf(cellEnd));
-								cells.set(c, android.text.Html.fromHtml(cell)
-										.toString());
-							}
-
-							// System.out.println("Headcode: " + cells.get(0));
-							// System.out.println("Departure: " + cells.get(1));
-							// System.out.println("Destination: " +
-							// cells.get(2));
-							// System.out.println("Platform: " + cells.get(3));
-							// System.out.println("Operator: " + cells.get(4));
-
-							for (int i = 0; i < cells.size(); i++) {
-								journey.add(cells.get(i));
-							}
-
-							journey.add(journeyId);
-							journey.add(year);
-							journey.add(month);
-							journey.add(day);
-
-							result.clear();
-							result.add("SUCCESS");
-							result.add("" + journeys.size());
-							formattedJourneys.set(0, result);
-
-							formattedJourneys.add(journey);
-						}
-					}
-				}
-
-				try {
-					reader.close();
-				} catch (IOException e) {
-					System.err.println(e.getMessage());
-					System.err.println(e.getStackTrace());
-				}
-
-			} catch (UnsupportedEncodingException e) {
-				System.err.println(e.getMessage());
-				System.err.println(e.getStackTrace());
-				result.clear();
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_invalid));
-				formattedJourneys.set(0, result);
-			} catch (IOException e) {
-				result.clear();
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_io));
-				formattedJourneys.set(0, result);
-			}
-
-			return formattedJourneys;
+			return schedules;
 		}
 
-		protected void onPostExecute(
-				final ArrayList<ArrayList<String>> resultList) {
-			dialog.dismiss();
+		private JSONObject fetchTimetable(String crsCode, String year,
+				String month, String date, String hour, String minute,
+				String duration) {
 
-			if (resultList.get(0).get(0) == "SUCCESS") {
-				resultList.remove(0);
-				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-				tp_FromTime = (TimePicker) findViewById(R.id.tp_FromTime);
+			JSONObject json = new JSONObject();
+			String rawJson = Helpers
+					.fetchData("http://api.traintimes.im/locations.json?location="
+							+ crsCode
+							+ "&date="
+							+ Helpers.leftPad(year, 4)
+							+ "-"
+							+ Helpers.leftPad(month, 2)
+							+ "-"
+							+ Helpers.leftPad(date, 2)
+							+ "&startTime="
+							+ hour
+							+ "" + minute + "&period=" + duration);
+			try {
+				json = new JSONObject(rawJson);
+			} catch (JSONException e) {
+				// boo hiss boo
+			}
 
-				String[] presentedResults = new String[resultList.size()];
+			return json;
+		}
 
-				for (int i = 0; i < resultList.size(); i++) {
-					ArrayList<String> result = resultList.get(i);
-					System.out.println("Result #" + i + ": " + result);
+		private ArrayList<Map<String, Object>> parseSchedules(
+				JSONObject schedulesJson, String locationCrs) {
+			ArrayList<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
+			try {
+				JSONArray servicesJson = schedulesJson.getJSONArray("services");
+				services = parseServices(servicesJson, "dep", locationCrs);
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (schedules): "
+						+ e.getMessage());
+			}
+			return services;
+		}
 
-					String platformInfo = result.get(3);
-					if (platformInfo.length() > 0) {
-						platformInfo = " ("
-								+ getString(R.string.add_new_headcode_results_platform)
-								+ " " + platformInfo + ")";
+		private ArrayList<Map<String, Object>> parseServices(
+				JSONArray servicesJson, String flagArrDep, String locationCrs) {
+			ArrayList<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
+			for (int i = 0; i < servicesJson.length(); i++) {
+				try {
+					JSONObject service = servicesJson.getJSONObject(i);
+					Map<String, Object> s = parseService(service, locationCrs);
+					if (s.get("train") == "true") {
+						if ((flagArrDep == "arr" && s.get("arrivalAt") != "null")
+								|| (flagArrDep == "dep" && s.get("departureAt") != "null")) {
+							services.add(s);
+						} else {
+							System.out.println("Schedule " + s.get("uid")
+									+ " (" + s.get("headcode")
+									+ ") is not scheduled to arrive/depart.");
+						}
+					} else {
+						System.out.println("Schedule " + s.get("uid") + " ("
+								+ s.get("headcode") + ") is not a train.");
 					}
+				} catch (JSONException e) {
+					System.err.println("Unable to parse JSON (services): "
+							+ e.getMessage());
+				}
+			}
+			return services;
+		}
 
-					presentedResults[i] = result.get(1) + ": " + result.get(0)
-							+ " "
-							+ getString(R.string.add_new_headcode_results_to)
-							+ " " + result.get(2) + platformInfo;
+		private Map<String, Object> parseService(JSONObject serviceJson,
+				String locationCrs) {
+			Map<String, Object> service = new HashMap<String, Object>();
+			try {
+				service.put("uid", serviceJson.getString("uid"));
+				service.put("train", serviceJson.getString("train"));
+				service.put("headcode", serviceJson.getString("trainIdentity"));
+				service.put("tocCode", serviceJson.getString("operatorCode"));
+				service.put("platform", serviceJson.getString("platform"));
+				service.put("arrivalAt", serviceJson.getString("arrival_time"));
+				service.put("departureAt",
+						serviceJson.getString("departure_time"));
+
+				service.put("locationCrs", locationCrs);
+				service.put("year", DateFormat.format("yyyy", new Date())); // TODO
+				service.put("month", DateFormat.format("MM", new Date())); // TODO
+				service.put("day", DateFormat.format("dd", new Date())); // TODO
+
+				Map<String, String> origin = parseServiceOrigin(serviceJson
+						.getJSONObject("origin"));
+				service.put("origin", origin);
+				Map<String, String> destination = parseServiceDestination(serviceJson
+						.getJSONObject("destination"));
+				service.put("destination", destination);
+				System.out.println("Service " + service.get("uid") + " is "
+						+ service.get("headcode") + ": " + origin.get("name")
+						+ " to " + destination.get("name") + " at platform "
+						+ service.get("platform") + " by "
+						+ service.get("tocCode"));
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (service): "
+						+ e.getMessage());
+			}
+			return service;
+		}
+
+		private Map<String, String> parseServiceOrigin(JSONObject origin) {
+			Map<String, String> location = new HashMap<String, String>();
+			try {
+				location.put("crs", origin.getString("crs"));
+				location.put("name", origin.getString("description"));
+				location.put("time", origin.getString("departure_time"));
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (destination): "
+						+ e.getMessage());
+			}
+			return location;
+		}
+
+		private Map<String, String> parseServiceDestination(
+				JSONObject destination) {
+			Map<String, String> location = new HashMap<String, String>();
+			try {
+				location.put("crs", destination.getString("crs"));
+				location.put("name", destination.getString("description"));
+				location.put("time", destination.getString("arrival_time"));
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (destination): "
+						+ e.getMessage());
+			}
+			return location;
+		}
+
+		@SuppressWarnings("unchecked")
+		protected void onPostExecute(
+				final ArrayList<Map<String, Object>> schedules) {
+			progressDialog.dismiss();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					AddActivity.this);
+			builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
+
+			final String[] scheduleLabels = new String[schedules.size()];
+			int i = 0;
+			for (Map<String, Object> schedule : schedules) {
+				Map<String, String> origin = (Map<String, String>) schedule
+						.get("origin");
+				Map<String, String> destination = (Map<String, String>) schedule
+						.get("destination");
+
+				String platformInfo = "";
+				if (schedule.get("platform") != "null") {
+					platformInfo = " (platform " + schedule.get("platform")
+							+ ")";
 				}
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AddActivity.this);
-				builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
-				builder.setSingleChoiceItems(presentedResults, -1,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface d, int i) {
-								ArrayList<String> selection = resultList.get(i);
-								SharedPreferences settings = getSharedPreferences(
-										UserPrefsActivity.APP_PREFS,
-										MODE_PRIVATE);
+				scheduleLabels[i] = "" + schedule.get("headcode") + ": "
+						+ schedule.get("departureAt") + " to "
+						+ destination.get("name") + platformInfo;
 
-								System.out.println("Using: " + selection.get(1));
-								int hours = Integer.parseInt(selection.get(1)
-										.substring(0, 2));
-								int minutes = Integer.parseInt(selection.get(1)
-										.substring(2, 4));
-
-								if (settings.getBoolean("CompleteFromStation",
-										true)) {
-									txt_DetailHeadcode.setText(selection.get(0));
-									tp_FromTime.setCurrentHour(hours);
-									tp_FromTime.setCurrentMinute(minutes);
-								}
-								updateSummary();
-								d.dismiss();
-
-								if (settings.getBoolean("CompleteToStation",
-										true)) {
-									System.out
-											.println("Starting DownloadJourneyDetailTask()");
-									String[] journeyDetails = new String[] {
-											selection.get(5), selection.get(6),
-											selection.get(7), selection.get(8),
-											selection.get(1) };
-									dialog = ProgressDialog
-											.show(AddActivity.this,
-													getString(R.string.add_new_headcode_schedule_progress_title),
-													getString(R.string.add_new_headcode_schedule_progress_text),
-													true);
-									dialog.setCancelable(true);
-
-									new DownloadJourneyDetailTask()
-											.execute(journeyDetails);
-								}
-							}
-						});
-				AlertDialog alert = builder.create();
-				alert.show();
-			} else { // resultList.get(0).get(0) == "ERROR"
-				Toast.makeText(getApplicationContext(),
-						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
+				i++;
 			}
+
+			OnClickListener journeySelectOnClickListener = new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface d, int itemId) {
+					HashMap<String, Object> scheduleParams = (HashMap<String, Object>) schedules
+							.toArray()[itemId];
+					alertPopup.dismiss();
+					progressDialog = ProgressDialog
+							.show(AddActivity.this,
+									getString(R.string.add_new_headcode_schedule_progress_title),
+									getString(R.string.add_new_headcode_schedule_progress_text),
+									true);
+
+					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+					txt_DetailHeadcode.setText((CharSequence) scheduleParams
+							.get("headcode").toString());
+
+					new DownloadScheduleTask().execute(scheduleParams);
+				}
+			};
+
+			builder.setSingleChoiceItems(scheduleLabels, -1,
+					journeySelectOnClickListener);
+			alertPopup = builder.create();
+			alertPopup.show();
 		}
 	}
 
-	private class DownloadJourneyDetailTask extends
-			AsyncTask<String[], Void, ArrayList<ArrayList<String>>> {
+	private class DownloadScheduleTask
+			extends
+			AsyncTask<HashMap<String, Object>, Void, ArrayList<Map<String, String>>> {
 
-		protected ArrayList<ArrayList<String>> doInBackground(
-				String[]... journeyDetails) {
-			ArrayList<ArrayList<String>> formattedStations = new ArrayList<ArrayList<String>>();
+		@SuppressWarnings("unchecked")
+		protected ArrayList<Map<String, String>> doInBackground(
+				HashMap<String, Object>... scheduleParams) {
+			ArrayList<Map<String, String>> locations;
 
-			ArrayList<String> result = new ArrayList<String>();
-			String dataError = getString(R.string.add_new_headcode_error_default_schedule);
-			result.add("ERROR");
-			result.add(dataError);
-			formattedStations.add(result);
+			HashMap<String, Object> journeyDetails = scheduleParams[0];
+			String uid = journeyDetails.get("uid").toString().toUpperCase();
+			Map<String, String> scheduleOrigin = (Map<String, String>) journeyDetails
+					.get("origin");
+			Map<String, String> scheduleDestination = (Map<String, String>) journeyDetails
+					.get("destination");
 
-			String[] journeyDetail = journeyDetails[0];
-			String journeyId = journeyDetail[0];
-			String fromYear = journeyDetail[1];
-			String fromMonth = journeyDetail[2];
-			String fromDay = journeyDetail[3];
-			String fromTime = journeyDetail[4];
-			boolean passedStationInSchedule = false;
+			JSONObject scheduleJson = fetchTimetable(uid,
+					scheduleOrigin.get("crs"),
+					(String) journeyDetails.get("locationCrs"),
+					scheduleDestination.get("crs"), journeyDetails.get("year")
+							.toString(),
+					journeyDetails.get("month").toString(),
+					journeyDetails.get("day").toString());
+
+			locations = parseSchedule(scheduleJson);
+			System.out.println("Fetched " + locations.size() + " locations on "
+					+ uid);
+
+			return locations;
+		}
+
+		private JSONObject fetchTimetable(String uid, String originCrsCode,
+				String locationCrs, String destinationCrsCode, String year,
+				String month, String date) {
+
+			JSONObject json = new JSONObject();
+			String rawJson = Helpers
+					.fetchData("http://api.traintimes.im/schedule_partial.json?"
+							+ "uid="
+							+ uid
+							+ "&origin="
+							+ locationCrs
+							+ "&destination="
+							+ destinationCrsCode
+							+ "&date="
+							+ Helpers.leftPad(year, 4)
+							+ "-"
+							+ Helpers.leftPad(month, 2)
+							+ "-"
+							+ Helpers.leftPad(date, 2));
+			try {
+				json = new JSONObject(rawJson);
+			} catch (JSONException e) {
+				// boo hiss boo
+			}
+
+			return json;
+		}
+
+		private ArrayList<Map<String, String>> parseSchedule(
+				JSONObject scheduleJson) {
+			ArrayList<Map<String, String>> schedule = new ArrayList<Map<String, String>>();
 
 			try {
-				URL url = new URL("http://trains.im/schedule/" + journeyId
-						+ "/" + fromYear + "/" + fromMonth + "/" + fromDay);
-				System.out.println("Fetching journey detail from: "
-						+ url.toString());
+				JSONArray scheduleLocations = scheduleJson
+						.getJSONArray("locations");
+				if (scheduleLocations.length() > 1) {
+					for (int i = 1; i < scheduleLocations.length(); i++) {
+						JSONObject locationJson = (JSONObject) scheduleLocations
+								.get(i);
+						// System.out.println("Parsing: " +
+						// locationJson.toString(2));
 
-				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(url.openStream(), "UTF-8"));
+						String locationCrs = locationJson.getString("crs");
+						String locationDesc = locationJson
+								.getString("description");
+						Boolean publicCall = locationJson
+								.getBoolean("publicCall");
+						Boolean pickupOnly = locationJson
+								.getBoolean("picksUpOnly");
+						String arrivalDate = locationJson.getString("calldate");
+						String arrivalTime = locationJson
+								.getString("arrival_time");
+						String platform = locationJson.getString("platform");
 
-				for (String line; (line = reader.readLine()) != null;) {
-					builder.append(line.trim());
-				}
+						if (publicCall && !pickupOnly) {
+							HashMap<String, String> location = new HashMap<String, String>();
+							location.put("locationCrs", locationCrs);
+							location.put("locationDesc", locationDesc);
+							location.put("arrivalDate", arrivalDate);
+							location.put("arrivalTime", arrivalTime);
+							location.put("platform", platform);
 
-				String tableStart = "<table class=\"table table-striped\">";
-				String tableEnd = "</table>";
-				if (builder.indexOf(tableStart) > 0) {
-					String tablePart = builder.substring(builder
-							.indexOf(tableStart) + tableStart.length());
-					// System.out.println(tablePart);
-					String table = tablePart.substring(0,
-							tablePart.indexOf(tableEnd));
-
-					String bodyStart = "<tbody>";
-					String bodyEnd = "</tbody>";
-					if (table.indexOf(bodyStart) > 0) {
-						String bodyPart = table.substring(table
-								.indexOf(bodyStart) + bodyStart.length());
-						String body = bodyPart.substring(0,
-								bodyPart.indexOf(bodyEnd));
-
-						String rowStart = "<tr";
-						String rowEnd = "</tr>";
-						ArrayList<String> rows = new ArrayList<String>();
-
-						String[] rawRows = body.split(Pattern.quote(rowStart));
-						for (int r = 1; r < rawRows.length; r++) {
-							String row = rawRows[r];
-							rows.add(row);
-							System.out.println("Added row " + r + ": " + row);
-						}
-
-						ArrayList<ArrayList<String>> stations = new ArrayList<ArrayList<String>>();
-
-						for (int r = 0; r < rows.size(); r++) {
-							String row = rows.get(r);
-
-							// Split into array of cellS
-							String cellStart = "<td";
-							String cellEnd = "</";
-
-							ArrayList<String> cells = new ArrayList<String>();
-							String[] rawCells = row.split(Pattern
-									.quote(cellStart));
-							for (int i = 0; i < rawCells.length; i++) {
-								cells.add(rawCells[i]);
-							}
-							cells.remove(0);
-
-							ArrayList<String> station = new ArrayList<String>();
-
-							// get journey ID from headcode a[@href]
-							String link = cells.get(0);
-							System.out.println("Link: " + link);
-
-							int linkPos = link.indexOf("href") + 6;
-							int linkSepPos = linkPos - 1;
-							String sep = "" + link.charAt(linkSepPos);
-
-							int secondSepPos = link.indexOf(sep, linkPos);
-							String linkHref = link.substring(linkPos,
-									secondSepPos - 1);
-
-							System.out.println("Link HREF:" + linkHref);
-							String[] journeyParts = linkHref.split("/");
-							String year = journeyParts[3];
-							String month = journeyParts[4];
-							String day = journeyParts[5];
-
-							// Get contents of all cells and remove
-							// any more HTML tags from inside
-							for (int c = 0; c < cells.size(); c++) {
-								String cellPart = cells.get(c);
-								String cell = cellPart.substring(
-										cellPart.indexOf(">") + 1,
-										cellPart.indexOf(cellEnd));
-								cells.set(c, android.text.Html.fromHtml(cell)
-										.toString());
-							}
-
-							// Pick out elements
-							String stnName = cells.get(0);
-							String stnCode = stnName
-									.substring(stnName.length() - 3);
-							stnName = stnName
-									.substring(0, stnName.length() - 5);
-
-							String platform = cells.get(1);
-							String arrTime = cells.get(2);
-							String depTime = cells.get(3);
-
-							if (platform == " ") {
-								platform = ""
-										+ getText(R.string.add_new_headcode_results_no_platform);
-							}
-
-							System.out.println("Station: " + stnName);
-							System.out.println("Code: " + stnCode);
-							System.out.println("Platform: " + platform);
-							System.out.println("Arrival: " + arrTime);
-							System.out.println("Departure: " + depTime);
-							System.out.println("Year: " + year);
-							System.out.println("Month: " + month);
-							System.out.println("Day: " + day);
-
-							String time = arrTime;
-							if (!time.matches("[0-9]{4}")) {
-								time = "" + depTime;
-							}
-
-							station.add(stnName);
-							station.add(stnCode);
-							station.add(time);
-							station.add(year);
-							station.add(month);
-							station.add(day);
-
-							System.out.println("Station: " + station);
-							boolean laterToday = (Integer.parseInt(fromTime) < Integer
-									.parseInt(time)
-									&& fromYear.equals(year)
-									&& fromMonth.equals(month) && fromDay
-									.equals(day));
-							boolean tommorrow = (Integer.parseInt(year) > Integer
-									.parseInt(fromYear)
-									|| Integer.parseInt(month) > Integer
-											.parseInt(fromMonth) || Integer
-									.parseInt(day) > Integer.parseInt(fromDay));
-							if (laterToday || tommorrow) {
-								passedStationInSchedule = true;
-							}
-
-							if (passedStationInSchedule) {
-								result.clear();
-								result.add("SUCCESS");
-
-								if (formattedStations.size() == 0) {
-									formattedStations.add(result);
-									formattedStations.add(station);
-								} else {
-									formattedStations.set(0, result);
-									formattedStations.add(station);
-								}
-							}
+							schedule.add(location);
 						}
 					}
 				}
-
-				try {
-					reader.close();
-				} catch (IOException e) {
-					System.err.println(e.getMessage());
-					System.err.println(e.getStackTrace());
-				}
-
-				if (formattedStations.get(0).get(0).equals("ERROR")) {
-					formattedStations.clear();
-					result.add("ERROR");
-					result.add(getString(R.string.add_new_headcode_error_last_station));
-					formattedStations.set(0, result);
-				}
-
-			} catch (UnsupportedEncodingException e) {
-				System.err.println(e.getMessage());
-				System.err.println(e.getStackTrace());
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_invalid));
-				formattedStations.set(0, result);
-			} catch (IOException e) {
-				System.err.println(e.getMessage());
-				System.err.println(e.getStackTrace());
-				result.add("ERROR");
-				result.add(getString(R.string.add_new_headcode_error_io));
-				formattedStations.set(0, result);
+			} catch (JSONException e) {
+				System.err.println("Unable to parse JSON (schedule): "
+						+ e.getMessage());
 			}
 
-			return formattedStations;
+			return schedule;
 		}
 
+		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
-				final ArrayList<ArrayList<String>> resultList) {
-			dialog.dismiss();
-			if (resultList.get(0).get(0) == "SUCCESS") {
-				resultList.remove(0);
-				txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
-				actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
-				dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
-				tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+				final ArrayList<Map<String, String>> locations) {
+			progressDialog.dismiss();
 
-				String[] presentedResults = new String[resultList.size()];
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AddActivity.this);
-				builder.setTitle(getString(R.string.add_new_headcode_schedule_results_title));
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					AddActivity.this);
+			builder.setTitle(getString(R.string.add_new_headcode_schedule_results_title));
 
-				for (int i = 0; i < resultList.size(); i++) {
-					ArrayList<String> result = resultList.get(i);
-					System.out.println("Result #" + i + ": " + result);
-					presentedResults[i] = result.get(2) + ": " + result.get(0);
+			final String[] locationLabels = new String[locations.size()];
+			int i = 0;
+			for (Map<String, String> location : locations) {
+
+				String platformInfo = "";
+				if (location.get("platform") != "null") {
+					platformInfo = " (platform " + location.get("platform")
+							+ ")";
 				}
 
-				builder.setSingleChoiceItems(presentedResults, -1,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface d, int i) {
-								ArrayList<String> selection = resultList.get(i);
-								System.out.println("Selected #" + i + ": "
-										+ selection);
-								String destinationCode = selection.get(1);
-								String destination = "" + selection.get(1)
-										+ " " + selection.get(0);
+				locationLabels[i] = "" + location.get("arrivalTime") + ": "
+						+ location.get("locationDesc") + platformInfo;
 
-								String[] completions = read_csv("stations.lst");
-								for (String stationName : completions) {
-									String completionCode = Helpers
-											.trimNameFromStation(stationName,
-													getApplicationContext());
-									if (completionCode.equals(destinationCode)) {
-										destination = stationName;
-										break;
-									}
-								}
-
-								actv_ToSearch.setText(destination);
-
-								String time = selection.get(2);
-								if (time.matches("[0-9]{4}")) {
-									int hrs = Integer.parseInt(time.substring(
-											0, 2));
-									int min = Integer.parseInt(time.substring(
-											2, 4));
-
-									tp_ToTime.setCurrentHour(hrs);
-									tp_ToTime.setCurrentMinute(min);
-								}
-
-								int year = Integer.parseInt(selection.get(3));
-								int month = Integer.parseInt(selection.get(4));
-								int day = Integer.parseInt(selection.get(5));
-								dp_ToDate.updateDate(year, month - 1, day);
-
-								updateSummary();
-								d.dismiss();
-							}
-						});
-				AlertDialog alert = builder.create();
-				alert.show();
-			} else { // resultList.get(0).get(0) == "ERROR"
-				Toast.makeText(getApplicationContext(),
-						resultList.get(0).get(1), Toast.LENGTH_LONG).show();
+				i++;
 			}
+
+			OnClickListener locationSelectOnClickListener = new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface d, int itemId) {
+					HashMap<String, String> locationParams = (HashMap<String, String>) locations
+							.toArray()[itemId];
+
+					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+					actv_ToSearch = (AutoCompleteTextView) findViewById(R.id.actv_ToSearch);
+					dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
+					tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
+
+					Toast.makeText(
+							getApplicationContext(),
+							"Selected: " + locationParams.get("locationDesc")
+									+ " at "
+									+ locationParams.get("arrivalTime"),
+							Toast.LENGTH_SHORT).show();
+
+					ensureCompletions();
+					String[] matchedStation = Helpers
+							.codeAndStationFromStation(
+									locationParams.get("locationDesc"),
+									completions, AddActivity.this);
+					actv_ToSearch.setText(matchedStation[1]);
+
+					String time = locationParams.get("arrivalTime");
+					if (time.matches("[0-9]{4}")) {
+						int hrs = Integer.parseInt(time.substring(0, 2));
+						int min = Integer.parseInt(time.substring(2, 4));
+
+						tp_ToTime.setCurrentHour(hrs);
+						tp_ToTime.setCurrentMinute(min);
+					}
+
+					String date = locationParams.get("arrivalDate");
+					if (date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+						int year = Integer.parseInt(date.substring(0, 4));
+						System.out.println("Year: " + year);
+						int month = Integer.parseInt(date.substring(5, 6));
+						System.out.println("Month: " + month);
+						int day = Integer.parseInt(date.substring(8, 10));
+						System.out.println("Day: " + day);
+
+						dp_ToDate.updateDate(year, month + 1, day);
+					}
+
+					updateSummary();
+					alertPopup.dismiss();
+				}
+			};
+
+			builder.setSingleChoiceItems(locationLabels, -1,
+					locationSelectOnClickListener);
+			alertPopup = builder.create();
+			alertPopup.show();
 		}
 	}
 }
