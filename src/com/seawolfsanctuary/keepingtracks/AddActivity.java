@@ -78,6 +78,8 @@ public class AddActivity extends TabActivity {
 	TextView txt_summary_headcode_data;
 	CheckBox chk_Checkin;
 
+	protected String[] completions;
+
 	SharedPreferences settings;
 
 	protected ProgressDialog progressDialog;
@@ -85,6 +87,12 @@ public class AddActivity extends TabActivity {
 
 	boolean isLocationEnabledNetwork = false;
 	boolean isLocationEnabledGPS = false;
+
+	private void ensureCompletions() {
+		if (completions == null) {
+			completions = read_csv("stations.lst");
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -263,7 +271,7 @@ public class AddActivity extends TabActivity {
 		mTabHost.setCurrentTab(0);
 
 		// Link array of completions
-		String[] completions = read_csv("stations.lst");
+		ensureCompletions();
 		ada_fromSearchAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_dropdown_item_1line, completions);
 		ada_toSearchAdapter = new ArrayAdapter<String>(this,
@@ -298,6 +306,9 @@ public class AddActivity extends TabActivity {
 		} catch (NullPointerException e) {
 			// meh
 		}
+
+		completions = read_csv("stations.lst");
+
 		MenuActivity.hideLoader();
 	}
 
@@ -574,6 +585,13 @@ public class AddActivity extends TabActivity {
 					Toast.LENGTH_LONG).show();
 			mTabHost.setCurrentTab(0);
 		} else {
+			ensureCompletions();
+			String[] matchedStation = Helpers.codeAndStationFromCode(from,
+					completions, AddActivity.this);
+			from = matchedStation[0];
+			actv_FromSearch.setText(matchedStation[1]);
+			updateSummary();
+
 			HashMap<String, String> journeyDetails = new HashMap<String, String>();
 			journeyDetails.put("from", from);
 			journeyDetails.put("to", to);

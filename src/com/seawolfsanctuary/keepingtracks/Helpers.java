@@ -190,6 +190,24 @@ public class Helpers {
 		return station;
 	}
 
+	/* returns [best code, best display of station in from field] */
+	public static String[] codeAndStationFromCode(String input,
+			String[] completions, Context c) {
+		String[] bestGuess = new String[] { input.toUpperCase(), input };
+
+		input = input.toUpperCase();
+		for (int i = 0; i < completions.length; i++) {
+			String codeAndStation = completions[i];
+
+			if (input.equals(Helpers.trimNameFromStation(codeAndStation, c))) {
+				bestGuess[0] = input;
+				bestGuess[1] = codeAndStation;
+			}
+		}
+
+		return bestGuess;
+	}
+
 	public static String trimCategoryFromPlace(String placeName, Context c) {
 		if (placeName.length() > 0 && placeName.contains(": ")) {
 			String category = placeName.split(":")[0];
