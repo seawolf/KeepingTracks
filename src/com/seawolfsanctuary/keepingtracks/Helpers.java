@@ -469,11 +469,12 @@ public class Helpers {
 		return f;
 	}
 
-	public static String fetchData(String url) {
+	public static String fetchData(String url) throws Exception {
 		System.out.println("Fetching data from:");
 		System.out.println(url);
 		InputStream inputStream = null;
 		String result = "";
+		Exception error = null;
 
 		try {
 			DefaultHttpClient httpclient = new DefaultHttpClient(
@@ -492,13 +493,18 @@ public class Helpers {
 			}
 			result = sb.toString();
 		} catch (Exception e) {
-			// Oops
+			error = e;
 		} finally {
 			try {
 				if (inputStream != null)
 					inputStream.close();
 			} catch (Exception squish) {
+				//
 			}
+		}
+
+		if (error != null) {
+			throw error;
 		}
 
 		return result;
