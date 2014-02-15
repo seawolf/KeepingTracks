@@ -81,6 +81,8 @@ public class AddActivity extends TabActivity {
 
 	protected ProgressDialog progressDialog;
 	protected AlertDialog alertPopup;
+	protected Exception errorThrown;
+	protected String errorThrowLevel;
 
 	boolean isLocationEnabledNetwork = false;
 	boolean isLocationEnabledGPS = false;
@@ -609,13 +611,24 @@ public class AddActivity extends TabActivity {
 
 	}
 
+	protected void presentError(Exception errorThrown, String errorThrowLevel) {
+		System.err.println("Unable to " + errorThrowLevel + ": "
+				+ errorThrown.getMessage());
+		Toast.makeText(
+				getApplicationContext(),
+				"Sorry! Something went wrong "
+						+ errorThrowLevel
+						+ ". Please try again. If the problem persists, please contact us!",
+				Toast.LENGTH_LONG).show();
+	}
+
 	private class DownloadSchedulesTask
 			extends
 			AsyncTask<HashMap<String, String>, Void, ArrayList<Map<String, Object>>> {
 
 		protected ArrayList<Map<String, Object>> doInBackground(
 				HashMap<String, String>... journeysDetails) {
-			ArrayList<Map<String, Object>> schedules;
+			ArrayList<Map<String, Object>> schedules = new ArrayList<Map<String, Object>>();
 
 			HashMap<String, String> journeyDetails = journeysDetails[0];
 			String locationCrs = journeyDetails.get("from").toUpperCase();
@@ -623,7 +636,10 @@ public class AddActivity extends TabActivity {
 					journeyDetails.get("year"), journeyDetails.get("month"),
 					journeyDetails.get("day"), journeyDetails.get("hour"),
 					"00", "60");
-			schedules = parseSchedules(schedulesJson, locationCrs);
+
+			if (errorThrown == null) {
+				schedules = parseSchedules(schedulesJson, locationCrs);
+			}
 
 			System.out.println("Fetched " + schedules.size()
 					+ " schedules from " + locationCrs);
@@ -648,26 +664,28 @@ public class AddActivity extends TabActivity {
 		private JSONObject fetchTimetable(String crsCode, String year,
 				String month, String date, String hour, String minute,
 				String duration) {
-
 			JSONObject json = new JSONObject();
-			String rawJson = Helpers
-					.fetchData("http://api.traintimes.im/locations.json?location="
-							+ crsCode
-							+ "&date="
-							+ Helpers.leftPad(year, 4)
-							+ "-"
-							+ Helpers.leftPad(month, 2)
-							+ "-"
-							+ Helpers.leftPad(date, 2)
-							+ "&startTime="
-							+ hour
-							+ "" + minute + "&period=" + duration);
+
 			try {
+				String rawJson = Helpers
+						.fetchData("http://api.traintimes.im/locations.json?location="
+								+ crsCode
+								+ "&date="
+								+ Helpers.leftPad(year, 4)
+								+ "-"
+								+ Helpers.leftPad(month, 2)
+								+ "-"
+								+ Helpers.leftPad(date, 2)
+								+ "&startTime="
+								+ hour + "" + minute + "&period=" + duration);
 				json = new JSONObject(rawJson);
 			} catch (JSONException e) {
-				// boo hiss boo
+				errorThrown = (Exception) e;
+				errorThrowLevel = "fetching the timetable data";
+			} catch (Exception e) {
+				errorThrown = e;
+				errorThrowLevel = "fetching the departure board. Check the 'From' station and your Internet connection";
 			}
-
 			return json;
 		}
 
@@ -678,8 +696,8 @@ public class AddActivity extends TabActivity {
 				JSONArray servicesJson = schedulesJson.getJSONArray("services");
 				services = parseServices(servicesJson, "dep", locationCrs);
 			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (schedules): "
-						+ e.getMessage());
+				errorThrown = (Exception) e;
+				errorThrowLevel = "parsing the schedule data. Check the 'From' station";
 			}
 			return services;
 		}
@@ -705,8 +723,8 @@ public class AddActivity extends TabActivity {
 								+ s.get("headcode") + ") is not a train.");
 					}
 				} catch (JSONException e) {
-					System.err.println("Unable to parse JSON (services): "
-							+ e.getMessage());
+					errorThrown = (Exception) e;
+					errorThrowLevel = "parsing the services data";
 				}
 			}
 			return services;
@@ -726,9 +744,9 @@ public class AddActivity extends TabActivity {
 						serviceJson.getString("departure_time"));
 
 				service.put("locationCrs", locationCrs);
-				service.put("year", DateFormat.format("yyyy", new Date())); // TODO
-				service.put("month", DateFormat.format("MM", new Date())); // TODO
-				service.put("day", DateFormat.format("dd", new Date())); // TODO
+				service.put("year", DateFormat.format("yyyy", new Date()));
+				service.put("month", DateFormat.format("MM", new Date()));
+				service.put("day", DateFormat.format("dd", new Date()));
 
 				Map<String, String> origin = parseServiceOrigin(serviceJson
 						.getJSONObject("origin"));
@@ -742,8 +760,8 @@ public class AddActivity extends TabActivity {
 						+ service.get("platform") + " by "
 						+ service.get("tocCode"));
 			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (service): "
-						+ e.getMessage());
+				errorThrown = (Exception) e;
+				errorThrowLevel = "parsing a service's data";
 			}
 			return service;
 		}
@@ -755,8 +773,8 @@ public class AddActivity extends TabActivity {
 				location.put("name", origin.getString("description"));
 				location.put("time", origin.getString("departure_time"));
 			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (destination): "
-						+ e.getMessage());
+				errorThrown = (Exception) e;
+				errorThrowLevel = "parsing a service's origin";
 			}
 			return location;
 		}
@@ -769,17 +787,15 @@ public class AddActivity extends TabActivity {
 				location.put("name", destination.getString("description"));
 				location.put("time", destination.getString("arrival_time"));
 			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (destination): "
-						+ e.getMessage());
+				errorThrown = (Exception) e;
+				errorThrowLevel = "parsing a service's destination";
 			}
 			return location;
 		}
 
 		@SuppressWarnings("unchecked")
-		protected void onPostExecute(
+		private void presentSchedules(
 				final ArrayList<Map<String, Object>> schedules) {
-			progressDialog.dismiss();
-
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					AddActivity.this);
 			builder.setTitle(getString(R.string.add_new_headcode_depboard_results_title));
@@ -787,8 +803,8 @@ public class AddActivity extends TabActivity {
 			final String[] scheduleLabels = new String[schedules.size()];
 			int i = 0;
 			for (Map<String, Object> schedule : schedules) {
-				Map<String, String> origin = (Map<String, String>) schedule
-						.get("origin");
+				// Map<String, String> origin = (Map<String, String>) schedule
+				// .get("origin");
 				Map<String, String> destination = (Map<String, String>) schedule
 						.get("destination");
 
@@ -830,6 +846,16 @@ public class AddActivity extends TabActivity {
 			alertPopup = builder.create();
 			alertPopup.show();
 		}
+
+		protected void onPostExecute(ArrayList<Map<String, Object>> schedules) {
+			progressDialog.dismiss();
+
+			if (errorThrown == null) {
+				presentSchedules(schedules);
+			} else {
+				presentError(errorThrown, errorThrowLevel);
+			}
+		}
 	}
 
 	private class DownloadScheduleTask
@@ -839,7 +865,7 @@ public class AddActivity extends TabActivity {
 		@SuppressWarnings("unchecked")
 		protected ArrayList<Map<String, String>> doInBackground(
 				HashMap<String, Object>... scheduleParams) {
-			ArrayList<Map<String, String>> locations;
+			ArrayList<Map<String, String>> locations = new ArrayList<Map<String, String>>();
 
 			HashMap<String, Object> journeyDetails = scheduleParams[0];
 			String uid = journeyDetails.get("uid").toString().toUpperCase();
@@ -856,7 +882,10 @@ public class AddActivity extends TabActivity {
 					journeyDetails.get("month").toString(),
 					journeyDetails.get("day").toString());
 
-			locations = parseSchedule(scheduleJson);
+			if (errorThrown == null) {
+				locations = parseSchedule(scheduleJson);
+			}
+
 			System.out.println("Fetched " + locations.size() + " locations on "
 					+ uid);
 
@@ -866,28 +895,31 @@ public class AddActivity extends TabActivity {
 		private JSONObject fetchTimetable(String uid, String originCrsCode,
 				String locationCrs, String destinationCrsCode, String year,
 				String month, String date) {
-
 			JSONObject json = new JSONObject();
-			String rawJson = Helpers
-					.fetchData("http://api.traintimes.im/schedule_partial.json?"
-							+ "uid="
-							+ uid
-							+ "&origin="
-							+ locationCrs
-							+ "&destination="
-							+ destinationCrsCode
-							+ "&date="
-							+ Helpers.leftPad(year, 4)
-							+ "-"
-							+ Helpers.leftPad(month, 2)
-							+ "-"
-							+ Helpers.leftPad(date, 2));
+
 			try {
+				String rawJson = Helpers
+						.fetchData("http://api.traintimes.im/schedule_partial.json?"
+								+ "uid="
+								+ uid
+								+ "&origin="
+								+ locationCrs
+								+ "&destination="
+								+ destinationCrsCode
+								+ "&date="
+								+ Helpers.leftPad(year, 4)
+								+ "-"
+								+ Helpers.leftPad(month, 2)
+								+ "-"
+								+ Helpers.leftPad(date, 2));
 				json = new JSONObject(rawJson);
 			} catch (JSONException e) {
-				// boo hiss boo
+				errorThrown = (Exception) e;
+				errorThrowLevel = "fetching the timetable data";
+			} catch (Exception e) {
+				errorThrown = e;
+				errorThrowLevel = "fetching the departure board. Check the 'From' station and your Internet connection";
 			}
-
 			return json;
 		}
 
@@ -930,18 +962,15 @@ public class AddActivity extends TabActivity {
 					}
 				}
 			} catch (JSONException e) {
-				System.err.println("Unable to parse JSON (schedule): "
-						+ e.getMessage());
+				errorThrown = (Exception) e;
+				errorThrowLevel = "parsing the schedule data";
 			}
 
 			return schedule;
 		}
 
-		@SuppressWarnings("unchecked")
-		protected void onPostExecute(
+		private void presentLocations(
 				final ArrayList<Map<String, String>> locations) {
-			progressDialog.dismiss();
-
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					AddActivity.this);
 			builder.setTitle(getString(R.string.add_new_headcode_schedule_results_title));
@@ -962,6 +991,7 @@ public class AddActivity extends TabActivity {
 				i++;
 			}
 
+			@SuppressWarnings("unchecked")
 			OnClickListener locationSelectOnClickListener = new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface d, int itemId) {
@@ -1017,6 +1047,16 @@ public class AddActivity extends TabActivity {
 					locationSelectOnClickListener);
 			alertPopup = builder.create();
 			alertPopup.show();
+		}
+
+		protected void onPostExecute(ArrayList<Map<String, String>> locations) {
+			progressDialog.dismiss();
+
+			if (errorThrown == null) {
+				presentLocations(locations);
+			} else {
+				presentError(errorThrown, errorThrowLevel);
+			}
 		}
 	}
 }
