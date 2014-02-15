@@ -819,6 +819,11 @@ public class AddActivity extends TabActivity {
 									getString(R.string.add_new_headcode_schedule_progress_title),
 									getString(R.string.add_new_headcode_schedule_progress_text),
 									true);
+
+					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
+					txt_DetailHeadcode.setText((CharSequence) scheduleParams
+							.get("headcode").toString());
+
 					new DownloadScheduleTask().execute(scheduleParams);
 				}
 			};

@@ -190,7 +190,7 @@ public class Helpers {
 		return station;
 	}
 
-	/* returns [best code, best display of station in from field] */
+	/* returns [best code, best display of station in text field] */
 	public static String[] codeAndStationFromCode(String input,
 			String[] completions, Context c) {
 		String[] bestGuess = new String[] { input.toUpperCase(), input };
@@ -208,7 +208,7 @@ public class Helpers {
 		return bestGuess;
 	}
 
-	/* returns [best code, best display of station in from field] */
+	/* returns [best code, best display of station in text field] */
 	public static String[] codeAndStationFromStation(String input,
 			String[] completions, Context c) {
 		String[] bestGuess = new String[] { input.toUpperCase(), input };
@@ -216,13 +216,6 @@ public class Helpers {
 		input = input.toUpperCase();
 		for (int i = completions.length - 1; i >= 0; i--) {
 			String codeAndStation = completions[i];
-
-			System.out.println("Checking: '"
-					+ input
-					+ "' to '"
-					+ Helpers.trimCodeFromStation(codeAndStation, c)
-							.toUpperCase() + "'");
-
 			if (input.equals(Helpers.trimCodeFromStation(codeAndStation, c)
 					.toUpperCase())) {
 				bestGuess[0] = input;
