@@ -488,9 +488,11 @@ public class CheckinActivity extends org.holoeverywhere.app.ListActivity {
 						}
 					}
 
-					venues.add(venueCategory + ": " + venueName);
-					venueIDs.add(e.getString("id"));
-
+					if (venueCategory
+							.matches(".*(Train|Tram|Rail|Railway|Subway|Platform|Lounge).*")) {
+						venues.add(venueName);
+						venueIDs.add(e.getString("id"));
+					}
 				}
 
 				setVenues(venues);
