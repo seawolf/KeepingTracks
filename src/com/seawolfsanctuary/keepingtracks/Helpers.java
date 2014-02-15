@@ -208,6 +208,31 @@ public class Helpers {
 		return bestGuess;
 	}
 
+	/* returns [best code, best display of station in from field] */
+	public static String[] codeAndStationFromStation(String input,
+			String[] completions, Context c) {
+		String[] bestGuess = new String[] { input.toUpperCase(), input };
+
+		input = input.toUpperCase();
+		for (int i = completions.length - 1; i >= 0; i--) {
+			String codeAndStation = completions[i];
+
+			System.out.println("Checking: '"
+					+ input
+					+ "' to '"
+					+ Helpers.trimCodeFromStation(codeAndStation, c)
+							.toUpperCase() + "'");
+
+			if (input.equals(Helpers.trimCodeFromStation(codeAndStation, c)
+					.toUpperCase())) {
+				bestGuess[0] = input;
+				bestGuess[1] = codeAndStation;
+			}
+		}
+
+		return bestGuess;
+	}
+
 	public static String trimCategoryFromPlace(String placeName, Context c) {
 		if (placeName.length() > 0 && placeName.contains(": ")) {
 			String category = placeName.split(":")[0];

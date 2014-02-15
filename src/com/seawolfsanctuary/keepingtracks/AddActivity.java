@@ -978,7 +978,12 @@ public class AddActivity extends TabActivity {
 									+ locationParams.get("arrivalTime"),
 							Toast.LENGTH_SHORT).show();
 
-					actv_ToSearch.setText(locationParams.get("locationDesc"));
+					ensureCompletions();
+					String[] matchedStation = Helpers
+							.codeAndStationFromStation(
+									locationParams.get("locationDesc"),
+									completions, AddActivity.this);
+					actv_ToSearch.setText(matchedStation[1]);
 
 					String time = locationParams.get("arrivalTime");
 					if (time.matches("[0-9]{4}")) {
