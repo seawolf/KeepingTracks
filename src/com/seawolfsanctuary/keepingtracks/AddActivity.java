@@ -2,11 +2,8 @@ package com.seawolfsanctuary.keepingtracks;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.holoeverywhere.app.AlertDialog;
@@ -614,11 +611,11 @@ public class AddActivity extends TabActivity {
 
 	private class DownloadSchedulesTask
 			extends
-			AsyncTask<HashMap<String, String>, Void, Collection<Map<String, Object>>> {
+			AsyncTask<HashMap<String, String>, Void, ArrayList<Map<String, Object>>> {
 
-		protected Collection<Map<String, Object>> doInBackground(
+		protected ArrayList<Map<String, Object>> doInBackground(
 				HashMap<String, String>... journeysDetails) {
-			Collection<Map<String, Object>> schedules;
+			ArrayList<Map<String, Object>> schedules;
 
 			HashMap<String, String> journeyDetails = journeysDetails[0];
 			String locationCrs = journeyDetails.get("from").toUpperCase();
@@ -674,9 +671,9 @@ public class AddActivity extends TabActivity {
 			return json;
 		}
 
-		private Collection<Map<String, Object>> parseSchedules(
+		private ArrayList<Map<String, Object>> parseSchedules(
 				JSONObject schedulesJson, String locationCrs) {
-			Collection<Map<String, Object>> services = new HashSet<Map<String, Object>>();
+			ArrayList<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
 			try {
 				JSONArray servicesJson = schedulesJson.getJSONArray("services");
 				services = parseServices(servicesJson, "dep", locationCrs);
@@ -687,9 +684,9 @@ public class AddActivity extends TabActivity {
 			return services;
 		}
 
-		private List<Map<String, Object>> parseServices(JSONArray servicesJson,
-				String flagArrDep, String locationCrs) {
-			List<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
+		private ArrayList<Map<String, Object>> parseServices(
+				JSONArray servicesJson, String flagArrDep, String locationCrs) {
+			ArrayList<Map<String, Object>> services = new ArrayList<Map<String, Object>>();
 			for (int i = 0; i < servicesJson.length(); i++) {
 				try {
 					JSONObject service = servicesJson.getJSONObject(i);
@@ -780,7 +777,7 @@ public class AddActivity extends TabActivity {
 
 		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
-				final Collection<Map<String, Object>> schedules) {
+				final ArrayList<Map<String, Object>> schedules) {
 			progressDialog.dismiss();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -837,12 +834,12 @@ public class AddActivity extends TabActivity {
 
 	private class DownloadScheduleTask
 			extends
-			AsyncTask<HashMap<String, Object>, Void, Collection<Map<String, String>>> {
+			AsyncTask<HashMap<String, Object>, Void, ArrayList<Map<String, String>>> {
 
 		@SuppressWarnings("unchecked")
-		protected Collection<Map<String, String>> doInBackground(
+		protected ArrayList<Map<String, String>> doInBackground(
 				HashMap<String, Object>... scheduleParams) {
-			Collection<Map<String, String>> locations;
+			ArrayList<Map<String, String>> locations;
 
 			HashMap<String, Object> journeyDetails = scheduleParams[0];
 			String uid = journeyDetails.get("uid").toString().toUpperCase();
@@ -894,9 +891,9 @@ public class AddActivity extends TabActivity {
 			return json;
 		}
 
-		private Collection<Map<String, String>> parseSchedule(
+		private ArrayList<Map<String, String>> parseSchedule(
 				JSONObject scheduleJson) {
-			Collection<Map<String, String>> schedule = new HashSet<Map<String, String>>();
+			ArrayList<Map<String, String>> schedule = new ArrayList<Map<String, String>>();
 
 			try {
 				JSONArray scheduleLocations = scheduleJson
@@ -942,7 +939,7 @@ public class AddActivity extends TabActivity {
 
 		@SuppressWarnings("unchecked")
 		protected void onPostExecute(
-				final Collection<Map<String, String>> locations) {
+				final ArrayList<Map<String, String>> locations) {
 			progressDialog.dismiss();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
