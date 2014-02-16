@@ -628,6 +628,8 @@ public class AddActivity extends TabActivity {
 
 		protected ArrayList<Map<String, Object>> doInBackground(
 				HashMap<String, String>... journeysDetails) {
+			errorThrown = null;
+			errorThrowLevel = null;
 			ArrayList<Map<String, Object>> schedules = new ArrayList<Map<String, Object>>();
 
 			HashMap<String, String> journeyDetails = journeysDetails[0];
@@ -865,6 +867,8 @@ public class AddActivity extends TabActivity {
 		@SuppressWarnings("unchecked")
 		protected ArrayList<Map<String, String>> doInBackground(
 				HashMap<String, Object>... scheduleParams) {
+			errorThrown = null;
+			errorThrowLevel = null;
 			ArrayList<Map<String, String>> locations = new ArrayList<Map<String, String>>();
 
 			HashMap<String, Object> journeyDetails = scheduleParams[0];
