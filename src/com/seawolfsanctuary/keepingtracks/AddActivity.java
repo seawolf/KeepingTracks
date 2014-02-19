@@ -632,6 +632,7 @@ public class AddActivity extends TabActivity {
 
 			HashMap<String, String> journeyDetails = journeysDetails[0];
 			String locationCrs = journeyDetails.get("from").toUpperCase();
+
 			JSONObject schedulesJson = fetchTimetable(locationCrs,
 					journeyDetails.get("year"), journeyDetails.get("month"),
 					journeyDetails.get("day"), journeyDetails.get("hour"),
@@ -841,6 +842,15 @@ public class AddActivity extends TabActivity {
 									getString(R.string.add_new_headcode_schedule_progress_text),
 									true);
 
+					String time = scheduleParams.get("departureAt").toString();
+					if (time.matches("[0-9]{4}")) {
+						int hrs = Integer.parseInt(time.substring(0, 2));
+						int min = Integer.parseInt(time.substring(2, 4));
+
+						tp_FromTime.setCurrentHour(hrs);
+						tp_FromTime.setCurrentMinute(min);
+					}
+
 					txt_DetailHeadcode = (TextView) findViewById(R.id.txt_DetailHeadcode);
 					txt_DetailHeadcode.setText((CharSequence) scheduleParams
 							.get("headcode").toString());
@@ -904,7 +914,7 @@ public class AddActivity extends TabActivity {
 
 		private JSONObject fetchTimetable(String uid, String originCrsCode,
 				String locationCrs, String destinationCrsCode, String year,
-				String month, String date) {
+				String month, String day) {
 			JSONObject json = new JSONObject();
 
 			try {
@@ -921,7 +931,7 @@ public class AddActivity extends TabActivity {
 								+ "-"
 								+ Helpers.leftPad(month, 2)
 								+ "-"
-								+ Helpers.leftPad(date, 2));
+								+ Helpers.leftPad(day, 2));
 				json = new JSONObject(rawJson);
 			} catch (JSONException e) {
 				errorThrown = (Exception) e;
@@ -1039,13 +1049,10 @@ public class AddActivity extends TabActivity {
 					String date = locationParams.get("arrivalDate");
 					if (date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
 						int year = Integer.parseInt(date.substring(0, 4));
-						System.out.println("Year: " + year);
-						int month = Integer.parseInt(date.substring(5, 6));
-						System.out.println("Month: " + month);
+						int month = Integer.parseInt(date.substring(5, 7));
 						int day = Integer.parseInt(date.substring(8, 10));
-						System.out.println("Day: " + day);
 
-						dp_ToDate.updateDate(year, month + 1, day);
+						dp_ToDate.updateDate(year, month - 1, day);
 					}
 
 					updateSummary();
