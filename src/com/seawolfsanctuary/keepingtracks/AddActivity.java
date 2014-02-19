@@ -2,7 +2,6 @@ package com.seawolfsanctuary.keepingtracks;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -746,9 +744,17 @@ public class AddActivity extends TabActivity {
 						serviceJson.getString("departure_time"));
 
 				service.put("locationCrs", locationCrs);
-				service.put("year", DateFormat.format("yyyy", new Date()));
-				service.put("month", DateFormat.format("MM", new Date()));
-				service.put("day", DateFormat.format("dd", new Date()));
+
+				String arrivalDate = serviceJson.getString("localDate");
+				if (arrivalDate.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+					int year = Integer.parseInt(arrivalDate.substring(0, 4));
+					int month = Integer.parseInt(arrivalDate.substring(5, 7));
+					int day = Integer.parseInt(arrivalDate.substring(8, 10));
+
+					service.put("year", year);
+					service.put("month", month);
+					service.put("day", day);
+				}
 
 				Map<String, String> origin = parseServiceOrigin(serviceJson
 						.getJSONObject("origin"));
