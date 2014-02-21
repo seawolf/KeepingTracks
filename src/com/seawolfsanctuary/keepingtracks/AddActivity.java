@@ -977,6 +977,8 @@ public class AddActivity extends TabActivity {
 							location.put("arrivalTime", arrivalTime);
 							location.put("platform", platform);
 
+							System.out.println("Location found: "
+									+ location.toString());
 							schedule.add(location);
 						}
 					}
@@ -1023,18 +1025,13 @@ public class AddActivity extends TabActivity {
 					dp_ToDate = (DatePicker) findViewById(R.id.dp_ToDate);
 					tp_ToTime = (TimePicker) findViewById(R.id.tp_ToTime);
 
-					Toast.makeText(
-							getApplicationContext(),
-							"Selected: " + locationParams.get("locationDesc")
-									+ " at "
-									+ locationParams.get("arrivalTime"),
-							Toast.LENGTH_SHORT).show();
+					System.out.println("Location selected: "
+							+ locationParams.toString());
 
 					ensureCompletions();
-					String[] matchedStation = Helpers
-							.codeAndStationFromStation(
-									locationParams.get("locationDesc"),
-									completions, AddActivity.this);
+					String[] matchedStation = Helpers.codeAndStationFromCode(
+							locationParams.get("locationCrs"), completions,
+							AddActivity.this);
 					actv_ToSearch.setText(matchedStation[1]);
 
 					String time = locationParams.get("arrivalTime");
