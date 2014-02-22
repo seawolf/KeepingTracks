@@ -634,9 +634,10 @@ public class AddActivity extends TabActivity {
 			String locationCrs = journeyDetails.get("from").toUpperCase();
 
 			JSONObject schedulesJson = fetchTimetable(locationCrs,
-					journeyDetails.get("year"), journeyDetails.get("month"),
-					journeyDetails.get("day"), journeyDetails.get("hour"),
-					"00", "60");
+					Helpers.leftPad(journeyDetails.get("year"), 4),
+					Helpers.leftPad(journeyDetails.get("month"), 2),
+					Helpers.leftPad(journeyDetails.get("day"), 2),
+					Helpers.leftPad(journeyDetails.get("hour"), 2), "00", "60");
 
 			if (errorThrown == null) {
 				schedules = parseSchedules(schedulesJson, locationCrs);
