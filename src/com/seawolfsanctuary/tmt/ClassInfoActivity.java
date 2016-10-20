@@ -260,13 +260,19 @@ public class ClassInfoActivity extends ExpandableListActivity {
 					// meh
 				}
 
+				if (entry[4] == "0000") {
+					entry[4] = "(none)";
+					entry[5] = "(none)";
+				}
+
 				if (entry[5].length() < 1) {
 					entry[5] = "still in service";
 				}
 
 				split.add(null);
 				split.add("Guage: " + entry[2] + "\nEngine: " + entry[3]);
-				split.add("Service: " + entry[4] + "\nRetired: " + entry[5]);
+				split.add("Entered Service: " + entry[4] + "\nRetired: "
+						+ entry[5]);
 
 				ArrayList<String> operatorList = parseOperators(entry[6]);
 				String operators = "";
